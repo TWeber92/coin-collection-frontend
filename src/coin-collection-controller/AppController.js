@@ -1,4 +1,4 @@
-export class ApplicationController {
+export class AppController {
   async APP(req, res, handler) {
     try {
       const result = await handler();

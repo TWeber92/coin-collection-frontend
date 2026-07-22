@@ -1,6 +1,7 @@
 import { EventRegister } from "../src/EventRegister";
 
 export const handler = (e) => {
+  let responseBody;
   const mq = e.target.dataset.mq;
   const collectionController = EventRegister.controllers.collectionController;
   const carouselNavController = EventRegister.controllers.carouselNavController;
@@ -16,7 +17,7 @@ export const handler = (e) => {
   };
   const activateDesktopMode = () => {
     usMapController.putStatesBackInMap();
-    usMapController.putCoinBackInMap();
+    usMapController.putCoinsBackInMap();
   };
   //   const mq = window.matchMedia("(max-width: 768px)").matches;
   mq ? activateMobileMode() : activateDesktopMode();

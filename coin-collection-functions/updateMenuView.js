@@ -8,8 +8,8 @@ export const handler = (e) => {
   const req = { body: { id } };
   const router = {
     hamburger: () => menuController.updateMenu(),
-    favorites: () => collectionController.updateFavorites(req),
-    archived: () => collectionController.updateArchived(req),
+    favorites: () => collectionController.putFavoritesOnPage(req),
+    archived: () => collectionController.putArchivedOnPage(req),
     login: () => modalController.postLoginModal(req),
   };
   router[id]();

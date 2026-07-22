@@ -12,26 +12,23 @@ export const handler = (e) => {
   const sortController = EventRegister.controllers.sortController;
   const res = { node: (data) => (requestBody = data) };
   coinController.getCoinState(res);
-  const req = { body: { coin: responseBody } };
-  collectionController.postToUserCollection(req, res);
+  const req = { body: { coin: responseBody, action } };
   const route = `${action}:${value}`;
   const updateMap = {
-    "add:coin": () =>
-      collectionController.postFavoriteToCollection(req.body, action),
+    "add:coin": () => collectionController.postFavoriteToCollection(req, res),
     "archive:coin": () =>
-      collectionController.putFavoriteInRemovedCollection(req.body, action),
+      collectionController.putFavoriteInArchiveCollection(req),
     "restore:coin": () =>
-      collectionController.putRemovedInFavoriteCollection(req.body, action),
-    "delete:coin": () =>
-      collectionController.deleteCoinFromUserCollection(req.body, action),
+      collectionController.putArchivedInFavoriteCollection(req, res),
+    "delete:coin": () => collectionController.deleteCoinFromUserCollection(req),
   };
   updateMap[route]();
   const data = responseBody;
-  if (!data.inserted) USMapController.postCoinInForeignObj(data.coin);
-  const { favorites, removed } = data;
-  collectionController.deleteCollectionControls(favorites, removed);
-  menuController.updateMenuCounters({ favorites, removed });
-  [(favorites, removed)].forEach(({ container, show }) => {
+  if (!data.inserted) USMapController.postCoinInForeignObj(req);
+  const { favorites, archive } = data;
+  collectionController.deleteCollectionControls(favorites, archive);
+  menuController.updateMenuCounters({ favorites, archive });
+  [(favorites, archive)].forEach(({ container, show }) => {
     if (show && container) {
       scrollController.updateScrollArrowState({ container, show });
       sortController.postSortTools({ container });
