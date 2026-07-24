@@ -8,16 +8,16 @@ export class AppController {
       throw error;
     }
   }
-  async GET(req, res = null, handler) {
+  async GET(req, res, handler) {
     await this.APP(req, res, handler);
   }
-  async POST(req, res = null, handler) {
+  async POST(req, res, handler) {
     await this.APP(req, res, handler);
   }
-  async PUT(req, res = null, handler) {
+  async PUT(req, res, handler) {
     await this.APP(req, res, handler);
   }
-  async DELETE(req, res = null, handler) {
+  async DELETE(req, res, handler) {
     await this.APP(req, res, handler);
   }
 }

@@ -13,8 +13,8 @@ export const handler = (e) => {
     body: { fo: e.target, event: EventRegister },
   };
   const router = {
-    over: () => usMapController.putFOLast(req),
-    out: () => usMapController.putFOBack(req),
+    over: () => usMapController.putFOLast(req, null),
+    out: () => usMapController.putFOBack(req, null),
   };
   router[mouse]();
 };

@@ -5,8 +5,8 @@ export const handler = (e) => {
   const usMapController = EventRegister.controllers.usMapController;
   const req = { body: { target: e.target } };
   const router = {
-    over: () => usMapController.putPathLast(req),
-    out: () => usMapController.putPathBack(req),
+    over: () => usMapController.putPathLast(req, null),
+    out: () => usMapController.putPathBack(req, null),
   };
   router[mouse]();
 };

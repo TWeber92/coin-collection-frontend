@@ -10,14 +10,14 @@ export const handler = (e) => {
   const req = { body: { index } };
   const res = { obj: (data) => (responseBody = data) };
   const activateMobileMode = () => {
-    collectionController.updatecollectionLocation();
+    collectionController.updatecollectionLocation(req, null);
     carouselNavController.getNavIndex(req, res);
     req.body.index = responseBody;
-    stateCardController.putStateCardsInPosition(req);
+    stateCardController.putStateCardsInPosition(req, null);
   };
   const activateDesktopMode = () => {
-    usMapController.putStatesBackInMap();
-    usMapController.putCoinsBackInMap();
+    usMapController.putStatesBackInMap(req, null);
+    usMapController.putCoinsBackInMap(req, null);
   };
   //   const mq = window.matchMedia("(max-width: 768px)").matches;
   mq ? activateMobileMode() : activateDesktopMode();

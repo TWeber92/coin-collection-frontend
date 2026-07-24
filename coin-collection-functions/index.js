@@ -24,7 +24,7 @@ export const event = async (e) => {
     "click:/a/signup": () => updateModalTemplate(e),
   };
   const collectionRouter = {
-    "click:/div/tooltip": () => updateUserCollection(e),
+    "click:/button/tooltip": () => updateUserCollection(e),
     "click:/div/coin": () => updateTooltip(e),
     "mouseout:/div/coin": () => deleteTooltip(e),
   };

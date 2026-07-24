@@ -8,12 +8,12 @@ export const updateCarousel = (e) => {
   const req = { body: { index } };
   const res = { obj: (data) => (responseBody = data) };
   const router = {
-    prev: () => carouselNavController.getPrevIndex(res),
-    next: () => carouselNavController.getNextIndex(res),
-    dot: () => carouselNavController.getDotIndex(res),
-    selected: () => carouselNavController.getSelectedIndex(res),
+    prev: () => carouselNavController.getPrevIndex(null, res),
+    next: () => carouselNavController.getNextIndex(null, res),
+    dot: () => carouselNavController.getDotIndex(null, res),
+    selected: () => carouselNavController.getSelectedIndex(null, res),
   };
   router[option]();
   req.body.index = responseBody;
-  slideController.putSlideInPosition(req);
+  slideController.putSlideInPosition(req, null);
 };

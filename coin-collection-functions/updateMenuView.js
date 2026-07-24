@@ -7,11 +7,11 @@ export const handler = (e) => {
   const modalController = EventRegister.controllers.modalController;
   const req = { body: { id } };
   const router = {
-    hamburger: () => menuController.updateMenu(),
-    favorites: () => collectionController.putFavoritesOnPage(req),
-    archived: () => collectionController.putArchivedOnPage(req),
-    login: () => modalController.postLoginModal(req),
+    hamburger: () => menuController.updateMenu(null, null),
+    favorites: () => collectionController.putFavoritesOnPage(req, null),
+    archived: () => collectionController.putArchivedOnPage(req, null),
+    login: () => modalController.postLoginModal(req, null),
   };
   router[id]();
-  if (id !== "hamburger") menuController.updateMenu();
+  if (id !== "hamburger") menuController.updateMenu(null, null);
 };

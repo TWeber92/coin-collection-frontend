@@ -9,5 +9,6 @@ export const handler = (e) => {
   );
   const menu = document.querySelector("#menu");
   const activeMenu = menu.dataset.active === "true";
-  if (activeMenu && backdrop && !activeOverlay) menuController.updateMenu();
+  if (activeMenu && backdrop && !activeOverlay)
+    menuController.updateMenu(null, null);
 };

@@ -5,8 +5,8 @@ export const handler = (e) => {
   const authController = EventRegister.controllers.authController;
   const req = { body: { value: e.target.value } };
   const router = {
-    email: () => authController.updateEmail(req),
-    password: () => authController.updatePassword(req),
+    email: () => authController.updateEmail(req, null),
+    password: () => authController.updatePassword(req, null),
   };
   router[field]();
 };

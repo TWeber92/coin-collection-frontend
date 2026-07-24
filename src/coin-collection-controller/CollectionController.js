@@ -7,43 +7,47 @@ export class CollectionController extends AppController {
     this.#collectionService = service;
   }
   postFavoriteToCollection(req, res) {
-    super.POST(req, res, () => {
-      this.#collectionService.postFavoriteToCollection(req.body);
+    return super.POST(req, res, () => {
+      const data = this.#collectionService.postFavoriteToCollection(req.body);
+      return { data };
     });
   }
   putFavoriteInArchiveCollection(req, res) {
-    super.PUT(req, res, () => {
+    return super.PUT(req, res, () => {
       this.#collectionService.putFavoriteInArchiveCollection(req.body);
+      return { data };
     });
   }
   putArchivedInFavoriteCollection(req, res) {
-    super.PUT(req, res, () => {
+    return super.PUT(req, res, () => {
       this.#collectionService.putArchivedInFavoriteCollection(req.body);
+      return { data };
     });
   }
   deleteArchivedFromUserCollection(req, res) {
-    super.DELETE(req, res, () => {
+    return super.DELETE(req, res, () => {
       this.#collectionService.deleteCoinFromUserCollection(req.body);
+      return { data };
     });
   }
   updatecollectionLocation(req, res) {
-    super.PUT(req, res, () => {
-      this.#collectionService.updatecollectionLocation(req.body);
-    });
-  }
-  deleteCollectionControls(req, res) {
-    super.DELETE(req, res, () => {
-      this.#collectionService.deleteCollectionControls(req.body);
-    });
+    super.PUT(req, res, () =>
+      this.#collectionService.updatecollectionLocation(req.body),
+    );
   }
   putArchivedOnPage(req, res) {
-    super.PUT(req, res, () => {
-      this.#collectionService.putArchivedOnPage(req.body);
-    });
+    super.PUT(req, res, () =>
+      this.#collectionService.putArchivedOnPage(req.body),
+    );
   }
   putFavoritesOnPage(req, res) {
-    super.PUT(req, res, () => {
-      this.#collectionService.putFavoritesOnPage(req.body);
-    });
+    super.PUT(req, res, () =>
+      this.#collectionService.putFavoritesOnPage(req.body),
+    );
+  }
+  deleteCollectionControls(req, res) {
+    super.DELETE(req, res, () =>
+      this.#collectionService.deleteCollectionControls(req.body),
+    );
   }
 }
