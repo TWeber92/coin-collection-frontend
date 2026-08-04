@@ -1,21 +1,20 @@
 export class DocumentClient {
-  constructor(element, method) {
-    this.element = element;
-    this.method = method;
+  constructor(entity) {
+    this.entity = entity;
   }
-  DOC(element) {
-    this.method(element);
+  DOC(value, method) {
+    return method(value);
   }
-  GET(element) {
-    this.DOC(element);
+  GET(value, method) {
+    return this.DOC(value, method);
   }
-  POST(element) {
-    this.DOC(element);
+  POST(value, method) {
+    this.DOC(value, method);
   }
-  PUT(element) {
-    this.DOC(element);
+  PUT(value, method) {
+    this.DOC(value, method);
   }
-  DELETE(element) {
-    this.DOC(element);
+  DELETE(value, method) {
+    this.DOC(value, method);
   }
 }

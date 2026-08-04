@@ -1,4 +1,4 @@
-export const deleteOverlay = (e) => {
+export const deleteOverlay = async (e) => {
   const overlay = e.target.closest("#overlay");
-  if (overlay) overlay.dataset.active = "false";
+  if (overlay) overlay.hidden = true;
 };

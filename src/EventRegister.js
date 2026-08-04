@@ -1,4 +1,11 @@
 import { event } from "../coin-collection-functions";
+import { CarouselController } from "./coin-collection-controller/CarouselController";
+import { CoinController } from "./coin-collection-controller/CoinController";
+import { CollectionController } from "./coin-collection-controller/CollectionController";
+import { HeaderController } from "./coin-collection-controller/HeaderController";
+import { ModalController } from "./coin-collection-controller/ModalController";
+import { TooltipController } from "./coin-collection-controller/TooltipController";
+import { USMapController } from "./coin-collection-controller/USMapController";
 
 export class EventRegister {
   static #transition;
@@ -9,8 +16,8 @@ export class EventRegister {
     this.#registerControllers();
     this.#registerListeners();
   }
-  static get transition() {
-    return EventRegister.#transition;
+  static set transition(transition) {
+    EventRegister.#transition = transition;
   }
   static get controllers() {
     return EventRegister.#controllers;
@@ -31,15 +38,18 @@ export class EventRegister {
     this.controllers.collectionController = new CollectionController(
       this.#service.collectionService,
     );
-    this.controllers.menuController = new MenuController(
-      this.#service.menuService,
+    this.controllers.headerController = new HeaderController(
+      this.#service.headerService,
     );
-    this.controllers.scrollController = new ScrollController(
-      this.#service.scrollService,
+    this.controllers.carouselController = new CarouselController(
+      this.#service.carouselService,
     );
-    this.controllers.sortController = new SortController(
-      this.#service.sortService,
-    );
+    // this.controllers.scrollController = new ScrollController(
+    //   this.#service.scrollService,
+    // );
+    // this.controllers.sortController = new SortController(
+    //   this.#service.sortService,
+    // );
   }
   #registerListeners() {
     this.#registerClickListener();
@@ -51,41 +61,41 @@ export class EventRegister {
   }
 
   #registerClickListener() {
-    document.addEventListener("click", (e) => {
+    document.addEventListener("click", async (e) => {
       if (e.target.nodeType !== 1) return;
-      event(e);
+      await event(e);
     });
   }
   #registerInputListener() {
-    document.addEventListener("input", (e) => {
+    document.addEventListener("input", async (e) => {
       if (e.target.nodeType !== 1) return;
-      event(e);
+      await event(e);
     });
   }
   #registerSubmitListener() {
-    document.addEventListener("submit", (e) => {
+    document.addEventListener("submit", async (e) => {
       e.preventDefault();
-      event(e);
+      await event(e);
     });
   }
   #registerMouseListeners() {
-    document.addEventListener("mouseover", (e) => {
+    document.addEventListener("mouseover", async (e) => {
       if (e.target.nodeType !== 1) return;
-      event(e);
+      await event(e);
     });
-    document.addEventListener("mouseout", (e) => {
+    document.addEventListener("mouseout", async (e) => {
       if (e.target.nodeType !== 1) return;
-      event(e);
+      await event(e);
     });
   }
   #registerTransitionEndListener() {
-    document.addEventListener("transitionend", (e) => {
-      event(e);
+    document.addEventListener("transitionend", async (e) => {
+      if (EventRegister.#transition) EventRegister.#transition();
     });
   }
   #registerResizeListener() {
-    window.addEventListener("resize", (e) => {
-      event(e);
+    window.addEventListener("resize", async (e) => {
+      await event(e);
     });
   }
 }

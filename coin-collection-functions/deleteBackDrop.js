@@ -1,6 +1,6 @@
 import { EventRegister } from "../src/EventRegister";
 
-export const handler = (e) => {
+export const handler = async (e) => {
   const menuController = EventRegister.menuController;
   const backdrop = e.target.dataset.backdrop === "true";
   const overlays = [...document.querySelectorAll("#overlay")];
@@ -10,5 +10,5 @@ export const handler = (e) => {
   const menu = document.querySelector("#menu");
   const activeMenu = menu.dataset.active === "true";
   if (activeMenu && backdrop && !activeOverlay)
-    menuController.updateMenu(null, null);
+    await menuController.updateMenu(null, null);
 };

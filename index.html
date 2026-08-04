@@ -6,8 +6,9 @@
   <title>Coin Collection</title>
 </head>
 <body>
-    <div class="us-map" data-us-map></div>
-    <div class="state-cards" data-state-cards></div>
-    <script src="/src/Application.js" type="module"></script>    
+    <script type="module">
+      import { Application } from './src/Application.js';
+      new Application();
+    </script>   
 </body>
 </html>

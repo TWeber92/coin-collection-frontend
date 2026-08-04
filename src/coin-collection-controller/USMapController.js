@@ -6,27 +6,40 @@ export class USMapController extends AppController {
     super();
     this.#usMapService = service;
   }
-  postCoinInForeignObj(req, res) {
+  #getAllCoinsFromForeignObjects(req, res) {
+    return super.GET(req, res, () =>
+      this.#usMapService.getAllCoinsFromForeignObjects(),
+    );
+  }
+  #getCarouselPathsByIndex(req, res) {
+    return super.GET(req, res, () =>
+      this.#usMapService.getCarouselPathsByIndex(),
+    );
+  }
+  #postCoinInForeignObj(req, res) {
     super.POST(req, res, () =>
       this.#usMapService.postCoinInForeignObj(req.body),
     );
   }
-  putCoinBackInMap(req, res) {
-    super.PUT(req, res, () => this.#usMapService.putCoinBackInMap(req.body));
+  #postAllSvgPaths(req, res) {
+    super.POST(req, res, () => this.#usMapService.postAllSvgPaths());
   }
-  putStatesBackInMap(req, res) {
-    super.PUT(req, res, () => this.#usMapService.putStatesBackInMap(req.body));
+  #putCoinsBackInMap(req, res) {
+    super.PUT(req, res, () => this.#usMapService.putCoinsBackInMap(req.body));
   }
-  putPathBack(req, res) {
+  #putStatesBackInMap(req, res) {
+    super.PUT(req, res, () => this.#usMapService.putStatesBackInMap());
+  }
+  #putPathBack(req, res) {
     super.PUT(req, res, () => this.#usMapService.putPathBack(req.body));
   }
-  putPathLast(req, res) {
+  #putPathLast(req, res) {
     super.PUT(req, res, () => this.#usMapService.putPathLast(req.body));
   }
-  putFOBack(req, res) {
+  #putFOBack(req, res) {
     super.PUT(req, res, () => this.#usMapService.putFOBack(req.body));
   }
-  putFOLast(req, res) {
+  #putFOLast(req, res) {
     super.PUT(req, res, () => this.#usMapService.putFOLast(req.body));
   }
 }

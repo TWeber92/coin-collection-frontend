@@ -1,19 +1,18 @@
 import { EventRegister } from "../src/EventRegister";
 
-export const updateCarousel = (e) => {
+export const updateCarousel = async (e) => {
   let responseBody;
   const option = e.target.dataset.option;
-  const carouselNavController = EventRegister.controllers.carouselNavController;
-  const slideController = EventRegister.controllers.slideController;
-  const req = { body: { index } };
+  const carouselController = EventRegister.controllers.carouselController;
+  const usMapController = EventRegister.controllers.usMapController;
   const res = { obj: (data) => (responseBody = data) };
   const router = {
-    prev: () => carouselNavController.getPrevIndex(null, res),
-    next: () => carouselNavController.getNextIndex(null, res),
-    dot: () => carouselNavController.getDotIndex(null, res),
-    selected: () => carouselNavController.getSelectedIndex(null, res),
+    prev: async () => await carouselController.updatePrevIndex(null, null),
+    next: async () => await carouselController.updateNextIndex(null, null),
   };
-  router[option]();
-  req.body.index = responseBody;
-  slideController.putSlideInPosition(req, null);
+  await usMapController.putStatesBackInMap();
+  await router[option]();
+  await usMapController.getCarouselPathsByIndex(null, res);
+  const req = { body: { entity: responseBody } };
+  await carouselController.putSlidesInPosition(req, null);
 };

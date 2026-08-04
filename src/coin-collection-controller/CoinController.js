@@ -12,9 +12,8 @@ export class CoinController extends AppController {
     });
   }
   updateCoinState(req, res) {
-    return super.PUT(req, res, () => {
+    super.PUT(req, res, () => {
       this.#coinService.updateCoinState(req.body);
-      return { coin };
     });
   }
   updateCoinElement(req, res) {

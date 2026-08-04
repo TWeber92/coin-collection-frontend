@@ -1,49 +1,43 @@
 import { TooltipDTO } from "../coin-collection-dto/TooltipDTO";
 import { TooltipEntity } from "../coin-collection-entity/TooltipEntity";
-import { DocumentStore } from "../DocumentStore";
+import { TooltipRepository } from "../coin-collection-repository/TooltipRepository";
 
-export class TooltipService {
-  constructor(repo) {
-    this.#tooltipRepository = repo(this.#entity);
+export class TooltipService extends TooltipRepository {
+  constructor() {
+    super(this.#getTooltip());
   }
-  #entity = this.#getTooltip();
-  #tooltipRepository;
+
   #getTooltip() {
-    const tooltip = DocumentStore.createDivElement({
+    return TooltipRepository.getTooltipElement({
       id: "tooltip",
       className: "tooltip-wrapper",
       hidden: true,
-    }).appendTo(document.body);
-    TooltipEntity.tooltip = tooltip;
-    return TooltipEntity.tooltip;
+      data: { location: "modal" },
+    });
   }
   #postAddTooltip(body) {
-    const id = this.#tooltipRepository.getChildElement(body.coin).id;
-    const template = TooltipDTO.toEntity(id);
-    const element = TooltipEntity.fromDTO(template.add);
-    this.#tooltipRepository.postAddTooltip(...element, body);
+    const dto = TooltipDTO.fromEntity(this.getChildElement(body.coin));
+    const entity = TooltipEntity.fromDTO(dto.add);
+    this.postAddTooltip(...entity.node);
     this.#putTooltipOnDisplay(body);
   }
   #postArchiveTooltip(body) {
-    const id = this.#tooltipRepository.getChildElement(body.coin).id;
-    const template = TooltipDTO.toEntity(id);
-    const element = TooltipEntity.fromDTO(template.archive);
-    this.#tooltipRepository.postArchiveTooltip(...element, body);
+    const dto = TooltipDTO.fromEntity(this.getChildElement(body.coin));
+    const entity = TooltipEntity.fromDTO(dto.archive);
+    this.postAddTooltip(...entity.node);
     this.#putTooltipOnDisplay(body);
   }
   #postRestoreOrDeleteTooltip(body) {
-    const id = this.#tooltipRepository.getChildElement(body.coin).id;
-    const template = TooltipDTO.toEntity(id);
-    const element = TooltipEntity.fromDTO(template.resOrDel);
-    this.#tooltipRepository.postRestoreOrDeleteTooltip(...element, body);
+    const dto = TooltipDTO.fromEntity(this.getChildElement(body.coin));
+    const entity = TooltipEntity.fromDTO(dto.resOrDel);
+    this.postAddTooltip(...entity.node);
     this.#putTooltipOnDisplay(body);
   }
   #putTooltipOnDisplay(body) {
-    this.#tooltipRepository.putTooltipOnDisplay(body);
+    this.putTooltipOnDisplay(body);
   }
   #deleteTooltip(body) {
     const relative = body.e.relatedTarget;
-    if (!relative || !this.#entity.contains(relative))
-      this.#tooltipRepository.deleteTooltip(body);
+    if (!relative || !this.#entity.contains(relative)) this.deleteTooltip();
   }
 }

@@ -6,48 +6,45 @@ export class CollectionController extends AppController {
     super();
     this.#collectionService = service;
   }
-  postFavoriteToCollection(req, res) {
-    return super.POST(req, res, () => {
-      const data = this.#collectionService.postFavoriteToCollection(req.body);
+  #getCollectionById(req, res) {
+    return super.GET(req, res, () => {
+      const data = this.#collectionService.getCollectionById();
       return { data };
     });
   }
-  putFavoriteInArchiveCollection(req, res) {
-    return super.PUT(req, res, () => {
-      this.#collectionService.putFavoriteInArchiveCollection(req.body);
-      return { data };
+  async #postFavoriteToCollection(req, res) {
+    super.POST(req, res, async () => {
+      await this.#collectionService.postFavoriteToCollection(req.body);
     });
   }
-  putArchivedInFavoriteCollection(req, res) {
-    return super.PUT(req, res, () => {
-      this.#collectionService.putArchivedInFavoriteCollection(req.body);
-      return { data };
+  async #putFavoriteInArchiveCollection(req, res) {
+    super.PUT(req, res, async () => {
+      await this.#collectionService.putFavoriteInArchiveCollection(req.body);
     });
   }
-  deleteArchivedFromUserCollection(req, res) {
-    return super.DELETE(req, res, () => {
-      this.#collectionService.deleteCoinFromUserCollection(req.body);
-      return { data };
+  async #putArchivedInFavoriteCollection(req, res) {
+    super.PUT(req, res, async () => {
+      await this.#collectionService.putArchivedInFavoriteCollection(req.body);
     });
   }
-  updatecollectionLocation(req, res) {
+  async #deleteArchivedFromCollection(req, res) {
+    super.DELETE(req, res, async () => {
+      await this.#collectionService.deleteArchivedFromCollection(req.body);
+    });
+  }
+  #putAllFavoritesInCollection(req, res) {
     super.PUT(req, res, () =>
-      this.#collectionService.updatecollectionLocation(req.body),
+      this.#collectionService.putAllFavoritesInCollection(req.body),
     );
   }
-  putArchivedOnPage(req, res) {
+  #putCollectionOnOrOffDisplay(req, res) {
     super.PUT(req, res, () =>
       this.#collectionService.putArchivedOnPage(req.body),
     );
   }
-  putFavoritesOnPage(req, res) {
-    super.PUT(req, res, () =>
-      this.#collectionService.putFavoritesOnPage(req.body),
-    );
-  }
-  deleteCollectionControls(req, res) {
-    super.DELETE(req, res, () =>
-      this.#collectionService.deleteCollectionControls(req.body),
-    );
-  }
+  // #deleteCollectionControls(req, res) {
+  //   super.DELETE(req, res, () =>
+  //     this.#collectionService.deleteCollectionControls(req.body),
+  //   );
+  // }
 }

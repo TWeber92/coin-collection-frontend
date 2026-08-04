@@ -8,13 +8,13 @@ export class ModalController extends AppController {
     this.#modalService = service;
   }
 
-  postStateModal(req, res) {
+  #postStateModal(req, res) {
     super.POST(req, res, () => this.#modalService.postStateModal(req.body));
   }
-  postLoginModal(req, res) {
+  #postLoginModal(req, res) {
     super.POST(req, res, () => this.#modalService.postLoginModal(req.body));
   }
-  postSignUpModal(req, res) {
+  #postSignUpModal(req, res) {
     super.POST(req, res, () => this.#modalService.postSignUpModal(req.body));
   }
 }

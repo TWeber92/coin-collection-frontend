@@ -3,6 +3,14 @@ export class DocumentStore {
     Object.assign(element, options);
   }
 
+  static createHeaderElement(attributes) {
+    const { element, options } = DocumentStore.#setOptions(
+      document.createElement("header"),
+      attributes,
+    );
+    return new DocumentStore(element, options);
+  }
+
   static createDivElement(attributes) {
     const { element, options } = DocumentStore.#setOptions(
       document.createElement("div"),
@@ -15,14 +23,18 @@ export class DocumentStore {
       document.createElementNS("http://www.w3.org/2000/svg", "svg"),
       attributes,
     );
-    return new DocumentStore(element, options);
+    return new DocumentStore(element, {
+      ...options,
+      viewBox: `${attributes.geo.x} ${attributes.geo.y} ${attributes.geo.width} ${attributes.geo.height}`,
+    });
   }
   static createForeignObjectElement(attributes) {
+    const { width, height, x, y } = attributes;
     const { element, options } = DocumentStore.#setOptions(
       document.createElementNS("http://www.w3.org/2000/svg", "foreignObject"),
       attributes,
     );
-    return new DocumentStore(element, options);
+    return new DocumentStore(element, { ...options, width, height, x, y });
   }
   static #setOptions(element, attributes) {
     if (attributes.data)

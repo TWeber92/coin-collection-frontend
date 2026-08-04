@@ -2,12 +2,12 @@ export class TooltipDTO {
   #addTooltip;
   #archiveTooltip;
   #restoreOrDeleteTooltip;
-  constructor(id) {
-    this.#addTooltip = `<button id="tooltip" data-action="add">Add ${id}?</button>`;
-    this.#archiveTooltip = `<button id="tooltip" data-action="archive">Archive ${id}?</button>`;
+  constructor(entity) {
+    this.#addTooltip = `<button id="tooltip" data-action="add">Add ${entity.id}?</button>`;
+    this.#archiveTooltip = `<button id="tooltip" data-action="archive">Archive ${entity.id}?</button>`;
     this.#restoreDeleteTooltip = `
-      <button id="tooltip" data-action="restore">Restore</button>
-      <button id="tooltip" data-action="delete">Delete ${id}?</button>
+      <button id="tooltip" data-action="restore">Restore ${entity.id}</button>
+      <button id="tooltip" data-action="delete">Delete ${entity.id}?</button>
     `;
   }
 
@@ -18,7 +18,7 @@ export class TooltipDTO {
       resOrDel: this.#restoreOrDeleteTooltip,
     };
   }
-  static toEntity(id) {
-    return new TooltipDTO(id).#toJSON();
+  static fromEntity(entity) {
+    return new TooltipDTO(entity).#toJSON();
   }
 }

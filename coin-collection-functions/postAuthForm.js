@@ -8,8 +8,8 @@ export const handler = async (e) => {
   const authController = EventRegister.controllers.authController;
   const req = { body: { email, password } };
   const router = {
-    login: () => authController.postLoginForm(req, null),
-    signup: () => authController.postSignUpForm(req, null),
+    login: async () => await authController.postLoginForm(req, null),
+    signup: async () => await authController.postSignUpForm(req, null),
   };
-  router[form.id]();
+  await router[form.id]();
 };

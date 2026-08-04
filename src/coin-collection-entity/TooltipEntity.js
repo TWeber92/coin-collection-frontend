@@ -1,21 +1,14 @@
 export class TooltipEntity {
   static #toolTip;
-  #template;
-  constructor(template) {
-    this.#template = new DOMParser().parseFromString(
-      template,
+  #node;
+  constructor(dto) {
+    this.#node = new DOMParser().parseFromString(
+      dto,
       "text/html",
     ).body.childNodes;
   }
 
-  static get tooltip() {
-    return TooltipEntity.#toolTip;
-  }
-  static set tooltip(node) {
-    TooltipEntity.#toolTip = node;
-  }
-
-  static fromDTO(template) {
-    return new TooltipEntity(template).#template;
+  static fromDTO(dto) {
+    return new TooltipEntity(dto);
   }
 }

@@ -1,7 +1,7 @@
 import { EventRegister } from "../src/EventRegister";
 
-export const handler = (e) => {
+export const handler = async (e) => {
   const tooltipController = EventRegister.tooltipController;
   const req = { body: { coin: e.target } };
-  tooltipController.deleteTooltip(req, null);
+  await tooltipController.deleteTooltip(req, null);
 };
