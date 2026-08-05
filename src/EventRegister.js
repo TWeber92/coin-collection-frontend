@@ -6,7 +6,7 @@ import { HeaderController } from "./coin-collection-controller/HeaderController.
 // import { ModalController } from "./coin-collection-controller/ModalController.js";
 // import { PageController } from "./coin-collection-controller/PageController.js";
 // import { TooltipController } from "./coin-collection-controller/TooltipController.js";
-// import { USMapController } from "./coin-collection-controller/USMapController.js";
+import { USMapController } from "./coin-collection-controller/USMapController.js";
 
 export class EventRegister {
   static #transition;
@@ -27,28 +27,28 @@ export class EventRegister {
     const controllers = EventRegister.controllers;
     controllers.headerController = new HeaderController(
       this.#service.headerService,
-      // );
-      // this.controllers.usMapController = new USMapController(
-      //   this.#service.usMapService,
-      // );
-      // this.controllers.collectionController = new CollectionController(
-      //   this.#service.collectionService,
-      // );
-      // this.controllers.carouselController = new CarouselController(
-      //   this.#service.carouselService,
-      // );
-      // this.controllers.coinController = new CoinController(
-      //   this.#service.coinService,
-      // );
-      // this.controllers.pageController = new PageController(
-      //   this.#service.modalService,
-      // );
-      // this.controllers.modalController = new ModalController(
-      //   this.#service.modalService,
-      // );
-      // this.controllers.tooltipController = new TooltipController(
-      //   this.#service.tooltipService,
     );
+    controllers.usMapController = new USMapController(
+      this.#service.usMapService,
+    );
+    // this.controllers.collectionController = new CollectionController(
+    //   this.#service.collectionService,
+    // );
+    // this.controllers.carouselController = new CarouselController(
+    //   this.#service.carouselService,
+    // );
+    // this.controllers.coinController = new CoinController(
+    //   this.#service.coinService,
+    // );
+    // this.controllers.pageController = new PageController(
+    //   this.#service.modalService,
+    // );
+    // this.controllers.modalController = new ModalController(
+    //   this.#service.modalService,
+    // );
+    // this.controllers.tooltipController = new TooltipController(
+    //   this.#service.tooltipService,
+    // );
     // this.controllers.scrollController = new ScrollController(
     //   this.#service.scrollService,
     // );

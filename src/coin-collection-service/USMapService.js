@@ -1,12 +1,12 @@
-import { USMapDTO } from "../coin-collection-dto/USMapDTO";
-import { USMapEntity } from "../coin-collection-entity/USMapEntity";
-import { USMapRepository } from "../coin-collection-repository/USMapRepository";
-import { GeoUtility } from "../coin-collection-utility/GeoUtility";
-import { EventRegister } from "../EventRegister";
+import { USMapDTO } from "../coin-collection-dto/USMapDTO.js";
+import { USMapEntity } from "../coin-collection-entity/USMapEntity.js";
+import { USMapRepository } from "../coin-collection-repository/USMapRepository.js";
+import { GeoUtility } from "../coin-collection-utility/GeoUtility.js";
+import { EventRegister } from "../EventRegister.js";
 
 export class USMapService extends USMapRepository {
   constructor() {
-    super(this.#getMap());
+    super(USMapService.#getMap());
   }
 
   #init = (async () => {
@@ -14,17 +14,17 @@ export class USMapService extends USMapRepository {
     this.#getAndSerializePaths();
   })();
 
-  #getMap() {
+  static #getMap() {
     return USMapRepository.getMapLayout({
       id: "usmap",
       className: "usmap-layout",
-      hidden: document.dataset.mq ? false : true,
     });
   }
-  async #putMapOndisplay() {
+  async #putMapOnDisplay() {
     const text = await this.getSvgUSMapText("/us.svg");
     const dto = USMapDTO.fromEntity({ html: text });
     const { node } = USMapEntity.fromDTO(dto);
+    node.setAttribute("viewBox", "80 0 1000 589");
     USMapEntity.map = node;
     this.putMapInEntity(node);
     this.putMapOnDisplay();
@@ -32,7 +32,7 @@ export class USMapService extends USMapRepository {
 
   #getAndSerializePaths() {
     const dto = USMapDTO.fromEntity({
-      paths: [...this.getAllPathsFromSvg("path")].map(
+      paths: [...this.getAllPathsFromSVG("path")].map(
         (p) => ((p.id = p.tagName.toLowerCase()), p),
       ),
     });

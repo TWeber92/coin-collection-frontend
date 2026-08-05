@@ -1,6 +1,6 @@
-import { DocumentStore } from "../DocumentStore";
-import { DocumentClient } from "./DocumentClient";
-import { APIClient } from "./APIClient";
+import { DocumentStore } from "../DocumentStore.js";
+import { DocumentClient } from "./DocumentClient.js";
+import { APIClient } from "./APIClient.js";
 
 export class USMapRepository extends DocumentClient {
   constructor(entity) {
@@ -9,7 +9,9 @@ export class USMapRepository extends DocumentClient {
   #api = new APIClient("/assets");
 
   static getMapLayout(props) {
-    return DocumentStore.createDivElement(props).appendTo(document.body);
+    return document.body.appendChild(
+      DocumentStore.createDivElement(props).node,
+    );
   }
   getForeignObjectSVG(value) {
     return super.GET(value, (p) =>
@@ -82,10 +84,10 @@ export class USMapRepository extends DocumentClient {
   putForeignObjAfterPath(value) {
     super.PUT(value, (svg) => svg.path.after(svg.fo));
   }
-  putMapOndisplay() {
+  putMapOnDisplay() {
     super.PUT(
-      document,
-      (d) => (this.entity.hidden = d.dataset.mq ? true : false),
+      document.documentElement,
+      (d) => (this.entity.hidden = d.dataset.mq === "true"),
     );
   }
 }

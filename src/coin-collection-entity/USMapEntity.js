@@ -5,6 +5,7 @@ export class USMapEntity {
   #favorites;
   #path;
   #fo;
+  #siblings;
   #prev;
   #active;
   #next;
@@ -47,7 +48,26 @@ export class USMapEntity {
     USMapEntity.#paths = pathsArray;
   }
 
+  #toJSON() {
+    return {
+      node: this.#node,
+      favorites: this.#favorites,
+      path: this.#path,
+      fo: this.#fo,
+      siblings: this.#siblings,
+      prev: this.#prev,
+      active: this.#active,
+      next: this.#next,
+      name: this.#name,
+      coin: this.#coin,
+      width: this.#width,
+      height: this.#height,
+      x: this.#x,
+      y: this.#y,
+    };
+  }
+
   static fromDTO(dto) {
-    return new USMapEntity(dto);
+    return new USMapEntity(dto).#toJSON();
   }
 }

@@ -1,9 +1,10 @@
-import { USMapDTO } from "./USMapDTO";
+import { USMapDTO } from "./USMapDTO.js";
 
 export class CarouselDTO {
   #index;
   #paths;
   #template;
+  #navPaths;
   #active;
   #next;
   #prev;
@@ -49,7 +50,7 @@ export class CarouselDTO {
   #toJSON() {
     return {
       index: this.#index,
-      length: this.paths.length,
+      length: this.#paths?.length,
       template: this.#template,
       active: this.#active,
       next: this.#next,
@@ -57,7 +58,7 @@ export class CarouselDTO {
       navPaths: this.#navPaths,
     };
   }
-  static #fromEntity(entity) {
+  static fromEntity(entity) {
     return new CarouselDTO(entity).#toJSON();
   }
 }

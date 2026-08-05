@@ -13,9 +13,6 @@ export class DocumentStore {
       document.createElement("header"),
       attributes,
     );
-    console.log(element, options);
-    console.log(new DocumentStore(element, options));
-
     return new DocumentStore(element, options);
   }
 

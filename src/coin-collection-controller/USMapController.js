@@ -1,4 +1,4 @@
-import { AppController } from "./AppController";
+import { AppController } from "./AppController.js";
 
 export class USMapController extends AppController {
   #usMapService;

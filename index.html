@@ -10,6 +10,11 @@
   <title>Coin Collection</title>
 </head>
 <body>
+    <script>
+      document.documentElement.dataset.mq =
+        window.matchMedia("(max-width: 768px)").matches;
+        
+    </script>
     <script type="module">
       import { Application } from './src/Application.js';
       new Application();

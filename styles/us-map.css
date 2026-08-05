@@ -1,0 +1,8 @@
+.usmap-layout {
+  display: flex;
+  justify-content: center;
+}
+.usmap-layout svg {
+  /* clip-path: inset(0 0 0 100px); */
+  /* left: -50px; */
+}

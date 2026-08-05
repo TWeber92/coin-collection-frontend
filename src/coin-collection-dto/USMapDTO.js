@@ -1,4 +1,4 @@
-import { CarouselDTO } from "./CarouselDTO";
+import { CarouselDTO } from "./CarouselDTO.js";
 
 export class USMapDTO {
   #siblings;

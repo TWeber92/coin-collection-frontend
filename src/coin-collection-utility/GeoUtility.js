@@ -1,7 +1,7 @@
-import { GeoState } from "./GeoState";
+import { GeoState } from "./GeoState.js";
 
 export class GeoUtility {
-  static POSITION_OVERRIDES = {
+  static #POSITION_OVERRIDES = {
     ID: { xAdjust: -10, yAdjust: 15 },
     RI: { xAdjust: 9, yAdjust: 9 },
     DE: { xAdjust: 16, yAdjust: 10 },
