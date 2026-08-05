@@ -5,7 +5,7 @@ export class HeaderDTO {
   #badgeId;
   constructor(entity) {
     this.#headerContext = `
-      <h1>🪙 Coin Collection</h1>
+      <h3>STATE QUARTERS</h3>
       <menu id="menu" class="nav-desktop" aria-label="Main navigation">
         <button id="favorites" class="nav-item">
           ⭐ Favorites
@@ -19,7 +19,7 @@ export class HeaderDTO {
       <button id="hamburger" class="menu-hamburger" data-option="hamburger" aria-label="Toggle menu">
         ☰
       </button>
-      <nav id="nav-mobile" class="nav-mobile" hidden=true aria-label="Mobile navigation">
+      <nav id="nav-mobile" class="nav-mobile" aria-label="Mobile navigation">
         <button id="favorites" data-location="menu" class="nav-item">
           ⭐ Favorites
           <span id="badge" data-badge="favorites" class="favorites-badge">0</span>
@@ -44,7 +44,7 @@ export class HeaderDTO {
 
   #toJSON() {
     return {
-      context: this.#headerContext,
+      template: this.#headerContext,
       id: this.#badgeId,
       favorites: this.#favorites,
       archive: this.#archive,

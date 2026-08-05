@@ -1,25 +1,30 @@
-import { CarouselService } from "./coin-collection-service/CarouselService";
-import { CoinService } from "./coin-collection-service/CoinService";
-import { CollectionService } from "./coin-collection-service/CollectionService";
-import { HeaderService } from "./coin-collection-service/HeaderService";
-import { ModalService } from "./coin-collection-service/ModalService";
-import { TooltipService } from "./coin-collection-service/TooltipService";
-import { USMapService } from "./coin-collection-service/USMapService";
-import { EventRegister } from "./EventRegister";
+// import { CarouselService } from "./coin-collection-service/CarouselService.js";
+// import { CoinService } from "./coin-collection-service/CoinService.js";
+// import { CollectionService } from "./coin-collection-service/CollectionService.js";
+import { HeaderService } from "./coin-collection-service/HeaderService.js";
+// import { ModalService } from "./coin-collection-service/ModalService.js";
+// import { PageService } from "./coin-collection-service/PageService.js";
+// import { TooltipService } from "./coin-collection-service/TooltipService.js";
+// import { USMapService } from "./coin-collection-service/USMapService.js";
+import { EventRegister } from "./EventRegister.js";
 
 export class Application {
   constructor() {
+    console.log("Services Instantiated! ✅");
+
     this.#eventRegister = new EventRegister(this.#services);
     document.documentElement.dataset.mq =
       window.matchMedia("(max-width: 768px)").matches;
   }
+  #eventRegister;
   #services = {
     headerService: new HeaderService(),
-    usMapService: new USMapService(),
-    carouselService: new CarouselService(),
-    collectionService: new CollectionService(),
-    coinService: new CoinService(),
-    modalService: new ModalService(),
-    tooltipService: new TooltipService(),
+    // usMapService: new USMapService(),
+    // carouselService: new CarouselService(),
+    // collectionService: new CollectionService(),
+    // coinService: new CoinService(),
+    // pageService: new PageService()
+    // modalService: new ModalService(),
+    // tooltipService: new TooltipService(),
   };
 }

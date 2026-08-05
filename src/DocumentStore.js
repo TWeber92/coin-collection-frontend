@@ -1,6 +1,11 @@
 export class DocumentStore {
   constructor(element, options) {
     Object.assign(element, options);
+    this.element = element;
+  }
+
+  get node() {
+    return this.element;
   }
 
   static createHeaderElement(attributes) {
@@ -8,6 +13,9 @@ export class DocumentStore {
       document.createElement("header"),
       attributes,
     );
+    console.log(element, options);
+    console.log(new DocumentStore(element, options));
+
     return new DocumentStore(element, options);
   }
 

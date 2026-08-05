@@ -1,3 +1,5 @@
+import { AppController } from "./AppController.js";
+
 export class HeaderController extends AppController {
   #headerService;
 

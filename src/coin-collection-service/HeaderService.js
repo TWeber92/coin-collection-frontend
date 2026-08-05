@@ -1,15 +1,17 @@
-import { HeaderDTO } from "../coin-collection-dto/HeaderDTO";
-import { HeaderEntity } from "../coin-collection-entity/HeaderEntity";
-import { HeaderRepository } from "../coin-collection-repository/HeaderRepository";
+import { HeaderDTO } from "../coin-collection-dto/HeaderDTO.js";
+import { HeaderEntity } from "../coin-collection-entity/HeaderEntity.js";
+import { HeaderRepository } from "../coin-collection-repository/HeaderRepository.js";
 
 export class HeaderService extends HeaderRepository {
   constructor() {
-    super(this.#getHeader());
+    super(HeaderService.#getHeader());
   }
 
   #init = this.#putContextInHeader();
 
-  #getHeader() {
+  static #getHeader() {
+    console.log("Me First 🥇");
+
     return HeaderRepository.getHeaderElement({
       id: "header",
       className: "doc-header",
@@ -18,7 +20,7 @@ export class HeaderService extends HeaderRepository {
   #putContextInHeader() {
     const dto = HeaderDTO.fromEntity({});
     const [h1, menu, btn, nav] = HeaderEntity.fromDTO(dto).node;
-    this.putContextInHeader(...[h1, menu, btn]);
+    this.putContextInHeader([h1, menu, btn]);
     this.putNavAfterHeader(nav);
   }
   #updateMenuCounter(body) {

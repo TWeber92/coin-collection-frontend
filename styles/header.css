@@ -1,0 +1,27 @@
+.doc-header {
+  margin: auto;
+  width: 95%;
+  font-family: "Oswald", sans-serif;
+  display: flex;
+  justify-content: space-between;
+  white-space: nowrap;
+}
+
+.menu-hamburger {
+  display: none;
+}
+.nav-mobile {
+  display: none;
+}
+.nav-item {
+  all: unset;
+}
+@media (max-width: 768px) {
+  .menu-hamburger {
+    all: unset;
+    display: block;
+  }
+  .nav-desktop {
+    display: none;
+  }
+}

@@ -1,5 +1,5 @@
-import { DocumentStore } from "../DocumentStore";
-import { DocumentClient } from "./DocumentClient";
+import { DocumentStore } from "../DocumentStore.js";
+import { DocumentClient } from "./DocumentClient.js";
 
 export class HeaderRepository extends DocumentClient {
   constructor(entity) {
@@ -7,7 +7,9 @@ export class HeaderRepository extends DocumentClient {
   }
 
   static getHeaderElement(props) {
-    return DocumentStore.createHeaderElement(props).appendTo(document.body);
+    return document.body.appendChild(
+      DocumentStore.createHeaderElement(props).node,
+    );
   }
   getMenuNav() {
     return super.GET(this.entity, (e) => e.nextElementSibling);
@@ -22,7 +24,7 @@ export class HeaderRepository extends DocumentClient {
     super.PUT(value, (v) => (v.menuBtn.textContent = v.hidden ? "☰" : "✕"));
   }
   putContextInHeader(value) {
-    super.PUT(value, (c) => this.entity.append(c));
+    super.PUT(value, (c) => this.entity.append(...c));
   }
   putNavAfterHeader(value) {
     super.PUT(value, (n) => this.entity.after(n));
