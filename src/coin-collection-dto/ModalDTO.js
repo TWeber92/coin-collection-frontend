@@ -3,7 +3,8 @@ export class ModalDTO {
   #loginModal;
   #signupModal;
   #collectedId;
-  constructor({ name, year, favorites }) {
+  #coin;
+  constructor({ name, year, favorites, coin, collectedId }) {
     this.#stateModal = `
       <div id="modal" class="modal-state">
         <div class="modal-header">
@@ -73,7 +74,8 @@ export class ModalDTO {
         </div>
       </div>
     `;
-    this.#collectedId = this.#stateModal.match(/collected/)[0];
+    this.#collectedId = collectedId;
+    this.#coin = coin;
   }
 
   #toJSON() {

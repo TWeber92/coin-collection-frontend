@@ -4,6 +4,7 @@ export class HeaderDTO {
   #headerContext;
   #badgeId;
   constructor(entity) {
+    entity = { ...this.#toJSON(), ...entity };
     this.#headerContext = `
       <h3>STATE QUARTERS</h3>
       <menu id="menu" class="nav-desktop" aria-label="Main navigation">

@@ -1,13 +1,13 @@
-import { ModalDTO } from "../coin-collection-dto/ModalDTO";
-import { ModalEntity } from "../coin-collection-entity/ModalEntity";
-import { ModalRepository } from "../coin-collection-repository/ModalRepository";
+import { ModalDTO } from "../coin-collection-dto/ModalDTO.js";
+import { ModalEntity } from "../coin-collection-entity/ModalEntity.js";
+import { ModalRepository } from "../coin-collection-repository/ModalRepository.js";
 
 export class ModalService extends ModalRepository {
   constructor() {
-    super(this.#getModal());
+    super(ModalService.#getModal());
   }
 
-  #getModal() {
+  static #getModal() {
     return ModalRepository.getModalElement({
       id: "overlay",
       className: "modal-overlay",
@@ -18,21 +18,21 @@ export class ModalService extends ModalRepository {
   #postStateModal(body) {
     const dto = ModalDTO.fromEntity(body);
     const entity = ModalEntity.fromDTO(dto);
-    this.postStateModal(...entity.node);
-    body.collected = this.getContainerFromEntityById(`#${entity.collectedId}`);
-    this.putCoinAfterCollected(body);
+    const collected = this.getCollectedFromStateModal(entity);
+    this.postStateModal(entity.node);
+    this.putCoinAfterCollected({ ...entity, collected });
     this.putModalOnDisplay();
   }
   #postLoginModal(body) {
     const dto = ModalDTO.fromEntity(body);
-    const entity = ModalEntity.fromDTO(dto).node;
-    this.postLoginModal(...entity);
+    const entity = ModalEntity.fromDTO(dto);
+    this.postLoginModal(entity.node);
     this.putModalOnDisplay();
   }
   #postSignUpModal(body) {
     const dto = ModalDTO.fromEntity(body);
-    const entity = ModalEntity.fromDTO(dto).node;
-    this.postSignUpModal(...entity);
+    const entity = ModalEntity.fromDTO(dto);
+    this.postSignUpModal(entity.node);
     this.putModalOnDisplay();
   }
 }

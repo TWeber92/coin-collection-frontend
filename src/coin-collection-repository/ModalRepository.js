@@ -1,5 +1,5 @@
-import { DocumentStore } from "../DocumentStore";
-import { DocumentClient } from "./DocumentClient";
+import { DocumentStore } from "../DocumentStore.js";
+import { DocumentClient } from "./DocumentClient.js";
 
 export class ModalRepository extends DocumentClient {
   constructor(entity) {
@@ -7,10 +7,12 @@ export class ModalRepository extends DocumentClient {
   }
 
   static getModalElement(props) {
-    return DocumentStore.createDivElement(props).appendTo(document.body);
+    return document.body.appendChild(
+      DocumentStore.createDivElement(props).node,
+    );
   }
-  getContainerFromEntityById(value) {
-    return super.GET(value, (id) => this.entity.querySelector(id));
+  getCollectedFromStateModal(value) {
+    return super.GET(value, (v) => v.node.querySelector(v.collectedId));
   }
   postStateModal(value) {
     super.POST(value, (c) => this.entity.replaceChildren(c));

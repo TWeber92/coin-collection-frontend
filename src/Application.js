@@ -2,7 +2,7 @@ import { CarouselService } from "./coin-collection-service/CarouselService.js";
 import { CoinService } from "./coin-collection-service/CoinService.js";
 // import { CollectionService } from "./coin-collection-service/CollectionService.js";
 import { HeaderService } from "./coin-collection-service/HeaderService.js";
-// import { ModalService } from "./coin-collection-service/ModalService.js";
+import { ModalService } from "./coin-collection-service/ModalService.js";
 import { PageService } from "./coin-collection-service/PageService.js";
 // import { TooltipService } from "./coin-collection-service/TooltipService.js";
 import { USMapService } from "./coin-collection-service/USMapService.js";
@@ -19,7 +19,7 @@ export class Application {
     // collectionService: new CollectionService(),
     coinService: new CoinService(),
     pageService: new PageService(),
-    // modalService: new ModalService(),
+    modalService: new ModalService(),
     // tooltipService: new TooltipService(),
   };
   #eventRegister = new EventRegister(this.#services);
