@@ -1,5 +1,5 @@
 import { CarouselService } from "./coin-collection-service/CarouselService.js";
-// import { CoinService } from "./coin-collection-service/CoinService.js";
+import { CoinService } from "./coin-collection-service/CoinService.js";
 // import { CollectionService } from "./coin-collection-service/CollectionService.js";
 import { HeaderService } from "./coin-collection-service/HeaderService.js";
 // import { ModalService } from "./coin-collection-service/ModalService.js";
@@ -17,7 +17,7 @@ export class Application {
     usMapService: new USMapService(),
     carouselService: new CarouselService(),
     // collectionService: new CollectionService(),
-    // coinService: new CoinService(),
+    coinService: new CoinService(),
     // pageService: new PageService()
     // modalService: new ModalService(),
     // tooltipService: new TooltipService(),

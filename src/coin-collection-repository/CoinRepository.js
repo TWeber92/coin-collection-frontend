@@ -1,6 +1,6 @@
-import { DocumentStore } from "../DocumentStore";
-import { APIClient } from "./APIClient";
-import { DocumentClient } from "./DocumentClient";
+import { DocumentStore } from "../DocumentStore.js";
+import { APIClient } from "./APIClient.js";
+import { DocumentClient } from "./DocumentClient.js";
 
 export class CoinRepository extends DocumentClient {
   constructor(entity) {
@@ -9,7 +9,9 @@ export class CoinRepository extends DocumentClient {
   #api = new APIClient("https://coin-api.coin-collection.workers.dev");
 
   static getCoinElement(value) {
-    return DocumentStore.createDivElement(value).appendTo(document.body);
+    return document.body.appendChild(
+      DocumentStore.createDivElement(value).node,
+    );
   }
   getCoinByStateName(value) {
     return this.#api.GET(`/api/coin?stateName=${value}`);

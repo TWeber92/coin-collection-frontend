@@ -17,7 +17,7 @@ export class DocumentStore {
   }
   static createNavElement(attributes) {
     const { element, options } = DocumentStore.#setOptions(
-      document.createElement("header"),
+      document.createElement("nav"),
       attributes,
     );
     return new DocumentStore(element, options);

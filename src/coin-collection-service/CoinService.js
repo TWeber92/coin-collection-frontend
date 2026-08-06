@@ -1,24 +1,25 @@
-import { CoinDTO } from "../coin-collection-dto/CoinDTO";
-import { CoinEntity } from "../coin-collection-entity/CoinEntity";
-import { CoinRepository } from "../coin-collection-repository/CoinRepository";
+import { CoinDTO } from "../coin-collection-dto/CoinDTO.js";
+import { CoinEntity } from "../coin-collection-entity/CoinEntity.js";
+import { CoinRepository } from "../coin-collection-repository/CoinRepository.js";
 
 export class CoinService extends CoinRepository {
   constructor() {
-    super(this.#getCoin());
+    super(CoinService.#getCoin());
   }
 
-  #getCoin() {
+  static #getCoin() {
     const entity = CoinRepository.getCoinElement({
       id: "coin",
       className: "coin-entity",
       hidden: true,
+      data: { location: "modal" },
     });
     CoinEntity.coin = entity;
     return entity;
   }
 
   #getUpdatedCoinState() {
-    return CoinEntity.fromDTO({}).coin;
+    return CoinEntity.fromDTO({});
   }
 
   #updateCoinEntityState(body) {

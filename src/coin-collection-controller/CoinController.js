@@ -1,3 +1,5 @@
+import { AppController } from "./AppController.js";
+
 export class CoinController extends AppController {
   #coinService;
 
