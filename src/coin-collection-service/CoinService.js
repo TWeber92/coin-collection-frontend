@@ -18,14 +18,17 @@ export class CoinService extends CoinRepository {
     return entity;
   }
 
-  #getUpdatedCoinState() {
-    return CoinEntity.fromDTO({});
+  #getUpdatedCoinState(body) {
+    const dto = CoinDTO.fromEntity(body);
+    const entity = CoinEntity.fromDTO(dto);
+    const clone = entity.coin.cloneNode(true);
+    return { ...entity, coin: dto.action === "add" ? clone : dto.coin };
   }
 
   #updateCoinEntityState(body) {
     const dto = CoinDTO.fromEntity(body);
-    const coin = this.getCoinContainer(dto.coin);
-    this.putCoinInEntity(coin);
+    const entity = CoinEntity.fromDTO(dto);
+    this.putCoinInEntity(entity.node);
   }
 
   async #updateCoinEntity(body) {

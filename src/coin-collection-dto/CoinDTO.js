@@ -2,15 +2,17 @@ export class CoinDTO {
   #template;
   #coin;
   #year;
+  #action;
   constructor(data) {
     data = { ...this.#toJSON(), ...data };
     this.#template = `
-          <div id="coin" class="coin-container">
-            <img class="coin-heads coin-front" src="${data.obvThumb}" alt="${entity.stateName} front" />
-            <img class="coin-tails coin-back" src="${data.revThumb}" alt="${entity.stateName} back" />
+          <div id="${data.stateName}" class="coin-container">
+            <img class="coin-heads coin-front" src="${data.obvThumb}" alt="${data.stateName} front" />
+            <img class="coin-tails coin-back" src="${data.revThumb}" alt="${data.stateName} back" />
           </div>`;
     this.#year = data.mintYear;
     this.#coin = data.coin;
+    this.#action = data.action;
   }
 
   #toJSON() {
@@ -18,6 +20,7 @@ export class CoinDTO {
       template: this.#template,
       year: this.#year,
       coin: this.#coin,
+      action: this.#action,
     };
   }
 

@@ -4,7 +4,7 @@ import { CoinService } from "./coin-collection-service/CoinService.js";
 import { HeaderService } from "./coin-collection-service/HeaderService.js";
 import { ModalService } from "./coin-collection-service/ModalService.js";
 import { PageService } from "./coin-collection-service/PageService.js";
-// import { TooltipService } from "./coin-collection-service/TooltipService.js";
+import { TooltipService } from "./coin-collection-service/TooltipService.js";
 import { USMapService } from "./coin-collection-service/USMapService.js";
 import { EventRegister } from "./EventRegister.js";
 
@@ -20,7 +20,7 @@ export class Application {
     coinService: new CoinService(),
     pageService: new PageService(),
     modalService: new ModalService(),
-    // tooltipService: new TooltipService(),
+    tooltipService: new TooltipService(),
   };
   #eventRegister = new EventRegister(this.#services);
 }

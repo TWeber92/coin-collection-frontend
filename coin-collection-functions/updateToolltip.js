@@ -3,15 +3,14 @@ import { ToolTipTemplates } from "../src/ui/tool-tip/ToolTipTemplates";
 
 export const handler = async (e) => {
   let responseBody;
-  const location = e.target.dataset.location;
+  const location = e.target.closest("#fo, #modal, #favorites, #archive").id;
   const tooltipController = EventRegister.controllers.tooltipController;
   const coinController = EventRegister.controllers.coinController;
-  const coin = location === "modal" ? e.target.cloneNode(true) : e.target;
-  const req = { body: { coin, location, e } };
+  // const coin = location === "modal" ? e.target.cloneNode(true) : e.target;
+  const req = { body: { coin: e.target, location } };
   await coinController.updateCoinState(req, null);
-  req.body = responseBody;
   const router = {
-    usmap: async () => await tooltipController.postArchiveTooltip(req, null),
+    fo: async () => await tooltipController.postArchiveTooltip(req, null),
     modal: async () => await tooltipController.postAddTooltip(req, null),
     favorites: async () =>
       await tooltipController.postArchiveTooltip(req, null),

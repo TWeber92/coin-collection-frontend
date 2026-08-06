@@ -1,5 +1,5 @@
-import { DocumentStore } from "../DocumentStore";
-import { DocumentClient } from "./DocumentClient";
+import { DocumentStore } from "../DocumentStore.js";
+import { DocumentClient } from "./DocumentClient.js";
 
 export class TooltipRepository extends DocumentClient {
   constructor(entity) {
@@ -7,25 +7,30 @@ export class TooltipRepository extends DocumentClient {
   }
 
   static getTooltipElement(props) {
-    return DocumentStore.createDivElement(props).appendTo(document.body);
+    return document.body.appendChild(
+      DocumentStore.createDivElement(props).node,
+    );
   }
   getChildElement(value) {
     return value.firstElementChild;
   }
   postAddTooltip(value) {
-    super.POST(value, (c) => this.entity.replaceChildren(c));
+    super.POST(value, (t) => this.entity.replaceChildren(t));
   }
   postArchiveTooltip(value) {
-    super.POST(value, (c) => this.entity.replaceChildren(c));
+    super.POST(value, (t) => this.entity.replaceChildren(t));
   }
   postRestoreOrDeleteTooltip(value) {
-    super.POST(value, (c) => this.entity.replaceChildren(c));
+    super.POST(value, (t) => this.entity.replaceChildren(t));
   }
   putTooltipOnDisplay(value) {
-    super.PUT(this.entity, (c) => value.append(c));
+    super.PUT(value, (c) => c.prepend(this.entity));
     this.entity.hidden = false;
   }
-  deleteTooltip() {
-    this.entity.hidden = true;
+  deleteTooltip(value) {
+    super.DELETE(
+      value,
+      (r) => (this.entity.hidden = !r || !this.entity.contains(r)),
+    );
   }
 }

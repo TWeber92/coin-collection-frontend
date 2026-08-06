@@ -10,8 +10,9 @@ export const handler = async (e) => {
   const usMapController = EventRegister.controllers.usMapController;
   const headerController = EventRegister.controllers.headerController;
   const res = { obj: (data) => (responseBody = data) };
-  await coinController.getCoinState(null, res);
-  const req = { body: { coin: responseBody, action } };
+  const req = { body: { action } };
+  await coinController.getCoinState(req, res);
+  req.body.coin = responseBody;
   const route = `${action}:${value}`;
   const postCoinToMap = () => usMapController.putCoinInForeignObj(req, res);
   const updateMap = {
