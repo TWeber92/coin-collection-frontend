@@ -1,31 +1,36 @@
 export class CarouselEntity {
+  #nodes;
   #active;
   #next;
   #prev;
-  #nodes;
   #navPaths;
   constructor(dto) {
-    this.#nodes = new DOMParser().parseFromString(
-      dto.template,
-      "text/html",
-    ).body.childNodes;
+    [
+      ...(this.#nodes = new DOMParser().parseFromString(
+        dto.template,
+        "text/html",
+      ).body.children),
+    ];
+    this.#active = dto.active;
+    this.#next = dto.next;
+    this.#prev = dto.next;
     this.#navPaths = dto.navPaths;
   }
-  get slides() {
+  get nodes() {
+    return this.#nodes;
+  }
+
+  #toJSON() {
     return {
-      prev: this.#prev,
-      active: this.#active,
-      next: this.#next,
+      nodes: this.#nodes,
+      active: new CarouselEntity({ template: this.#active }).#nodes,
+      next: new CarouselEntity({ template: this.#next }).#nodes,
+      prev: new CarouselEntity({ template: this.#prev }).#nodes,
+      navPaths: this.#navPaths,
     };
   }
 
-  set slides({ active, next, prev }) {
-    this.#active = new CarouselEntity({ template: active });
-    this.#next = new CarouselEntity({ template: next });
-    this.#prev = new CarouselEntity({ template: prev });
-  }
-
-  static #fromDTO(dto) {
-    return new CarouselEntity(dto);
+  static fromDTO(dto) {
+    return new CarouselEntity(dto).#toJSON();
   }
 }

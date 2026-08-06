@@ -1,16 +1,17 @@
-import { CarouselDTO } from "../coin-collection-dto/CarouselDTO";
-import { CarouselEntity } from "../coin-collection-entity/CarouselEntity";
-import { GeoUtility } from "../coin-collection-utility/GeoUtility";
+import { CarouselDTO } from "../coin-collection-dto/CarouselDTO.js";
+import { CarouselEntity } from "../coin-collection-entity/CarouselEntity.js";
+import { CarouselRepository } from "../coin-collection-repository/CarouselRepository.js";
+import { GeoUtility } from "../coin-collection-utility/GeoUtility.js";
 
 export class CarouselService extends CarouselRepository {
   constructor() {
-    super(this.#getNav());
+    super(CarouselService.#getNav());
   }
 
-  #getNav() {
+  static #getNav() {
     return this.getCarouselNavElement({
       id: "carousel-nav",
-      class: "carousel-nav",
+      className: "carousel-nav",
       ariaLabel: "State Carousel",
     });
   }
@@ -19,21 +20,24 @@ export class CarouselService extends CarouselRepository {
   #putCarouselAssemblyinNav() {
     const dto = this.#getRandomIndex();
     const entity = CarouselEntity.fromDTO(dto);
-    entity.slides = dto;
-    const layout = this.getCarouselLayout({
+    const layout = this.getStateCarouselLayout({
       id: "state-carousel",
       className: "state-carousel",
-      hidden: document.dataset.mq ? true : false,
+      hidden: document.documentElement.dataset.mq === "false",
     });
     this.putNavInCarouselLayout(layout);
     this.putCarouselInNav(entity.nodes);
-    this.putSlidesInCarousel(...entity.slides);
+    this.putSlidesInCarousel([
+      ...entity.prev,
+      ...entity.active,
+      ...entity.next,
+    ]);
   }
   #putSlidesInPosition(body) {
     const dto = CarouselDTO.fromEntity(body);
     const entity = CarouselEntity.fromDTO(dto);
-    entity.slides = dto;
-    Object.entries(entity.slides).forEach(([key, slide]) => {
+    const { prev, active, next } = entity;
+    Object.entries({ prev, active, next }).forEach(([key, slide]) => {
       const path = entity.navPaths[key];
       const container = this.getSlideContainer({ s, o: key });
       const geo = GeoUtility.getGeometryForSlide(path);
@@ -41,7 +45,7 @@ export class CarouselService extends CarouselRepository {
       this.putPathInSlideSvg({ svg, p: path });
       this.putSvgInCarouselSlide({ cs: container, svg });
     });
-    this.putNewSlidesInCarousel(...entity.slides);
+    this.putNewSlidesInCarousel([...prev, ...active, ...next]);
   }
 
   #getRandomIndex() {

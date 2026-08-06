@@ -15,7 +15,13 @@ export class DocumentStore {
     );
     return new DocumentStore(element, options);
   }
-
+  static createNavElement(attributes) {
+    const { element, options } = DocumentStore.#setOptions(
+      document.createElement("header"),
+      attributes,
+    );
+    return new DocumentStore(element, options);
+  }
   static createDivElement(attributes) {
     const { element, options } = DocumentStore.#setOptions(
       document.createElement("div"),

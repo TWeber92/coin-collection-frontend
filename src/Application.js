@@ -1,4 +1,4 @@
-// import { CarouselService } from "./coin-collection-service/CarouselService.js";
+import { CarouselService } from "./coin-collection-service/CarouselService.js";
 // import { CoinService } from "./coin-collection-service/CoinService.js";
 // import { CollectionService } from "./coin-collection-service/CollectionService.js";
 import { HeaderService } from "./coin-collection-service/HeaderService.js";
@@ -15,7 +15,7 @@ export class Application {
   #services = {
     headerService: new HeaderService(),
     usMapService: new USMapService(),
-    // carouselService: new CarouselService(),
+    carouselService: new CarouselService(),
     // collectionService: new CollectionService(),
     // coinService: new CoinService(),
     // pageService: new PageService()

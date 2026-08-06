@@ -23,19 +23,19 @@ export class CarouselDTO {
         </div>`;
     this.#active = `
         <div id="slide" class="carousel-slide">
-          <div id="state class="slide-card" data-option="active">
+          <div id="state" class="slide-card" data-option="active">
             <span class="state-name">${entity.active?.name.toUpperCase()}</span>
           </div>
         </div>`;
     this.#next = `
         <div id="slide" class="carousel-slide">
-          <div id="state class="slide-card" data-option="next">
+          <div id="state" class="slide-card" data-option="next">
             <span class="state-name">${entity.next?.name.toUpperCase()}</span>
           </div>
         </div>`;
     this.#prev = `
         <div id="slide" class="carousel-slide">
-          <div id="state class="slide-card" data-option="prev">
+          <div id="state" class="slide-card" data-option="prev">
             <span class="state-name">${entity.prev?.name.toUpperCase()}</span>
           </div>
         </div>`;

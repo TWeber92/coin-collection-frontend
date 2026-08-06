@@ -10,8 +10,6 @@ export class HeaderService extends HeaderRepository {
   #init = this.#putContextInHeader();
 
   static #getHeader() {
-    console.log("Me First 🥇");
-
     return HeaderRepository.getHeaderElement({
       id: "header",
       className: "doc-header",

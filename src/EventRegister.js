@@ -1,5 +1,5 @@
 // import { event } from "../coin-collection-functions.js";
-// import { CarouselController } from "./coin-collection-controller/CarouselController.js";
+import { CarouselController } from "./coin-collection-controller/CarouselController.js";
 // import { CoinController } from "./coin-collection-controller/CoinController.js";
 // import { CollectionController } from "./coin-collection-controller/CollectionController.js";
 import { HeaderController } from "./coin-collection-controller/HeaderController.js";
@@ -31,11 +31,11 @@ export class EventRegister {
     controllers.usMapController = new USMapController(
       this.#service.usMapService,
     );
+    controllers.carouselController = new CarouselController(
+      this.#service.carouselService,
+    );
     // this.controllers.collectionController = new CollectionController(
     //   this.#service.collectionService,
-    // );
-    // this.controllers.carouselController = new CarouselController(
-    //   this.#service.carouselService,
     // );
     // this.controllers.coinController = new CoinController(
     //   this.#service.coinService,
