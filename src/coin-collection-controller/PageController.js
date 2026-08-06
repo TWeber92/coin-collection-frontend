@@ -1,8 +1,9 @@
-import { AppController } from "./AppController";
+import { AppController } from "./AppController.js";
 
 export class PageController extends AppController {
   #pageService;
   constructor(service) {
+    super();
     this.#pageService = service;
   }
 

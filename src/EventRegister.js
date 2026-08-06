@@ -4,7 +4,7 @@ import { CoinController } from "./coin-collection-controller/CoinController.js";
 // import { CollectionController } from "./coin-collection-controller/CollectionController.js";
 import { HeaderController } from "./coin-collection-controller/HeaderController.js";
 // import { ModalController } from "./coin-collection-controller/ModalController.js";
-// import { PageController } from "./coin-collection-controller/PageController.js";
+import { PageController } from "./coin-collection-controller/PageController.js";
 // import { TooltipController } from "./coin-collection-controller/TooltipController.js";
 import { USMapController } from "./coin-collection-controller/USMapController.js";
 
@@ -38,9 +38,7 @@ export class EventRegister {
     //   this.#service.collectionService,
     // );
     controllers.coinController = new CoinController(this.#service.coinService);
-    // this.controllers.pageController = new PageController(
-    //   this.#service.modalService,
-    // );
+    controllers.pageController = new PageController(this.#service.modalService);
     // this.controllers.modalController = new ModalController(
     //   this.#service.modalService,
     // );

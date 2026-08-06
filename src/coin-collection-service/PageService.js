@@ -1,15 +1,15 @@
-import { PageDTO } from "../coin-collection-dto/PageDTO";
-import { PageEntity } from "../coin-collection-entity/PageEntity";
-import { PageRepository } from "../coin-collection-repository/PageRepository";
+import { PageDTO } from "../coin-collection-dto/PageDTO.js";
+import { PageEntity } from "../coin-collection-entity/PageEntity.js";
+import { PageRepository } from "../coin-collection-repository/PageRepository.js";
 
 export class PageService extends PageRepository {
   constructor() {
-    super(this.#getPage());
+    super(PageService.#getPage());
   }
 
   #init = this.#getCollectionPage();
 
-  #getPage() {
+  static #getPage() {
     return PageRepository.getPageElement({
       id: "overlay",
       className: "page-overlay",
@@ -25,7 +25,7 @@ export class PageService extends PageRepository {
   #postCollectionPage(body) {
     const dto = PageDTO.fromEntity(body);
     const entity = PageEntity.fromDTO(dto);
-    this.postCollectionPage(PageEntity.collections);
+    this.postCollectionPage(entity.collections);
     const container = this.getCollectionContainerBySet(dto.id);
     this.putCollectionInPageContainer({
       con: container,

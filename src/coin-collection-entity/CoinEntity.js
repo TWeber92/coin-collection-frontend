@@ -6,7 +6,7 @@ export class CoinEntity {
     this.#node = new DOMParser().parseFromString(
       dto.template,
       "text/html",
-    ).body.childNodes;
+    ).body.children;
     this.#year = dto.year;
   }
 

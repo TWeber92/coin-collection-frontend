@@ -1,5 +1,5 @@
-import { DocumentStore } from "../DocumentStore";
-import { DocumentClient } from "./DocumentClient";
+import { DocumentStore } from "../DocumentStore.js";
+import { DocumentClient } from "./DocumentClient.js";
 
 export class PageRepository extends DocumentClient {
   constructor(entity) {
@@ -7,7 +7,9 @@ export class PageRepository extends DocumentClient {
   }
 
   static getPageElement(props) {
-    return DocumentStore.createDivElement(props).appendTo(document.body);
+    return document.body.appendChild(
+      DocumentStore.createDivElement(props).node,
+    );
   }
   getCollectionContainerBySet(value) {
     const set = `[data-collection='${value}']`;
