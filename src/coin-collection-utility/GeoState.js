@@ -1,42 +1,46 @@
 export class GeoState {
+  static #json = {};
   #geo;
   #pathData;
   #coinSize;
   #override;
   #numbers = [];
   constructor(obj) {
+    obj = { ...GeoState.#json, ...obj };
+    this.#geo = obj.geo;
     this.#pathData = obj.pathData;
-    this.#numbers = obj.numbers?.match(/[-+]?(\d*\.\d+|\d+\.?)/g);
+    this.#numbers = obj.numbers;
     this.#override = obj.override;
     this.#coinSize = Math.max(18, Math.min(obj.coinSize * 0.45, 50));
+    GeoState.#json = { ...GeoState.fromGeo(), ...obj };
   }
 
   get coinX() {
     const geo = this.#geo;
-    return geo.x + this.#override.xAdjust + geo.width / 2 - this.#coinSize / 2;
+    return (
+      geo?.x + this.#override?.xAdjust + geo?.width / 2 - this.#coinSize / 2
+    );
   }
   get coinY() {
     const geo = this.#geo;
-    return geo.y + this.#override.yAdjust + geo.height / 2 - this.#coinSize / 2;
-  }
-  set geo(obj) {
-    this.#geo = obj;
+    return (
+      geo?.y + this.#override?.yAdjust + geo?.height / 2 - this.#coinSize / 2
+    );
   }
   get coinSize() {
     return this.#coinSize;
   }
-  fromGeo() {
+  static fromGeo() {
     return {
-      numbers: this.#numbers,
-      pathData: this.#pathData,
+      ...GeoState.#json,
       xCoords: [],
       yCoords: [],
     };
   }
-  fromSVG(obj) {
-    new GeoState(obj);
+  static fromSVG(obj) {
+    return new GeoState(obj).#toEntity();
   }
-  toEntity() {
+  #toEntity() {
     return {
       size: this.#coinSize,
       x: this.coinX,

@@ -1,51 +1,65 @@
-import { APIClient } from "./APIClient";
-import { BrowserRepository } from "./BrowserRepository";
-import { DocumentClient } from "./DocumentClient";
+import { APIClient } from "./APIClient.js";
+import { BrowserRepository } from "./BrowserRepository.js";
+import { DocumentClient } from "./DocumentClient.js";
 
 export class CollectionRepository extends DocumentClient {
-  #mq;
-  constructor(entity) {
-    super(entity);
-    this.#mq = document.dataset.mq;
+  constructor({ collection }) {
+    super();
+    this.#entity = { favorites: collection.favorites };
+    console.log(this.#entity.favorites.lastChild);
+
+    this.#mq = window.matchMedia("(max-width: 768px)").matches;
   }
+  #mq;
+  #entity;
   #api = new APIClient("https://coin-api.coin-collection.workers.dev");
   #browser = new BrowserRepository();
 
   getCoinFromArchiveCollection(value) {
     super.GET(value, (n) =>
-      this.entity.archived.firstElementChild.querySelector(`[data-name="${n}]`),
+      this.#entity.archived.lastChild.querySelector(`#${n}`),
     );
   }
   getCollectionById(value) {
-    super.GET(value, (v) => v.e.parentNode.querySelector(`${v.id}-collection`));
+    return super.GET(value.id, (id) => this.#entity[id]);
   }
-
+  getStateNameFromCoin(value) {
+    return super.GET(value, (v) => v.c.lastChild.id);
+  }
   postLocalStorage(value) {
     this.#browser.postLocalStorageByKey(value);
   }
-  postToFavoritesCollection(value) {
-    if (value.user.authenticated) this.#api.POST("", value.user);
+  async postToFavoritesCollection(value) {
+    if (value.user?.authenticated) await this.#api.POST("", value.user);
     this.#browser.putNewItemInLocalByKey("favorites", value.name);
+    console.log(this.#entity);
+
     if (this.#mq)
-      super.POST(value, (c) =>
-        this.entity.favorites.firstElementChild.append(c),
-      );
-    this.#deleteArchivedCoin(value.name);
+      super.POST(value, (c) => this.#entity.favorites.lastChild.append(c));
+    this.deleteArchivedCoin(value.name);
   }
-  postToArchiveCollection(value) {
-    if (value.user.authenticated) this.#api.POST("", value.user);
+  async postToArchiveCollection(value) {
+    if (value.user.authenticated) await this.#api.POST("", value.user);
     this.#browser.putNewItemInLocalByKey("archive", value.name);
-    super.POST(value, (c) => this.entity.archive.firstElementChild.append(c));
+    super.POST(value, (c) => this.#entity.archive.lastChild.append(c));
   }
   putFavoriteBackInContainer(value) {
-    super.PUT(value, (c) => this.entity.archive.firstElementChild.append(c));
+    super.PUT(value, (c) => this.#entity.archive.lastChild.append(c));
   }
   putCollectionOnOrOffDisplay(value) {
-    super.PUT(value, (c) => (c.hidden = c.hidden ? false : true));
+    super.PUT(value, (c) => {
+      c.hidden = !c.hidden;
+      c.previousSibling.children[c.parentNode.id].textContent = c.hidden
+        ? "︿"
+        : "﹀";
+    });
+  }
+  putArchiveCollectionInEntity(value) {
+    this.#entity.archive = value;
   }
   deleteFromArchiveCollection(value) {
     if (value.user.authenticated) this.#api.DELETE("", value.user);
-    this.#deleteArchivedCoin(value.name);
+    this.deleteArchivedCoin(value.name);
     super.DELETE(value.coin, (c) => c.remove());
   }
   deleteArchivedCoin(value) {

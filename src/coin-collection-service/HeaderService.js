@@ -17,29 +17,37 @@ export class HeaderService extends HeaderRepository {
   }
   #putContextInHeader() {
     const dto = HeaderDTO.fromEntity({});
-    const [h1, menu, btn, nav] = HeaderEntity.fromDTO(dto).node;
-    this.putContextInHeader([h1, menu, btn]);
+    const entity = HeaderEntity.fromDTO(dto);
+    const [h3, menu, btn, nav] = entity.nodes;
+    this.putContextInHeader([h3, menu, btn]);
+    this.putNavItemsInMenu({ menu, items: entity.buttons });
     this.putNavAfterHeader(nav);
   }
-  #updateMenuCounter(body) {
-    const dto = HeaderDTO.fromEntity({});
+  putNewCountInBadge(body) {
+    const dto = HeaderDTO.fromEntity(body);
     const entity = HeaderEntity.fromDTO(dto);
     const id = `#${entity.id}`;
     const headerBadges = [...this.getBadgesFromHeader(id)];
-    const nav = this.getMenuNav();
+    const nav = this.getMenuNavSibling();
     const navBadges = [...this.getBadgesFromNav({ id, nav })];
     const badges = [...headerBadges, ...navBadges];
     Object.entries(dto.collections).forEach(([key, value]) =>
       badges
         .filter((b) => b.dataset.badge === key)
-        .forEach((b) => this.putNewCountInBadge({ b, c: value.count })),
+        .forEach((b) => super.putNewCountInBadge({ b, c: value.count })),
     );
   }
-  #updateMenuView() {
-    const nav = this.getMenuNav();
-    const menuBtn = this.getMenuButton();
+  putNewIconInHeader(body) {
+    const dto = HeaderDTO.fromEntity(body);
+    const { menuBtnId } = HeaderEntity.fromDTO(dto);
+    const buttons = this.getNavItemsFromDocBody();
+    const nav = this.getMenuNavSibling();
+    const menuBtn = this.getMenuButtonById(menuBtnId);
     const hidden = nav.hidden;
-    this.putMenuNavOnDisplay({ nav, hidden });
-    this.updateMenuIcon({ menuBtn, hidden });
+    super.putMenuNavOnOffDisplay({ nav, hidden, buttons });
+    super.putNewIconInHeader({ menuBtn, nav });
+  }
+  putMenuNavOnOffDisplay(body) {
+    this.putNewIconInHeader(body);
   }
 }

@@ -1,4 +1,4 @@
-import { BrowserClient } from "./BrowserClient";
+import { BrowserClient } from "./BrowserClient.js";
 
 export class BrowserRepository extends BrowserClient {
   constructor() {

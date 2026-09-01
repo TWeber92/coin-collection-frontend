@@ -1,30 +1,37 @@
-import { EventRegister } from "../src/EventRegister";
+import { EventRegister } from "../src/EventRegister.js";
 
 export const handler = async (e) => {
   let responseBody;
-  const mq = document.dataset.mq;
+  const mq = window.matchMedia("(max-width: 768px)").matches;
+  const navIsOpen = !document.body.querySelector("#nav-menu").hidden;
   const collectionController = EventRegister.controllers.collectionController;
   const carouselController = EventRegister.controllers.carouselController;
-  const stateCardController = EventRegister.controllers.stateCardController;
   const usMapController = EventRegister.controllers.usMapController;
   const headerController = EventRegister.controllers.headerController;
-  const req = { body: { index } };
+  const req = {
+    body: { collectionId: "favorites", svgId: "state", menuId: "hamburger" },
+  };
   const res = { obj: (data) => (responseBody = data) };
-  await usMapController.getAllCoinsFromMap(null, res);
-  req.body.coins = responseBody;
   const activateMobileMode = async () => {
-    await usMapController.getAllCoinsFromForeignObjects(null, res);
-    req.body.coins = responseBody;
-    await collectionController.putAllFavoritesInCollection(req, res);
+    console.log("Mobile Mode");
+
+    await usMapController.putStatesBackInMap(req, null);
     await usMapController.getCarouselPathsByIndex(req, res);
-    req.body.paths = responseBody;
-    await stateCardController.putStateCardsInPosition(req, null);
+    req.body = { ...req.body, ...responseBody };
+    // req.body.entity = responseBody;
+    await carouselController.putSlidesInPosition(req, res);
+    await usMapController.putMapOnOffDisplay(req, res);
+    await carouselController.putCarouselOnOffDisplay(req, res);
   };
   const activateDesktopMode = async () => {
-    await collectionController.getUsersCollection(req, null);
+    console.log("Desktop Mode");
     await usMapController.putStatesBackInMap(req, null);
-    await usMapController.putCoinsBackInMap(req, null);
+    // await collectionController.getCollectionById(req, res);
+    // req.body.favorites = responseBody;
+    // await usMapController.putCoinsBackInMap(req, null);
+    if (navIsOpen) headerController.putMenuNavOnOffDisplay(req, res);
+    await carouselController.putCarouselOnOffDisplay(req, res);
+    await usMapController.putMapOnOffDisplay(req, res);
   };
-  //   const mq = window.matchMedia("(max-width: 768px)").matches;
   mq ? await activateMobileMode() : await activateDesktopMode();
 };

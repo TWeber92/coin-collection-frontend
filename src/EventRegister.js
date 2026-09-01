@@ -1,7 +1,8 @@
-// import { event } from "../coin-collection-functions.js";
+import { event } from "../coin-collection-functions/index.js";
+import { AuthController } from "./coin-collection-controller/AuthController.js";
 import { CarouselController } from "./coin-collection-controller/CarouselController.js";
 import { CoinController } from "./coin-collection-controller/CoinController.js";
-// import { CollectionController } from "./coin-collection-controller/CollectionController.js";
+import { CollectionController } from "./coin-collection-controller/CollectionController.js";
 import { HeaderController } from "./coin-collection-controller/HeaderController.js";
 import { ModalController } from "./coin-collection-controller/ModalController.js";
 import { PageController } from "./coin-collection-controller/PageController.js";
@@ -25,6 +26,7 @@ export class EventRegister {
   }
   #registerControllers() {
     const controllers = EventRegister.controllers;
+    controllers.authController = new AuthController(this.#service.authService);
     controllers.headerController = new HeaderController(
       this.#service.headerService,
     );
@@ -34,11 +36,11 @@ export class EventRegister {
     controllers.carouselController = new CarouselController(
       this.#service.carouselService,
     );
-    // this.controllers.collectionController = new CollectionController(
-    //   this.#service.collectionService,
-    // );
+    controllers.collectionController = new CollectionController(
+      this.#service.collectionService,
+    );
     controllers.coinController = new CoinController(this.#service.coinService);
-    controllers.pageController = new PageController(this.#service.modalService);
+    controllers.pageController = new PageController(this.#service.pageService);
     controllers.modalController = new ModalController(
       this.#service.modalService,
     );
@@ -53,12 +55,13 @@ export class EventRegister {
     // );
   }
   #registerListeners() {
-    // this.#registerClickListener();
-    // this.#registerInputListener();
+    this.#registerClickListener();
+    this.#registerInputListener();
     // this.#registerSubmitListener();
-    // this.#registerMouseListeners();
-    // this.#registerResizeListener();
+    this.#registerMouseListeners();
     // this.#registerTransitionEndListener();
+    this.#registerLoadedListener();
+    this.#registerResizeListener();
   }
 
   #registerClickListener() {
@@ -80,10 +83,10 @@ export class EventRegister {
     });
   }
   #registerMouseListeners() {
-    document.addEventListener("mouseover", async (e) => {
-      if (e.target.nodeType !== 1) return;
-      await event(e);
-    });
+    // document.addEventListener("mouseover", async (e) => {
+    //   if (e.target.nodeType !== 1) return;
+    //   await event(e);
+    // });
     document.addEventListener("mouseout", async (e) => {
       if (e.target.nodeType !== 1) return;
       await event(e);
@@ -94,9 +97,22 @@ export class EventRegister {
       if (EventRegister.#transition) EventRegister.#transition();
     });
   }
-  #registerResizeListener() {
-    window.addEventListener("resize", async (e) => {
-      await event(e);
-    });
+  async #registerResizeListener() {
+    window
+      .matchMedia("(max-width: 768px)")
+      .addEventListener(
+        "change",
+        async (e) => await event(this.#patchEvent(e)),
+      );
+  }
+  async #registerLoadedListener() {
+    window.addEventListener(
+      "load",
+      async (e) => await event(this.#patchEvent(e)),
+    );
+  }
+  #patchEvent(e) {
+    e.composedPath = () => [{ tagName: "UI", id: "update" }];
+    return e;
   }
 }

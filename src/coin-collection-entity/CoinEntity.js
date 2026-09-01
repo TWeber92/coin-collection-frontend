@@ -1,5 +1,5 @@
 export class CoinEntity {
-  static #coin;
+  #coin;
   #node;
   #year;
   constructor(dto) {
@@ -7,22 +7,19 @@ export class CoinEntity {
       dto.template,
       "text/html",
     ).body.children;
+    this.#coin = dto.coin;
     this.#year = dto.year;
-  }
-
-  static set coin(node) {
-    this.#coin = node;
   }
 
   #toJSON() {
     return {
-      coin: CoinEntity.#coin,
+      coin: this.#coin,
       year: this.#year,
       node: this.#node,
     };
   }
 
-  static #fromDTO(dto) {
+  static fromDTO(dto) {
     return new CoinEntity(dto).#toJSON();
   }
 }

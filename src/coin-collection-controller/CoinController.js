@@ -7,21 +7,20 @@ export class CoinController extends AppController {
     super();
     this.#coinService = service;
   }
-  getCoinState(req, res) {
-    return super.GET(req, res, () => {
-      const coin = this.#coinService.getCoinState(req.body);
-      return { coin };
-    });
+  getUpdatedCoinState(req, res) {
+    return super.GET(req, res, () =>
+      this.#coinService.getUpdatedCoinState(req.body),
+    );
   }
-  updateCoinState(req, res) {
-    super.PUT(req, res, () => {
-      this.#coinService.updateCoinState(req.body);
-    });
+  updateCoinEntityState(req, res) {
+    super.PUT(req, res, () =>
+      this.#coinService.updateCoinEntityState(req.body),
+    );
   }
-  updateCoinElement(req, res) {
-    return super.PUT(req, res, () => {
-      const coin = this.#coinService.updateCoinElement(req.body);
-      return { coin };
+  async updateCoinEntity(req, res) {
+    return super.PUT(req, res, async () => {
+      const { coin, year } = await this.#coinService.updateCoinEntity(req.body);
+      return { coin, year };
     });
   }
 }

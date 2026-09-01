@@ -29,10 +29,11 @@ export class USMapRepository extends DocumentClient {
   }
   getPathAndPreviousSibling(value) {
     const name = `[data-name='${value.name}']`;
+    const path = super.GET(value, (v) => v.map.querySelector(name));
     return {
-      path: super.GET(value, (v) => v.map.querySelector(name)),
-      sibling: super.GET(value, (p) => p.previousElementSibling),
-      name,
+      path,
+      sibling: super.GET(path, (p) => p.previousElementSibling),
+      name: value.name,
     };
   }
   getNextAndPreviousSibling(value) {
@@ -55,7 +56,7 @@ export class USMapRepository extends DocumentClient {
     return super.GET(value, (p) => this.entity.querySelectorAll(p));
   }
   getAllFavoriteCoins(value) {
-    return super.GET(value, (v) => v.favorites.querySelectorAll(v.id));
+    return super.GET(value, (v) => v.f.querySelectorAll(v.id));
   }
   putMapInEntity(value) {
     super.PUT(value, (svg) => this.entity.append(svg));
@@ -84,10 +85,10 @@ export class USMapRepository extends DocumentClient {
   putForeignObjAfterPath(value) {
     super.PUT(value, (svg) => svg.path.after(svg.fo));
   }
-  putMapOnDisplay() {
+  putMapOnOffDisplay() {
     super.PUT(
-      document.documentElement,
-      (d) => (this.entity.hidden = d.dataset.mq === "true"),
+      window.matchMedia("(max-width: 768px)").matches,
+      (m) => (this.entity.hidden = m),
     );
   }
 }

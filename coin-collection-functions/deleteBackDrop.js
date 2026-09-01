@@ -1,4 +1,4 @@
-import { EventRegister } from "../src/EventRegister";
+import { EventRegister } from "../src/EventRegister.js";
 
 export const handler = async (e) => {
   const menuController = EventRegister.menuController;

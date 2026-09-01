@@ -1,88 +1,78 @@
 export class ModalDTO {
+  static #json = {};
+  #modal;
   #stateModal;
   #loginModal;
   #signupModal;
   #collectedId;
   #coin;
-  constructor({ name, year, favorites, coin, collectedId }) {
-    this.#stateModal = `
-      <div id="modal" class="modal-state">
+  constructor(entity) {
+    entity = { ...ModalDTO.#json, ...entity };
+    this.#modal = `
         <div class="modal-header">
-          <h2>${name}</h2>
+          <h2></h2>
           <button id="close" type="button">✕</button>
         </div>
-        <div class="modal-body">
-          <div id="collected" hidden=${favorites.includes(name) ? false : true}> You Already Collected ${name}! ⭐️</div>
-        </div>
-        <div class="modal-footer">          
-          <div>Year Minted: ${year}</div>
-          <a href="https://www.usa.gov/states/${name}>Find Out More About ${name}</a>
-        </div>
-      </div>
-    `;
+        <div class="modal-body"></div>
+        <div class="modal-footer"></div>`;
+    this.#stateModal = {
+      title: `<h2>${entity.name}</h2>`,
+      body: `<div class="collected" hidden=${entity.favorites?.includes(entity.name) ? false : true}> You Already Collected ${entity.name}! ⭐️</div>`,
+      footer: `<div>Year Minted: ${entity.year}</div>
+              <a href="https://www.usa.gov/states/${entity.name}">Find Out More About ${entity.name}</a>`,
+    };
+    this.#loginModal = {
+      title: `<h2>${entity.id?.toUpperCase()}</h2>`,
+      body: `<form id="login" data-action="submit">
+            <div class="input-group">
+              <label for="email">Email</label>
+              <input required type="email" id="email" placeholder="Email" autocomplete="email" aria-label="Email" />
+              <span class="validation-feedback" hidden ></span>
+            </div>
+            <div class="input-group">
+              <label for="password">Password</label>
+              <input required type="password" id="password" placeholder="Password" autocomplete="password" aria-label="Password" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"/>
+              <span class="validation-feedback" hidden ></span>
+            </div>
+            <button disabled id="login" name="authenticate" type="submit" data-action="login">Sign In</button>
+          </form>`,
+      footer: `<span>Don't have an account? <button id="signup" data-name="signup" type="button">Sign Up</button></span>`,
+    };
 
-    this.#loginModal = `
-      <div id="modal" class="modal-login">
-        <div class="modal-header">
-          <h2>${name}</h2>
-          <button id="close" type="button">✕</button>
-        </div>
-        <div class="modal-body">
-          <form id="auth" data-action="submit">
-            <div class="input-group">
-              <input type="email" id="modal" placeholder="Email" data-validate="email" />
-              <span class="validation-feedback hidden" data-for="email"></span>
-            </div>
-            <div class="input-group">
-              <input type="password" id="auth" placeholder="Password" data-validate="password" />
-              <span class="validation-feedback hidden" data-for="password"></span>
-            </div>
-            <button id="auth" type="submit" data-action="login">Sign In</button>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <span>Don't have an account? <button id="signup" data-action="signup" type="button">Sign Up</button></span>
-        </div>
-      </div>
-    `;
-
-    this.#signupModal = `
-      <div id="modal" class="modal-signup">
-        <div class="modal-header">
-          <h2>${name}</h2>
-          <button id="close" type="button">✕</button>
-        </div>
-        <div class="modal-body">
-          <form id="auth" data-action="submit">
-            <div class="input-group">
-              <input type="email" id="modal" placeholder="Email" data-validate="email" />
-              <span class="validation-feedback hidden" data-for="email"></span>
-            </div>
-            <div class="input-group">
-              <input type="password" id="auth" placeholder="Password" data-validate="password" />
-              <span class="validation-feedback hidden" data-for="password"></span>
-            </div>
-            <div class="input-group">
-              <input type="password" id="auth" placeholder="Confirm Password" data-validate="confirm" />
-              <span class="validation-feedback hidden" data-for="confirm"></span>
-            </div>
-            <button id="auth" type="submit" data-action="signup">Create Account</button>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <span>Already have an account? <button id="login" data-action="login" type="button">Login</button></span>
-        </div>
-      </div>
-    `;
-    this.#collectedId = collectedId;
-    this.#coin = coin;
+    this.#signupModal = {
+      title: `<h2>${entity.id?.toUpperCase()}</h2>`,
+      body: `<form id="signup" data-action="submit">
+               <div class="input-group">
+                 <label for="email">Email</label>
+                 <input required type="email" id="email" placeholder="Email" autocomplete="new-email" aria-label="Email"/>
+                 <span class="validation-feedback" hidden ></span>
+               </div>
+               <div class="input-group">
+                 <label for="password">Password</label>
+                 <input required type="password" id="password" placeholder="Password" autocomplete="new-password" aria-label="Password" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"/>
+                 <span class="validation-feedback" hidden ></span>
+               </div>
+               <div class="input-group">
+                 <label for="confirm">Confirm Password</label>
+                 <input required type="password" id="confirm" placeholder="Confirm Password" autocomplete="new-password" aria-label="Confirm Password" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"/>
+                 <span class="validation-feedback" hidden ></span>
+               </div>
+               <button disabled id="signup" name="authenticate" type="submit" data-action="signup">Create Account</button>
+             </form>`,
+      footer: `<span>Already have an account? <button id="login" data-name="login" type="button">Login</button></span>`,
+    };
+    this.#collectedId = entity.collectedId;
+    this.#coin = entity.coin;
+    ModalDTO.#json = this.#toJSON();
   }
 
   #toJSON() {
     return {
+      template: this.#modal,
       state: this.#stateModal,
       login: this.#loginModal,
       signup: this.#signupModal,
+      coin: this.#coin,
       id: this.#collectedId,
     };
   }

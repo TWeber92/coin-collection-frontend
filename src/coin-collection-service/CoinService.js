@@ -2,40 +2,27 @@ import { CoinDTO } from "../coin-collection-dto/CoinDTO.js";
 import { CoinEntity } from "../coin-collection-entity/CoinEntity.js";
 import { CoinRepository } from "../coin-collection-repository/CoinRepository.js";
 
-export class CoinService extends CoinRepository {
+export class CoinService {
   constructor() {
-    super(CoinService.#getCoin());
+    this.#repo = new CoinRepository();
   }
 
-  static #getCoin() {
-    const entity = CoinRepository.getCoinElement({
-      id: "coin",
-      className: "coin-entity",
-      hidden: true,
-      data: { location: "modal" },
-    });
-    CoinEntity.coin = entity;
-    return entity;
-  }
+  #repo;
 
-  #getUpdatedCoinState(body) {
+  getUpdatedCoinState(body) {
     const dto = CoinDTO.fromEntity(body);
-    const entity = CoinEntity.fromDTO(dto);
-    const clone = entity.coin.cloneNode(true);
-    return { ...entity, coin: dto.action === "add" ? clone : dto.coin };
+    const coin = dto.clone ? this.#repo.getCloneCoinEntity() : dto.coin;
+    return CoinEntity.fromDTO({ ...dto, coin });
   }
 
-  #updateCoinEntityState(body) {
-    const dto = CoinDTO.fromEntity(body);
-    const entity = CoinEntity.fromDTO(dto);
-    this.putCoinInEntity(entity.node);
+  updateCoinEntityState(body) {
+    CoinDTO.fromEntity(body);
   }
 
-  async #updateCoinEntity(body) {
-    const coinDto = await this.getCoinByStateName(body.name);
-    const dto = CoinDTO.fromDTO(coinDto);
+  async updateCoinEntity(body) {
+    const data = await this.#repo.getCoinByStateName(body.name);
+    const dto = CoinDTO.fromDTO(data);
     const entity = CoinEntity.fromDTO(dto);
-    this.putCoinInEntity(entity.node);
-    return entity;
+    return { ...entity, coin: this.#repo.putCoinInEntity(entity.node[0]) };
   }
 }

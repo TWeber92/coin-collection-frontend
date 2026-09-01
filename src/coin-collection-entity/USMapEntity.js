@@ -23,10 +23,10 @@ export class USMapEntity {
     this.#favorites = dto.favorites;
     this.#path = dto.path;
     this.#fo = dto.fo;
-    this.#siblings = { next: dto.siblings?.[0], previous: dto.siblings?.[1] };
-    this.#prev = dto.paths?.[0];
-    this.#active = dto.paths?.[1];
-    this.#next = dto.paths?.[2];
+    this.#siblings = dto.siblings;
+    this.#prev = dto.navPaths?.[0];
+    this.#active = dto.navPaths?.[1];
+    this.#next = dto.navPaths?.[2];
     this.#name = dto.name;
     this.#coin = dto.coin;
     this.#width = dto.size;

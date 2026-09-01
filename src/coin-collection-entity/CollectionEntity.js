@@ -1,30 +1,30 @@
 export class CollectionEntity {
-  static #favorites;
-  static #archive;
-  #nodes;
+  #favorites;
+  #archive;
+  #collection;
+  #node;
   #coin;
+  #coins;
   constructor(dto) {
-    this.#nodes = new DOMParser().parseFromString(
+    this.#node = new DOMParser().parseFromString(
       dto.template,
       "text/html",
-    ).body.childNodes;
+    ).body.children;
     this.#coin = dto.coin;
+    this.#coins = dto.coins;
+    this.#collection = dto.collection;
   }
 
-  static get collection() {
+  #toJSON() {
     return {
-      favorites: this.#favorites,
-      archive: this.#archive,
+      node: this.#node,
+      coin: this.#coin,
+      coins: this.#coins,
+      collection: this.#collection,
     };
   }
-  static set favorites(node) {
-    this.#favorites = node;
-  }
-  static set archive(node) {
-    this.#archive = node;
-  }
 
-  static #fromDTO(dto) {
-    return new CollectionEntity(dto);
+  static fromDTO(dto) {
+    return new CollectionEntity(dto).#toJSON();
   }
 }

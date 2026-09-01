@@ -5,3 +5,6 @@
 .usmap-layout[hidden] {
   display: none;
 }
+path {
+  cursor: pointer;
+}

@@ -1,18 +1,24 @@
 export class HeaderEntity {
-  #node;
+  #nodes;
   #badgeId;
+  #menuBtnId;
+  #buttons;
   constructor(dto) {
-    this.#node = [
+    this.#nodes = [
       ...new DOMParser().parseFromString(dto.template, "text/html").body
         .children,
     ];
-    this.#badgeId = dto.id;
+    this.#badgeId = dto.bid;
+    this.#menuBtnId = dto.mbi;
+    this.#buttons = dto.buttons;
   }
 
   #toJSON() {
     return {
-      node: this.#node,
-      badgeId: this.#badgeId,
+      nodes: this.#nodes,
+      badgeId: `#${this.#badgeId}`,
+      menuBtnId: `#${this.#menuBtnId}`,
+      buttons: new HeaderEntity({ template: this.#buttons }).#nodes,
     };
   }
 

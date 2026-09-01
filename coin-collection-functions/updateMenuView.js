@@ -1,8 +1,8 @@
-import { EventRegister } from "../src/EventRegister";
+import { EventRegister } from "../src/EventRegister.js";
 
 export const handler = async (e) => {
-  const id = e.target.id;
+  const menuId = e.target.id;
   const headerController = EventRegister.controllers.headerController;
-  const req = { body: { id } };
-  await headerController.updateMenuView(null, null);
+  const req = { body: { menuId } };
+  await headerController.putNewIconInHeader(req, null);
 };

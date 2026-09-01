@@ -17,12 +17,10 @@ export class CarouselRepository extends DocumentClient {
     );
   }
   getSvgForSlidePath(value) {
-    return document.body.appendChild(
-      DocumentStore.createSvgElement(value).node,
-    );
+    return document.body.appendChild(DocumentStore.createSvgElement(value));
   }
   getSlideContainer(value) {
-    return super.GET(value, (v) => v.s.querySelector(`[data-option='${v.o}]`));
+    return super.GET(value, (v) => v.s.querySelector(`[data-option=${v.o}]`));
   }
   putNavInCarouselLayout(value) {
     super.PUT(value, (l) => l.append(this.entity));
@@ -40,5 +38,11 @@ export class CarouselRepository extends DocumentClient {
   }
   putSvgInCarouselSlide(value) {
     super.PUT(value, (v) => v.cs.prepend(v.svg));
+  }
+  putCarouselOnOffDisplay() {
+    super.PUT(
+      window.matchMedia("(max-width: 768px)").matches,
+      (m) => (this.entity.parentElement.hidden = !m),
+    );
   }
 }

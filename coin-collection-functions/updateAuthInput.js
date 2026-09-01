@@ -1,12 +1,17 @@
-import { EventRegister } from "../src/EventRegister";
+import { EventRegister } from "../src/EventRegister.js";
 
 export const handler = async (e) => {
-  const field = e.target.dataset.field;
+  console.log(e.target);
+  console.log(e.type);
+
+  const id = e.target.id;
+  const req = { body: { e, input: e.target, button: "authenticate" } };
   const authController = EventRegister.controllers.authController;
-  const req = { body: { value: e.target.value } };
   const router = {
-    email: async () => await authController.updateEmail(req, null),
-    password: async () => await authController.updatePassword(req, null),
+    email: async () => await authController.getEmailInputValidation(req, null),
+    password: async () =>
+      await authController.getPasswordInputValidation(req, null),
+    confirm: () => authController.getPasswordMatchValidation(req, null),
   };
-  await router[field]();
+  await router[id]();
 };

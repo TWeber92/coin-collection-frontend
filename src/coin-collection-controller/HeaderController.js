@@ -7,13 +7,18 @@ export class HeaderController extends AppController {
     super();
     this.#headerService = service;
   }
-  #putContextInHeader(req, res) {
-    super.PUT(req, res, () => this.#headerService.putContextInHeader());
+  // putContextInHeader(req, res) {
+  //   super.PUT(req, res, () => this.#headerService.putContextInHeader());
+  // }
+  putNewCountInBadge(req, res) {
+    super.PUT(req, res, () => this.#headerService.putNewCountInBadge(req.body));
   }
-  #updateMenuCounters(req, res) {
-    super.PUT(req, res, () => this.#headerService.updateMenuCounters(req.body));
+  putNewIconInHeader(req, res) {
+    super.PUT(req, res, () => this.#headerService.putNewIconInHeader(req.body));
   }
-  #updateMenuView(req, res) {
-    super.PUT(req, res, () => this.#headerService.updateMenu());
+  putMenuNavOnOffDisplay(req, res) {
+    super.PUT(req, res, () =>
+      this.#headerService.putMenuNavOnOffDisplay(req.body),
+    );
   }
 }

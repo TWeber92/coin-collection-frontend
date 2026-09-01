@@ -1,17 +1,21 @@
 export class TooltipEntity {
-  static #toolTip;
+  #button;
   #node;
+  #coin;
   constructor(dto) {
     this.#node = new DOMParser().parseFromString(
-      dto,
+      dto.template,
       "text/html",
     ).body.children;
+    this.#coin = dto.coin;
+    this.#button = dto.button;
   }
 
   #toJSON() {
     return {
+      button: new TooltipEntity({ template: this.#button }).#node,
       node: this.#node,
-      tooltip: TooltipEntity.#toolTip,
+      coin: this.#coin,
     };
   }
   static fromDTO(dto) {

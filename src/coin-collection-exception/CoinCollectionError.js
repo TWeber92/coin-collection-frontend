@@ -47,18 +47,23 @@ export class CoinCollectionError extends Error {
 }
 
 export class ValidationError extends CoinCollectionError {
-  constructor(target, message, operation) {
-    super({ message, name: "ValidationError", operation, status: 400 }); // 👈 object
-    this.target = target;
-    this.toSpan();
+  #input;
+  #span;
+  constructor({ target, name, message, operation }) {
+    super({ message: Object.values(message), name, operation, status: 400 }); // 👈 object
+    this.#input = target;
+    this.#span = target.nextElementSibling;
   }
-
   toSpan() {
-    const sibling = this.target.nextElementSibling;
-    if (sibling) {
-      sibling.textContent = this.message;
-      sibling.classList.remove("hidden");
-    }
+    const form = this.#input.form;
+    const confirmSpan = form.confirm?.nextElementSibling;
+    const text = this.message.split("⚠️,");
+    this.#span.textContent = text[0];
+    this.#span.hidden = false;
+    if (text[1]) confirmSpan.textContent = text[1];
+    const match =
+      this.#input.form[this.#input.type].value === this.#input.value;
+    if (match) this.#input.setCustomValidity("");
   }
 }
 
@@ -67,10 +72,9 @@ export class APIError extends CoinCollectionError {
     super({ message, name, operation, status });
     this.node = CoinCollectionError.node;
     this.x = CoinCollectionError.x;
-    this.toBanner();
   }
 
-  toBanner() {
+  toToast() {
     if (!this.node) return;
 
     this.node.dataset.active = "true";

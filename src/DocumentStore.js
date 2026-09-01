@@ -30,14 +30,14 @@ export class DocumentStore {
     return new DocumentStore(element, options);
   }
   static createSvgElement(attributes) {
+    const { width, height, x, y } = attributes;
     const { element, options } = DocumentStore.#setOptions(
       document.createElementNS("http://www.w3.org/2000/svg", "svg"),
       attributes,
     );
-    return new DocumentStore(element, {
-      ...options,
-      viewBox: `${attributes.geo.x} ${attributes.geo.y} ${attributes.geo.width} ${attributes.geo.height}`,
-    });
+    const svg = new DocumentStore(element, { id: options.id }).node;
+    svg.setAttribute("viewBox", `${x} ${y} ${width} ${height}`);
+    return svg;
   }
   static createForeignObjectElement(attributes) {
     const { width, height, x, y } = attributes;

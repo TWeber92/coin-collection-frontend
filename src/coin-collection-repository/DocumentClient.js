@@ -9,12 +9,12 @@ export class DocumentClient {
     return this.DOC(value, method);
   }
   POST(value, method) {
-    this.DOC(value, method);
+    return this.DOC(value, method);
   }
   PUT(value, method) {
-    this.DOC(value, method);
+    return this.DOC(value, method);
   }
   DELETE(value, method) {
-    this.DOC(value, method);
+    return this.DOC(value, method);
   }
 }

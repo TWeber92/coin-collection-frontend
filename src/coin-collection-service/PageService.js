@@ -7,8 +7,6 @@ export class PageService extends PageRepository {
     super(PageService.#getPage());
   }
 
-  #init = this.#getCollectionPage();
-
   static #getPage() {
     return PageRepository.getPageElement({
       id: "overlay",
@@ -16,27 +14,34 @@ export class PageService extends PageRepository {
       hidden: true,
     });
   }
-  #getCollectionPage() {
-    const dto = PageDTO.fromEntity({});
-    const entity = PageEntity.fromDTO(dto.template);
-    PageEntity.collections = entity.node;
-  }
 
   #postCollectionPage(body) {
+    const pageHidden = this.getPageEntityHiddenState();
+    const collectionExists = this.getCollectionById({ id: body.collectionId });
+    const collectionHidden = this.getCollectionHiddenState(body);
+    if (pageHidden && collectionExists) return pageHidden && !collectionHidden;
+    if ((collectionHidden && collectionExists) || !collectionHidden)
+      return pageHidden && !collectionHidden;
     const dto = PageDTO.fromEntity(body);
     const entity = PageEntity.fromDTO(dto);
-    this.postCollectionPage(entity.collections);
-    const container = this.getCollectionContainerBySet(dto.id);
-    this.putCollectionInPageContainer({
-      con: container,
+    this.putCollectionInPageBody({
+      b: entity.body,
+      id: entity.id,
       col: entity.collection,
     });
+    this.putCollectionPageTogether({
+      t: entity.node,
+      h: entity.header,
+      b: entity.body,
+    });
+    this.postTemplateToPageEntity(entity.node);
+    return false;
   }
 
-  #putFavoritesOnPage(body) {
-    this.#postCollectionPage(body);
+  putFavoritesOnPage(body) {
+    return this.#postCollectionPage(body);
   }
-  #putArchivedOnPage(body) {
-    this.#postCollectionPage(body);
+  putArchivedOnPage(body) {
+    return this.#postCollectionPage(body);
   }
 }

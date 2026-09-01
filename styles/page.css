@@ -1,0 +1,83 @@
+.page-overlay {
+  container-type: size;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 75vh;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  border-radius: 8px;
+  font-family: inherit;
+  white-space: nowrap;
+  overflow-x: auto;
+  z-index: 6;
+}
+.page-overlay:has(.collection-container) {
+  width: 50%;
+  background-color: #f9f9f9;
+}
+.page-overlay[hidden] {
+  right: -100%;
+}
+
+.page-header,
+.page-body {
+  display: flex;
+  width: 90%;
+  margin: 0 auto;
+}
+
+/* ── Header ── */
+.page-header {
+  justify-content: space-between;
+  align-items: baseline;
+  padding-top: 5px;
+  height: 15%;
+}
+
+.page-header h2 {
+  font-size: clamp(14px, 5cqw, 18px);
+}
+
+/* ── Body ── */
+.page-body {
+  flex-direction: column;
+  height: 80%;
+  font-weight: 700;
+  gap: 50%;
+}
+.page-body h3 {
+  font-size: clamp(12px, 5cqw, 16px);
+  line-height: 0;
+}
+.page-body button {
+  all: unset;
+  align-self: center;
+  transform: scale(1.15);
+}
+.page-body button:hover {
+  cursor: pointer;
+  text-shadow: 0px 0px 3px rgba(2, 2, 2, 0.95);
+}
+
+/* ── Favorites & Archive Sections ── */
+.page-body #favorites,
+.page-body #archive {
+  display: flex;
+  flex-direction: column;
+}
+.page-body #favorites .row,
+.page-body #archive .row {
+  display: flex;
+  line-height: 0;
+  gap: 8px;
+}
+#archive-collection,
+#favorites-collection {
+  margin-top: 4px;
+}
+
+.collection-container[hidden] {
+  display: none;
+}

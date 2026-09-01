@@ -1,0 +1,156 @@
+.state-carousel {
+  container-type: size;
+  height: 75vh;
+  /* height: clamp(60vh, 75vh, 100vh); */
+}
+
+.carousel-track {
+  container-type: size;
+  position: relative;
+  height: 50cqh;
+}
+
+.carousel-slide {
+  position: absolute;
+  top: 80%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.carousel-slide[data-active] {
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1.1);
+  z-index: 3;
+}
+
+.carousel-slide[data-prev],
+.carousel-slide[data-next] {
+  opacity: 0.75;
+}
+
+.carousel-slide[data-prev] {
+  left: 10%;
+  transform: translateY(-50%) scale(0.85);
+  z-index: 2;
+}
+
+.carousel-slide[data-next] {
+  right: 10%;
+  transform: translateY(-50%) scale(0.85);
+  z-index: 2;
+}
+
+.slide-card {
+  position: relative;
+  border: 3px solid #030303;
+  border-radius: 10px;
+  background: #f9f9f9;
+  padding: 10px;
+  text-align: center;
+  width: 33vw;
+  overflow: hidden;
+}
+
+.slide-card svg {
+  padding: 5px;
+  width: 100%;
+  max-height: 75cqh;
+  min-height: 15cqh;
+  aspect-ratio: attr(viewBox width) / attr(viewBox height);
+}
+
+.slide-card svg path {
+  fill: #030303 !important;
+}
+.carousel-controls {
+  container-type: size;
+  height: 50cqh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+}
+.carousel-dots {
+  display: flex;
+  align-self: center;
+  gap: 8px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ccc;
+  cursor: pointer;
+}
+
+#active.dot {
+  background: #030303;
+  transform: scale(1.2);
+}
+
+#prev.dot,
+#next.dot {
+  background: #999;
+}
+.dot:hover {
+  transform: scale(1.1);
+  background: #666;
+}
+
+.carousel-controls button {
+  background: none;
+  border: 2px solid #030303;
+  border-radius: 50%;
+  width: 33cqw;
+  max-height: 50px;
+  max-width: 50px;
+  font-size: clamp(0.825rem, 6cqw, 1.5rem);
+  cursor: pointer;
+  aspect-ratio: 1 / 1;
+}
+
+.carousel-controls button:hover {
+  background: #030303;
+  color: #f9f9f9;
+}
+.state-name {
+  position: fixed;
+  bottom: 40%;
+  transform: translateX(-45%) rotate(-33deg) scaleX(1.5);
+  z-index: 5;
+  font-family: "Oswald", sans-serif;
+  font-size: clamp(0.825rem, 6cqw, 2.825rem);
+  font-size-adjust: ex-height 0.6;
+  font-weight: 700;
+  color: rgba(11, 11, 11, 0.75);
+  text-shadow:
+    -1px -1px 0 #f9f9f9,
+    1px -1px 0 #000000,
+    -1px 1px 0 #f9f9f9,
+    1px 1px 0 #000000,
+    2px 2px 0 rgba(0, 0, 0, 0.15),
+    4px 4px 0 rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.slide-card:has([data-id="HI"]) svg {
+  aspect-ratio: 1 / 1;
+  transform: scale(3) translate(-37%, calc(-20% + (768px - 100cqw) * 0.0075));
+}
+.slide-card:has([data-id="AK"]) svg {
+  aspect-ratio: 1 / 1;
+  transform: scale(2)
+    translate(
+      calc(-25% + (100cqw - 768px) * 0.006),
+      calc(1% + (100cqw - 768px) * 0.0001)
+    );
+}
+.slide-card:has([data-id="MI"]) svg {
+  aspect-ratio: 1 / 1;
+  transform: scale(5.25)
+    translate(
+      calc(39% + (100cqw - 768px) * 0.006),
+      calc(1% + (100cqw - 768px) * 0.0001)
+    );
+}

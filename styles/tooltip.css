@@ -1,0 +1,87 @@
+#tooltip {
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 0;
+  width: max(50cqw, 50cqh);
+  height: max(50cqw, 50cqh);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  z-index: 5;
+  transition: transform 0.2s ease;
+}
+#tooltip svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+#tooltip svg * {
+  pointer-events: none;
+}
+#tooltip button {
+  all: unset;
+  overflow: visible;
+}
+#tooltip[hidden] {
+  display: none;
+}
+/* .tooltip-wrapper:hover {
+  transform: scale(1.15);
+} */
+.tooltip-wrapper svg circle {
+  fill: rgba(0, 0, 0, 0.25);
+  stroke: #f9f9f9;
+  stroke-width: 3px;
+  transition:
+    stroke-width 0.25s ease,
+    stroke 0.25s ease;
+}
+svg path:not([id]) {
+  fill: rgba(0, 0, 0, 0.25);
+}
+button[data-action="add"]:hover svg circle {
+  stroke: #ffd700;
+  pointer-events: auto;
+}
+button[data-action="add"]:hover svg text {
+  filter: drop-shadow(0px 0px 3px rgba(255, 215, 0, 0.95));
+}
+button[data-action="archive"]:hover svg circle {
+  stroke: #ff6200;
+}
+button[data-action="archive"]:hover svg text {
+  filter: drop-shadow(0px 0px 3px rgba(255, 98, 0, 0.95));
+}
+button[data-action="restore"]:hover svg circle {
+  stroke: #00cc66;
+}
+button[data-action="restore"]:hover svg text {
+  filter: drop-shadow(0px 0px 3px rgba(0, 204, 102, 0.95));
+}
+button[data-action="delete"]:hover svg circle {
+  stroke: #ff1500;
+}
+button[data-action="delete"]:hover svg text {
+  filter: drop-shadow(0px 0px 3px rgba(255, 0, 0, 0.95));
+}
+#tooltip svg text {
+  fill: #f9f9f9;
+  font-family: "Oswald", sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: fill 0.25s ease;
+}
+#tooltip:hover svg text {
+  fill: #ffd700;
+}
+textPath {
+  font-size: clamp(10px, 3.5cqw, 24px);
+}
+button text[dominant-baseline="text-before-edge"] {
+  transform: translateY(-1%);
+}

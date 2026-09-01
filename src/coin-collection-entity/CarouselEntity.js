@@ -4,6 +4,7 @@ export class CarouselEntity {
   #next;
   #prev;
   #navPaths;
+  #svgId;
   constructor(dto) {
     [
       ...(this.#nodes = new DOMParser().parseFromString(
@@ -13,8 +14,9 @@ export class CarouselEntity {
     ];
     this.#active = dto.active;
     this.#next = dto.next;
-    this.#prev = dto.next;
+    this.#prev = dto.prev;
     this.#navPaths = dto.navPaths;
+    this.#svgId = dto.svgId;
   }
   get nodes() {
     return this.#nodes;
@@ -27,6 +29,7 @@ export class CarouselEntity {
       next: new CarouselEntity({ template: this.#next }).#nodes,
       prev: new CarouselEntity({ template: this.#prev }).#nodes,
       navPaths: this.#navPaths,
+      svgId: this.#svgId,
     };
   }
 

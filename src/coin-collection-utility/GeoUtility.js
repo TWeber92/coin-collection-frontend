@@ -39,25 +39,26 @@ export class GeoUtility {
         }
       }
     }
-    GeoState.geo = {
-      x: Math.min(...xCoords),
-      y: Math.min(...yCoords),
-      width: Math.max(...xCoords) - Math.min(...xCoords),
-      height: Math.max(...yCoords) - Math.min(...yCoords),
-    };
+    return GeoState.fromSVG({
+      geo: {
+        x: Math.min(...xCoords),
+        y: Math.min(...yCoords),
+        width: Math.max(...xCoords) - Math.min(...xCoords),
+        height: Math.max(...yCoords) - Math.min(...yCoords),
+      },
+    });
   }
 
-  static getGeometryForSlide() {
+  static getGeometryForSlide(path) {
     const id = path.dataset.id;
     const bbox = path.getBBox();
     const pathData = path.getAttribute("d");
     const numbers = pathData.match(/[-+]?(\d*\.\d+|\d+\.?)/g);
-    GeoState.fromSVG({
+    const state = GeoState.fromSVG({
       pathData,
       numbers,
     });
-    this.getStatePathsGeometry();
-    return GeoState.toEntity(); //{ geo }
+    return this.getStatePathsGeometry(); //{ #fromEntity }
   }
 
   static getPositionForCoin(path) {
@@ -68,13 +69,12 @@ export class GeoUtility {
     const coinSize = Math.max(18, Math.min(baseSize * 0.45, 50));
     const override = this.getPositionOverrides(id);
     const numbers = pathData.match(/[-+]?(\d*\.\d+|\d+\.?)/g);
-    GeoState.fromSVG({
+    const state = GeoState.fromSVG({
       pathData,
       numbers,
       override,
       coinSize,
     });
-    this.getStatePathsGeometry();
-    return GeoState.toEntity();
+    return this.getStatePathsGeometry();
   }
 }

@@ -6,18 +6,21 @@ export class CarouselController extends AppController {
     super();
     this.#carouselService = service;
   }
-  #postNewRandomIndex(req, res) {
+  postNewRandomIndex(req, res) {
     super.POST(req, res, () => this.#carouselService.postNewRandomIndex());
   }
-  #putSlidesInPosition(req, res) {
+  postPreviousStateSlide(req, res) {
+    super.POST(req, res, () => this.#carouselService.postPreviousStateSlide());
+  }
+  postNextStateSlide(req, res) {
+    super.POST(req, res, () => this.#carouselService.postNextStateSlide());
+  }
+  putCarouselOnOffDisplay(req, res) {
+    super.PUT(req, res, () => this.#carouselService.putCarouselOnOffDisplay());
+  }
+  putSlidesInPosition(req, res) {
     super.PUT(req, res, () =>
       this.#carouselService.putSlidesInPosition(req.body),
     );
-  }
-  #updatePrevIndex(req, res) {
-    super.PUT(req, res, () => this.#carouselService.updatePrevIndex());
-  }
-  #updateNextIndex(req, res) {
-    super.PUT(req, res, () => this.#carouselService.updateNextIndex());
   }
 }

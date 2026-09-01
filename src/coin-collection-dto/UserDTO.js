@@ -1,17 +1,19 @@
 export class UserDTO {
+  static #json = {};
   #authenticated;
   #userName;
   #collection;
   #permissions;
   #roles;
   constructor(entity) {
-    entity = { ...this.#toJSON(), ...entity };
+    entity = { ...UserDTO.#json, ...entity };
     this.#authenticated = entity.authenticated;
     this.#userName = entity.userName;
     this.#collection = {
-      favorites: entity.collection?.favorites.names,
-      archive: entity.collection?.archive.names,
+      favorites: entity.collection?.favorites?.names,
+      archive: entity.collection?.archive?.names,
     };
+    UserDTO.#json = this.#toJSON();
   }
 
   #toJSON() {

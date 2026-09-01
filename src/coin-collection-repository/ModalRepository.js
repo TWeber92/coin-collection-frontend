@@ -12,21 +12,38 @@ export class ModalRepository extends DocumentClient {
     );
   }
   getCollectedFromStateModal(value) {
-    return super.GET(value, (v) => v.node.querySelector(v.collectedId));
+    return super.GET(value, (e) => e.body.querySelector(e.collectedId));
   }
-  postStateModal(value) {
-    super.POST(value, (c) => this.entity.replaceChildren(c));
+  postStateModalContext(value) {
+    super.POST(value, (v) => {
+      const [header, body, footer] = this.entity.children;
+      header.replaceChild(v.t, header.querySelector("h2"));
+      body.replaceChildren(v.b, v.coin);
+      footer.replaceChildren(...v.f);
+    });
   }
-  postLoginModal(value) {
-    super.POST(value, (c) => this.entity.replaceChildren(c));
+  postLoginModalContext(value) {
+    this.#postAuthenticationModal(value);
   }
-  postSignUpModal(value) {
-    super.POST(value, (c) => this.entity.replaceChildren(c));
+  postSignUpModalContext(value) {
+    this.#postAuthenticationModal(value);
+  }
+  #postAuthenticationModal(value) {
+    super.POST(value, (v) => {
+      const [header, body, footer] = this.entity.children;
+      header.replaceChild(v.t, header.querySelector("h2"));
+      body.replaceChildren(v.b);
+      footer.replaceChildren(v.f);
+    });
   }
   putCoinAfterCollected(value) {
     super.POST(value, (v) => v.collected.after(v.coin));
   }
   putModalOnDisplay() {
     this.entity.hidden = false;
+    document.body.dataset.overlay = "true";
+  }
+  putModalContextInOverlay(value) {
+    super.PUT(value, (n) => this.entity.append(...n));
   }
 }

@@ -1,10 +1,11 @@
 export class CoinDTO {
+  static #json = {};
   #template;
   #coin;
   #year;
-  #action;
+  #clone;
   constructor(data) {
-    data = { ...this.#toJSON(), ...data };
+    data = { ...CoinDTO.#json, ...data };
     this.#template = `
           <div id="${data.stateName}" class="coin-container">
             <img class="coin-heads coin-front" src="${data.obvThumb}" alt="${data.stateName} front" />
@@ -12,7 +13,8 @@ export class CoinDTO {
           </div>`;
     this.#year = data.mintYear;
     this.#coin = data.coin;
-    this.#action = data.action;
+    this.#clone = data.clone;
+    CoinDTO.#json = this.#toJSON();
   }
 
   #toJSON() {
@@ -20,7 +22,7 @@ export class CoinDTO {
       template: this.#template,
       year: this.#year,
       coin: this.#coin,
-      action: this.#action,
+      clone: this.#clone,
     };
   }
 

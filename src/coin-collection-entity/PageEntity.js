@@ -1,27 +1,28 @@
 export class PageEntity {
-  static #collections;
   #collection;
+  #collections;
+  #collectionId;
   #node;
+  #coins;
   constructor(dto) {
     this.#node = new DOMParser().parseFromString(
       dto.template,
       "text/html",
     ).body.children;
     this.#collection = dto.collection;
-  }
-
-  static get collections() {
-    return this.#collections;
-  }
-  static set collections(node) {
-    this.#collections = node;
+    this.#collections = dto.collections;
+    this.#collectionId = dto.id;
+    this.#coins = dto.coins;
   }
 
   #toJSON() {
     return {
+      id: this.#collectionId,
       node: this.#node,
+      coins: this.#coins,
+      header: new PageEntity({ template: this.#collections.header }).#node,
+      body: new PageEntity({ template: this.#collections.body }).#node,
       collection: this.#collection,
-      collections: PageEntity.#collections,
     };
   }
 
