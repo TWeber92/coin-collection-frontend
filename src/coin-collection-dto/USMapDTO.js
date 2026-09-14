@@ -5,33 +5,38 @@ export class USMapDTO {
   #siblings;
   #navPaths;
   #index;
+  #path;
   #paths;
   #template;
   #favorites;
-  #path;
   #fo;
+  #foTag;
   #name;
   #coin;
-  #width;
-  #height;
+  #coinId;
+  // #width;
+  // #height;
+  #size;
   #x;
   #y;
   constructor(entity) {
     entity = { ...USMapDTO.#json, ...entity };
     this.#siblings = entity.siblings;
     this.#navPaths = entity.navPaths;
+    this.#path = entity.path;
     this.#paths = entity.paths;
     this.#index = entity.index;
     this.#template = entity.html;
-    this.#favorites = entity.collection?.favorites.container;
-    this.#path = entity.path;
+    this.#favorites = entity.collection;
     this.#fo = entity.fo;
-    this.#name = entity.coin?.dataset.name;
+    this.#foTag = entity.foTag;
+    this.#name = entity.coin?.id;
     this.#coin = entity.coin;
-    this.#width = entity.size;
-    this.#height = entity.size;
-    this.x = entity.x;
-    this.y = entity.y;
+    this.#coinId = entity.coinId;
+    // this.#width = entity.size;
+    // this.#height = entity.size;
+    // this.x = entity.x;
+    // this.y = entity.y;
     USMapDTO.#json = this.#toJSON();
   }
 
@@ -43,12 +48,15 @@ export class USMapDTO {
       paths: this.#paths,
       path: this.#path,
       fo: this.#fo,
+      foTag: this.#foTag,
       siblings: this.#siblings,
       navPaths: this.#navPaths,
       name: this.#name,
       coin: this.#coin,
-      width: this.#width,
-      height: this.#height,
+      ccoinId: this.#coinId,
+      // width: this.#width,
+      // height: this.#height,
+      size: this.#size,
       x: this.#x,
       y: this.#y,
     };

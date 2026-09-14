@@ -7,16 +7,21 @@ export const handler = async (e) => {
   const collectionController = EventRegister.controllers.collectionController;
   const headerController = EventRegister.controllers.headerController;
   const pageController = EventRegister.controllers.pageController;
-  const req = { body: { menuId: "hamburger", collectionId } };
+  const req = { body: { button: e.target, menuId: "hamburger", collectionId } };
   const res = { obj: (data) => (responseBody = data) };
   await collectionController.getCollectionById(req, res);
   req.body.collection = responseBody.collection;
-  if (navIsOpen) headerController.putMenuNavOnOffDisplay(req, res);
+  if (navIsOpen) await headerController.putMenuNavOnOffDisplay(req, res);
   const router = {
     favorites: async () => await pageController.putFavoritesOnPage(req, res),
-    archived: async () => await pageController.putArchiveOnPage(req, res),
+    archive: async () => await pageController.putArchiveOnPage(req, res),
+    scrollable: async () =>
+      await pageController.putArchiveInNewPosition(req, res),
   };
   await router[collectionId]();
-  if (!responseBody)
+  if (!responseBody) {
     await collectionController.putCollectionOnOrOffDisplay(req, res);
+    if (collectionId === "archive")
+      await pageController.putFooterContentsOnOffDisplay(req, res);
+  }
 };

@@ -17,4 +17,14 @@ export class PageController extends AppController {
       this.#pageService.putArchiveOnPage(req.body),
     );
   }
+  putArchiveInNewPosition(req, res) {
+    super.PUT(req, res, () =>
+      this.#pageService.putArchiveInNewPosition(req.body),
+    );
+  }
+  putFooterContentsOnOffDisplay(req, res) {
+    super.PUT(req, res, () =>
+      this.#pageService.putFooterContentsOnOffDisplay(req.body),
+    );
+  }
 }

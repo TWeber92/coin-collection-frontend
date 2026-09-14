@@ -33,9 +33,9 @@ nav[hidden] {
   justify-content: center;
   gap: 8px;
   transition: right 0.8s ease;
-  z-index: 5;
   font-family: "Oswald", sans-serif;
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+  z-index: 5;
 }
 .nav-mobile {
   font-size: clamp(0.825rem, 4cqw, 1rem);
@@ -59,6 +59,7 @@ nav[hidden] {
   font-weight: 600;
   font-family: "Oswald", sans-serif;
   cursor: pointer;
+  pointer-events: auto;
   border-bottom: 1px solid #e0e0e0;
   color: #030303;
   transition:
@@ -69,6 +70,16 @@ nav[hidden] {
   background: #f0f0f0;
   padding-left: 18px;
 }
+[data-nav-item] {
+  cursor: pointer;
+}
+#favorites[data-nav-item] {
+  pointer-events: none;
+}
+#login[data-nav-item],
+#archive[data-nav-item] {
+  pointer-events: auto;
+}
 
 @media (max-width: 768px) {
   .menu-hamburger {
@@ -76,10 +87,14 @@ nav[hidden] {
     display: block;
     border-radius: 50%;
     cursor: pointer;
+    pointer-events: auto;
     z-index: 5;
   }
   .menu-hamburger:hover {
     transform: scale(1.15);
+  }
+  #favorites[data-nav-item] {
+    pointer-events: auto;
   }
 
   .nav-desktop {

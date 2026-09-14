@@ -6,45 +6,44 @@ export class CollectionRepository extends DocumentClient {
   constructor({ collection }) {
     super();
     this.#entity = { favorites: collection.favorites };
-    console.log(this.#entity.favorites.lastChild);
-
-    this.#mq = window.matchMedia("(max-width: 768px)").matches;
   }
-  #mq;
+
   #entity;
+  #mq = window.matchMedia("(max-width: 768px)").matches;
   #api = new APIClient("https://coin-api.coin-collection.workers.dev");
   #browser = new BrowserRepository();
 
-  getCoinFromArchiveCollection(value) {
-    super.GET(value, (n) =>
-      this.#entity.archived.lastChild.querySelector(`#${n}`),
-    );
-  }
   getCollectionById(value) {
     return super.GET(value.id, (id) => this.#entity[id]);
   }
   getStateNameFromCoin(value) {
     return super.GET(value, (v) => v.c.lastChild.id);
   }
-  postLocalStorage(value) {
-    this.#browser.postLocalStorageByKey(value);
+  getCoinFromArchiveCollection(value) {
+    return super.GET(value, (n) =>
+      this.#entity.archive?.lastChild.querySelector(`#${n}`),
+    );
+  }
+  getLocalStorageByKey(value) {
+    console.log(value);
+
+    return this.#browser.getLocalStorageByKey(value);
   }
   async postToFavoritesCollection(value) {
     if (value.user?.authenticated) await this.#api.POST("", value.user);
-    this.#browser.putNewItemInLocalByKey("favorites", value.name);
-    console.log(this.#entity);
-
+    this.#browser.putNewItemInLocalByKey(value.id.fid, value.name);
     if (this.#mq)
-      super.POST(value, (c) => this.#entity.favorites.lastChild.append(c));
-    this.deleteArchivedCoin(value.name);
+      super.POST(value.coin, (c) => this.#entity.favorites.lastChild.append(c));
+    this.#deleteArchivedCoin(value);
   }
   async postToArchiveCollection(value) {
     if (value.user.authenticated) await this.#api.POST("", value.user);
-    this.#browser.putNewItemInLocalByKey("archive", value.name);
-    super.POST(value, (c) => this.#entity.archive.lastChild.append(c));
+    this.#browser.putNewItemInLocalByKey(value.id.aid, value.name);
+    super.POST(value.coin, (c) => this.#entity.archive.lastChild.append(c));
+    this.#browser.deleteItemInLocalByKey(value.id.fid, value.name);
   }
   putFavoriteBackInContainer(value) {
-    super.PUT(value, (c) => this.#entity.archive.lastChild.append(c));
+    super.PUT(value, (c) => this.#entity.favorites.lastChild.append(c));
   }
   putCollectionOnOrOffDisplay(value) {
     super.PUT(value, (c) => {
@@ -57,12 +56,12 @@ export class CollectionRepository extends DocumentClient {
   putArchiveCollectionInEntity(value) {
     this.#entity.archive = value;
   }
-  deleteFromArchiveCollection(value) {
-    if (value.user.authenticated) this.#api.DELETE("", value.user);
-    this.deleteArchivedCoin(value.name);
+  async deleteFromArchiveCollection(value) {
+    if (value.user.authenticated) await this.#api.DELETE("", value.user);
+    this.#deleteArchivedCoin(value);
     super.DELETE(value.coin, (c) => c.remove());
   }
-  deleteArchivedCoin(value) {
-    this.#browser.deleteItemInLocalByKey("archive", value);
+  #deleteArchivedCoin(value) {
+    this.#browser.deleteItemInLocalByKey(value.id.aid, value.name);
   }
 }

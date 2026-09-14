@@ -10,10 +10,18 @@ export class APIClient {
         headers: { "Content-Type": "application/json", ...options.headers },
         ...options,
       });
-      if (!response.ok) throw response;
       const contentType = response.headers.get("content-type");
+      if (contentType?.includes("application/json")) {
+        const data = await response.json();
+        if (!response.ok) {
+          if (data.name === "AuthenticationError" || data.status === 401)
+            return { authenticated: false, message: data.message };
+          throw response;
+        }
+        return data;
+      }
       if (contentType?.includes("image/svg+xml")) return await response.text();
-      return await response.json();
+      return await response.text();
     } catch (error) {
       console.error("APIClient error:", error);
       throw error;

@@ -3,8 +3,8 @@ export class AppController {
     try {
       const result = await handler();
       if (res) res.obj(result);
+      return;
     } catch (error) {
-      // console.log(error);
       throw error;
     }
   }

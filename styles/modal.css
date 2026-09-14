@@ -1,14 +1,3 @@
-.modal-header * {
-  margin: 0;
-  font-size: inherit;
-}
-.modal-header h2 {
-  text-decoration: underline;
-}
-
-.modal-overlay[hidden] {
-  display: none;
-}
 .modal-overlay {
   container-type: size;
   font-family: "Oswald", sans-serif;
@@ -22,10 +11,13 @@
   max-height: 400px;
   height: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-  z-index: 4;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  z-index: 4;
+}
+.modal-overlay[hidden] {
+  display: none;
 }
 .modal-overlay:has(.coin-container) {
   max-height: 250px;
@@ -38,12 +30,22 @@
   align-items: start;
   font-size: clamp(1rem, 5.5cqw, 1.5rem);
 }
+.modal-header * {
+  margin: 0;
+  font-size: inherit;
+}
+.modal-header h2 {
+  text-decoration: underline;
+}
 
 .modal-body {
+  container-type: size;
+  position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
+  height: 100%;
   overflow-y: auto;
 }
 .modal-body::-webkit-scrollbar {
@@ -137,4 +139,31 @@ input:valid ~ .validation-feedback {
 }
 input:invalid ~ .validation-feedback {
   background-color: rgba(255, 0, 0, 0.338);
+}
+.collected {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: max(45cqw, 45cqh);
+  height: max(45cqw, 45cqh);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.7);
+  color: #f9f9f9;
+  font-family: "Oswald", sans-serif;
+  font-size: clamp(0.825rem, 4.5cqw, 1.25rem);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: 2px solid #ffd700;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  word-wrap: break-word;
+  z-index: 7;
+}
+
+.collected[hidden] {
+  display: none;
+  pointer-events: none;
 }

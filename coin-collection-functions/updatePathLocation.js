@@ -1,12 +1,14 @@
 import { EventRegister } from "../src/EventRegister.js";
 
 export const handler = async (e) => {
-  const mouse = e.target.dataset.mouse;
+  if (window.matchMedia("(max-width: 768px)").matches) return;
+  let responseBody;
   const usMapController = EventRegister.controllers.usMapController;
   const req = { body: { path: e.target } };
+  const res = { obj: (data) => (responseBody = data) };
   const router = {
-    over: async () => await usMapController.putPathLast(req, null),
-    out: async () => await usMapController.putPathBack(req, null),
+    mouseover: async () => await usMapController.putPathLast(req, res),
+    mouseout: async () => await usMapController.putPathBack(req, res),
   };
-  await router[mouse]();
+  await router[e.type]();
 };

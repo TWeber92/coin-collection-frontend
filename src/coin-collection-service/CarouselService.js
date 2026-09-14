@@ -3,30 +3,24 @@ import { CarouselEntity } from "../coin-collection-entity/CarouselEntity.js";
 import { CarouselRepository } from "../coin-collection-repository/CarouselRepository.js";
 import { GeoUtility } from "../coin-collection-utility/GeoUtility.js";
 
-export class CarouselService extends CarouselRepository {
+export class CarouselService {
   constructor() {
-    super(CarouselService.#getNav());
+    this.#repo = new CarouselRepository();
+    this.#putCarouselAssemblyinNav();
   }
 
-  static #getNav() {
-    return this.getCarouselNavElement({
-      id: "carousel-nav",
-      className: "carousel-nav",
-      ariaLabel: "State Carousel",
-    });
-  }
-  #init = this.#putCarouselAssemblyinNav();
+  #repo;
 
   #putCarouselAssemblyinNav() {
     const dto = this.#getRandomIndex();
     const entity = CarouselEntity.fromDTO(dto);
-    const layout = this.getStateCarouselLayout({
+    const layout = this.#repo.getStateCarouselLayout({
       id: "state-carousel",
       className: "state-carousel",
     });
-    this.putNavInCarouselLayout(layout); // Nav is the repository's entity
-    this.putCarouselInNav(entity.nodes);
-    this.putSlidesInCarousel([
+    this.#repo.putNavInCarouselLayout(layout); // Nav is the repository's entity
+    this.#repo.putCarouselInNav(entity.nodes);
+    this.#repo.putSlidesInCarousel([
       ...entity.prev,
       ...entity.active,
       ...entity.next,
@@ -51,21 +45,24 @@ export class CarouselService extends CarouselRepository {
     const { prev, active, next } = entity;
     Object.entries({ prev, active, next }).forEach(([key, slide]) => {
       const path = entity.navPaths[key];
-      const container = this.getSlideContainer({ s: [...slide][0], o: key });
+      const container = this.#repo.getSlideContainer({
+        s: [...slide][0],
+        o: key,
+      });
       const { geo } = GeoUtility.getGeometryForSlide(path);
-      const svg = this.getSvgForSlidePath({
+      const svg = this.#repo.getSvgForSlidePath({
         ...geo,
         id: entity.svgId,
         data: { name: path.dataset.name },
       });
-      this.putPathInSlideSvg({ svg, p: path });
-      this.putSvgInCarouselSlide({ cs: container, svg });
+      this.#repo.putPathInSlideSvg({ svg, p: path });
+      this.#repo.putSvgInCarouselSlide({ cs: container, svg });
     });
-    this.putSlidesInCarousel([...prev, ...active, ...next]);
+    this.#repo.putSlidesInCarousel([...prev, ...active, ...next]);
   }
 
   putCarouselOnOffDisplay() {
-    super.putCarouselOnOffDisplay();
+    this.#repo.putCarouselOnOffDisplay();
   }
 
   #getRandomIndex() {

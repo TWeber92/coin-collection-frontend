@@ -12,6 +12,19 @@ export class CarouselDTO {
   #svgId;
   constructor(entity) {
     entity = { ...CarouselDTO.#json, ...entity };
+    this.#html = entity;
+    this.#index = entity.index;
+    this.#paths = entity.paths;
+    this.#navPaths = {
+      prev: entity.prev?.path,
+      active: entity.active?.path,
+      next: entity.next?.path,
+    };
+    this.#svgId = entity.svgId;
+    CarouselDTO.#json = this.#toJSON();
+  }
+
+  set #html(entity) {
     this.#template = `
         <div id="carousel" class="carousel-track"></div>
         <div class="carousel-controls" id="carousel">
@@ -41,16 +54,8 @@ export class CarouselDTO {
             <span class="state-name">${entity.prev?.name?.toUpperCase()}</span>
           </div>
         </div>`;
-    this.#index = entity.index;
-    this.#paths = entity.paths;
-    this.#navPaths = {
-      prev: entity.prev?.path,
-      active: entity.active?.path,
-      next: entity.next?.path,
-    };
-    this.#svgId = entity.svgId;
-    CarouselDTO.#json = this.#toJSON();
   }
+
   #toJSON() {
     return {
       index: this.#index,

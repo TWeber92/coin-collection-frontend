@@ -40,12 +40,15 @@ export class DocumentStore {
     return svg;
   }
   static createForeignObjectElement(attributes) {
-    const { width, height, x, y } = attributes;
+    const { className, width, height, x, y } = attributes;
     const { element, options } = DocumentStore.#setOptions(
       document.createElementNS("http://www.w3.org/2000/svg", "foreignObject"),
       attributes,
     );
-    return new DocumentStore(element, { ...options, width, height, x, y });
+    Object.entries({ class: className, width, height, x, y }).forEach(
+      ([k, v]) => v && element.setAttribute(k, v),
+    );
+    return new DocumentStore(element, { id: options.id });
   }
   static #setOptions(element, attributes) {
     if (attributes.data)

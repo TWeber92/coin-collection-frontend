@@ -16,8 +16,8 @@ export class TooltipRepository extends DocumentClient {
       }).node,
     );
   }
-  getCoinFromEntity(value) {
-    return value.lastChild;
+  getCoinEntity(value) {
+    return value.parentElement;
   }
   getModifiedPathFromSvg(value) {
     const path = value.querySelector("path").cloneNode(true);
@@ -56,7 +56,7 @@ export class TooltipRepository extends DocumentClient {
   deleteTooltip(value) {
     super.DELETE(
       value,
-      (r) => (this.#entity.hidden = !r || !this.#entity.contains(r)),
+      (v) => (this.#entity.hidden = !v.r || !this.#entity.contains(v.r)),
     );
   }
 }

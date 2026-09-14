@@ -1,71 +1,68 @@
 .page-overlay {
-  container-type: size;
   display: flex;
   flex-direction: column;
   position: absolute;
-  top: 0;
+  top: 5%;
   right: 0;
-  height: 75vh;
+  height: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
   border-radius: 8px;
   font-family: inherit;
   white-space: nowrap;
   overflow-x: auto;
-  z-index: 6;
+  z-index: 5;
+}
+.page-overlay::-webkit-scrollbar {
+  display: none;
 }
 .page-overlay:has(.collection-container) {
-  width: 50%;
+  width: 75%;
   background-color: #f9f9f9;
 }
 .page-overlay[hidden] {
   right: -100%;
+  display: none;
 }
-
 .page-header,
 .page-body {
   display: flex;
   width: 90%;
   margin: 0 auto;
 }
-
-/* ── Header ── */
 .page-header {
   justify-content: space-between;
   align-items: baseline;
-  padding-top: 5px;
-  height: 15%;
+  height: auto;
 }
-
 .page-header h2 {
   font-size: clamp(14px, 5cqw, 18px);
 }
-
-/* ── Body ── */
 .page-body {
-  flex-direction: column;
-  height: 80%;
+  height: auto;
   font-weight: 700;
-  gap: 50%;
+  gap: 5%;
 }
+
 .page-body h3 {
-  font-size: clamp(12px, 5cqw, 16px);
+  font-size: clamp(12px, 4.55cqw, 16px);
   line-height: 0;
 }
 .page-body button {
   all: unset;
-  align-self: center;
-  transform: scale(1.15);
+  font-size: clamp(12px, 5cqw, 20px);
+  width: 5%;
+  pointer-events: auto;
 }
+
 .page-body button:hover {
   cursor: pointer;
   text-shadow: 0px 0px 3px rgba(2, 2, 2, 0.95);
 }
-
-/* ── Favorites & Archive Sections ── */
-.page-body #favorites,
+.page-body #favorites {
+  display: none;
+}
 .page-body #archive {
-  display: flex;
-  flex-direction: column;
+  width: 100%;
 }
 .page-body #favorites .row,
 .page-body #archive .row {
@@ -73,11 +70,133 @@
   line-height: 0;
   gap: 8px;
 }
-#archive-collection,
-#favorites-collection {
-  margin-top: 4px;
+.page-footer {
+  display: flex;
+  height: auto;
+  min-height: 10px;
+  background-color: rgba(255, 255, 255, 0.35);
+  justify-content: space-around;
+  pointer-events: auto;
+}
+.page-footer .archive-scroll {
+  all: unset;
+  line-height: 2;
 }
 
-.collection-container[hidden] {
+.page-footer button:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+  text-shadow: 0px 0px 3px rgba(2, 2, 2, 0.95);
+}
+#archive-collection,
+#favorites-collection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+#favorites-collection::-webkit-scrollbar,
+#archive-collection::-webkit-scrollbar {
   display: none;
+}
+
+.collection-container {
+  position: relative;
+}
+.collection-container[hidden] {
+  display: none !important;
+}
+.archive-scroll[hidden] {
+  display: none;
+}
+[data-collection] {
+  display: flex;
+  /* height: auto; */
+  gap: 5%;
+  /* padding: 0 28px 16px 28px; */
+  width: 100%;
+  height: 150px;
+  overflow: scroll;
+}
+[data-collection]::-webkit-scrollbar {
+  display: none;
+}
+[data-collection]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    #f9f9f9 0%,
+    transparent 20%,
+    transparent 80%,
+    #f9f9f9 100%
+  );
+  z-index: 6;
+}
+[data-collection] svg textPath {
+  font-size: clamp(12px, 2cqh, 20px);
+}
+[data-collection] .coin-entity:last-child {
+  padding-right: 15%;
+}
+[data-collection] .coin-entity:first-child {
+  padding-left: 15%;
+}
+
+@media (max-width: 768px) {
+  .page-overlay {
+    container-type: size;
+    top: 0;
+    height: 100vh;
+  }
+  .page-overlay:has(.collection-container) {
+    width: 45%;
+  }
+  .page-body {
+    flex-direction: column;
+    height: 90%;
+  }
+  .page-body #favorites,
+  .page-body #archive {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+  }
+  .page-body button {
+    align-self: center;
+    font-size: clamp(18px, 6cqw, 20px);
+  }
+  #archive-collection,
+  #favorites-collection {
+    margin-top: 4px;
+    overflow-y: auto;
+    overflow: visible;
+  }
+  [data-collection]::before {
+    content: normal;
+  }
+  #scrollable[name="archive"] {
+    display: none;
+  }
+  [data-collection] {
+    flex-wrap: wrap;
+    height: auto;
+    max-height: 400px;
+    padding: unset;
+  }
+  [data-collection] svg textPath {
+    font-size: clamp(10px, 3cqw, 20px);
+  }
+  [data-collection] .coin-entity:last-child {
+    padding-bottom: 16px;
+    padding-right: unset;
+  }
+  [data-collection] .coin-entity:first-child {
+    padding-left: unset;
+  }
 }

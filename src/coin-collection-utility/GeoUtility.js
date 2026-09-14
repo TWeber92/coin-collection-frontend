@@ -14,13 +14,14 @@ export class GeoUtility {
     MA: { xAdjust: 6, yAdjust: -3 },
     NJ: { xAdjust: 10, yAdjust: 5 },
     MN: { xAdjust: -10, yAdjust: 0 },
+    MI: { xAdjust: -260, yAdjust: 10 },
   };
 
-  static getPositionOverrides(id) {
+  static #getPositionOverrides(id) {
     return GeoUtility.#POSITION_OVERRIDES[id] || { xAdjust: 0, yAdjust: 0 };
   }
 
-  static getStatePathsGeometry() {
+  static #getStatePathsGeometry() {
     let currentX = 0;
     let currentY = 0;
     const { numbers, pathData, xCoords, yCoords } = GeoState.fromGeo();
@@ -50,31 +51,29 @@ export class GeoUtility {
   }
 
   static getGeometryForSlide(path) {
-    const id = path.dataset.id;
-    const bbox = path.getBBox();
     const pathData = path.getAttribute("d");
     const numbers = pathData.match(/[-+]?(\d*\.\d+|\d+\.?)/g);
-    const state = GeoState.fromSVG({
+    GeoState.fromSVG({
       pathData,
       numbers,
     });
-    return this.getStatePathsGeometry(); //{ #fromEntity }
+    return this.#getStatePathsGeometry(); //{ #fromEntity }
   }
 
   static getPositionForCoin(path) {
     const id = path.dataset.id;
     const bbox = path.getBBox();
     const pathData = path.getAttribute("d");
-    const baseSize = Math.min(bbox.width, bbox.height);
-    const coinSize = Math.max(18, Math.min(baseSize * 0.45, 50));
-    const override = this.getPositionOverrides(id);
+    const geoMean = Math.sqrt(bbox.width * bbox.height);
+    const coinSize = Math.max(50, Math.min(geoMean * 0.85, 150));
+    const override = this.#getPositionOverrides(id);
     const numbers = pathData.match(/[-+]?(\d*\.\d+|\d+\.?)/g);
-    const state = GeoState.fromSVG({
+    GeoState.fromSVG({
       pathData,
       numbers,
       override,
       coinSize,
     });
-    return this.getStatePathsGeometry();
+    return this.#getStatePathsGeometry();
   }
 }

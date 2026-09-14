@@ -2,6 +2,7 @@ export class PageEntity {
   #collection;
   #collections;
   #collectionId;
+  #direction;
   #node;
   #coins;
   constructor(dto) {
@@ -12,6 +13,7 @@ export class PageEntity {
     this.#collection = dto.collection;
     this.#collections = dto.collections;
     this.#collectionId = dto.id;
+    this.#direction = dto.direction;
     this.#coins = dto.coins;
   }
 
@@ -22,6 +24,8 @@ export class PageEntity {
       coins: this.#coins,
       header: new PageEntity({ template: this.#collections.header }).#node,
       body: new PageEntity({ template: this.#collections.body }).#node,
+      footer: new PageEntity({ template: this.#collections.footer }).#node,
+      direction: this.#direction,
       collection: this.#collection,
     };
   }

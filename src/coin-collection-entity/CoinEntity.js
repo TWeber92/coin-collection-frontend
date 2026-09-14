@@ -2,6 +2,8 @@ export class CoinEntity {
   #coin;
   #node;
   #year;
+  #name;
+  #tooltip;
   constructor(dto) {
     this.#node = new DOMParser().parseFromString(
       dto.template,
@@ -9,6 +11,8 @@ export class CoinEntity {
     ).body.children;
     this.#coin = dto.coin;
     this.#year = dto.year;
+    this.#name = dto.name;
+    this.#tooltip = dto.tooltip;
   }
 
   #toJSON() {
@@ -16,6 +20,7 @@ export class CoinEntity {
       coin: this.#coin,
       year: this.#year,
       node: this.#node,
+      name: this.#name,
     };
   }
 

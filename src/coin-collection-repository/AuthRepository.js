@@ -1,8 +1,8 @@
 import { DocumentClient } from "./DocumentClient.js";
 
 export class AuthRepository extends DocumentClient {
-  constructor(entity) {
-    super(entity);
+  constructor() {
+    super();
   }
 
   getInputsFromForm(value) {

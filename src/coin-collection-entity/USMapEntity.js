@@ -5,12 +5,14 @@ export class USMapEntity {
   #favorites;
   #path;
   #fo;
+  #fos;
   #siblings;
   #prev;
   #active;
   #next;
   #name;
   #coin;
+  #coinId;
   #width;
   #height;
   #x;
@@ -23,16 +25,18 @@ export class USMapEntity {
     this.#favorites = dto.favorites;
     this.#path = dto.path;
     this.#fo = dto.fo;
+    this.#fos = dto.fos;
     this.#siblings = dto.siblings;
     this.#prev = dto.navPaths?.[0];
     this.#active = dto.navPaths?.[1];
     this.#next = dto.navPaths?.[2];
     this.#name = dto.name;
     this.#coin = dto.coin;
+    this.#coinId = dto.coinId;
     this.#width = dto.size;
     this.#height = dto.size;
-    this.x = dto.x;
-    this.y = dto.y;
+    this.#x = dto.x;
+    this.#y = dto.y;
   }
 
   static get map() {
@@ -54,12 +58,14 @@ export class USMapEntity {
       favorites: this.#favorites,
       path: this.#path,
       fo: this.#fo,
+      fos: this.#fos,
       siblings: this.#siblings,
       prev: this.#prev,
       active: this.#active,
       next: this.#next,
       name: this.#name,
       coin: this.#coin,
+      coinId: this.#coinId,
       width: this.#width,
       height: this.#height,
       x: this.#x,

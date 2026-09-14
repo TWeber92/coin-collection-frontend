@@ -8,10 +8,8 @@ export class TooltipService {
   }
   #repo;
   postAddTooltip(body) {
-    const child = this.#repo.getCoinFromEntity(body.coin);
-    console.log(child);
-
-    const dto = TooltipDTO.fromEntity({ ...body, child });
+    const coin = this.#repo.getCoinEntity(body.coin);
+    const dto = TooltipDTO.fromEntity({ ...body, coin });
     const entity = TooltipEntity.fromDTO({
       ...dto,
       template: dto.svg,
@@ -23,8 +21,8 @@ export class TooltipService {
     this.#repo.putTooltipOnDisplay(entity.coin);
   }
   postArchiveTooltip(body) {
-    const child = this.#repo.getCoinFromEntity(body.coin);
-    const dto = TooltipDTO.fromEntity({ ...body, child });
+    const coin = this.#repo.getCoinEntity(body.coin);
+    const dto = TooltipDTO.fromEntity({ ...body, coin });
     const entity = TooltipEntity.fromDTO({
       ...dto,
       template: dto.svg,
@@ -37,8 +35,8 @@ export class TooltipService {
   }
   postRestoreOrDeleteTooltip(body) {
     [...Array(2)].reduce((acc, _, i) => {
-      const child = this.#repo.getCoinFromEntity(body.coin);
-      const dto = TooltipDTO.fromEntity({ ...body, child, sweep: i });
+      const coin = this.#repo.getCoinEntity(body.coin);
+      const dto = TooltipDTO.fromEntity({ ...body, coin, sweep: i });
       const entity = TooltipEntity.fromDTO({
         ...dto,
         template: dto.svg,
@@ -62,6 +60,6 @@ export class TooltipService {
   }
   deleteTooltip(body) {
     const dto = TooltipDTO.fromEntity(body);
-    this.#repo.deleteTooltip(dto.relative);
+    this.#repo.deleteTooltip({ r: dto.relative, c: dto.coin });
   }
 }

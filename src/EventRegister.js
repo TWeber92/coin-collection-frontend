@@ -13,6 +13,7 @@ export class EventRegister {
   static #transition;
   static #controllers = {};
   #service;
+  #mouseout = true;
   constructor(services) {
     this.#service = services;
     this.#registerControllers();
@@ -59,7 +60,7 @@ export class EventRegister {
     this.#registerInputListener();
     // this.#registerSubmitListener();
     this.#registerMouseListeners();
-    // this.#registerTransitionEndListener();
+    this.#registerTransitionEndListener();
     this.#registerLoadedListener();
     this.#registerResizeListener();
   }
@@ -82,19 +83,26 @@ export class EventRegister {
       await event(e);
     });
   }
-  #registerMouseListeners() {
-    // document.addEventListener("mouseover", async (e) => {
-    //   if (e.target.nodeType !== 1) return;
-    //   await event(e);
-    // });
+  async #registerMouseListeners() {
+    document.addEventListener("mouseover", async (e) => {
+      if (e.target.nodeType !== 1) return;
+      const fo = e.target.closest("foreignObject");
+      console.log(e.target.id);
+      await event(fo ? this.#patchEvent(e, fo.tagName, fo.id) : e);
+    });
     document.addEventListener("mouseout", async (e) => {
       if (e.target.nodeType !== 1) return;
-      await event(e);
+      const fo = e.target.closest("#tooltip foreignObject");
+      console.log(e.target.id);
+      console.log(fo);
+
+      await event(fo ? this.#patchEvent(e, fo.tagName, fo.id) : e);
     });
   }
   #registerTransitionEndListener() {
     document.addEventListener("transitionend", async (e) => {
-      if (EventRegister.#transition) EventRegister.#transition();
+      if (EventRegister.#transition) await EventRegister.#transition();
+      EventRegister.#transition = null;
     });
   }
   async #registerResizeListener() {
@@ -102,17 +110,17 @@ export class EventRegister {
       .matchMedia("(max-width: 768px)")
       .addEventListener(
         "change",
-        async (e) => await event(this.#patchEvent(e)),
+        async (e) => await event(this.#patchEvent(e, "UI", "update")),
       );
   }
   async #registerLoadedListener() {
     window.addEventListener(
       "load",
-      async (e) => await event(this.#patchEvent(e)),
+      async (e) => await event(this.#patchEvent(e, "UI", "update")),
     );
   }
-  #patchEvent(e) {
-    e.composedPath = () => [{ tagName: "UI", id: "update" }];
+  #patchEvent(e, tagName, id) {
+    e.composedPath = () => [{ tagName, id }];
     return e;
   }
 }

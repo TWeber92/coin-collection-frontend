@@ -1,26 +1,31 @@
 import { DocumentStore } from "../DocumentStore.js";
 import { APIClient } from "./APIClient.js";
+import { BrowserRepository } from "./BrowserRepository.js";
 import { DocumentClient } from "./DocumentClient.js";
 
 export class CoinRepository extends DocumentClient {
+  #cacheId = "coins";
   constructor() {
     super();
   }
   #api = new APIClient("https://coin-api.coin-collection.workers.dev");
   #entity = this.#getCoinElement();
+  #browser = new BrowserRepository();
 
   #getCoinElement() {
     return document.body.appendChild(
       DocumentStore.createDivElement({
-        id: "coin",
         className: "coin-entity",
         hidden: true,
         data: { location: "modal" },
       }).node,
     );
   }
-
-  getCloneCoinEntity() {
+  getCurrentEntityParent(value) {
+    return super.GET(value, (c) => c.parentNode);
+  }
+  getCloneCoinEntityRemoveTooltip(value) {
+    this.#entity.removeChild(value.parentElement);
     return super.GET(this.#entity, (c) => c.cloneNode(true));
   }
   getCoinByStateName(value) {
@@ -29,16 +34,16 @@ export class CoinRepository extends DocumentClient {
   getCoinContainer(value) {
     return super.GET(value, (c) => c.firstElementChild);
   }
+  getCacheCoinFromSession(value) {
+    const session = this.#browser.getSessionStorageByKey(this.#cacheId);
+    return session[value];
+  }
   putCoinInEntity(value) {
-    super.PUT(value, (c) => this.#entity.replaceChildren(c));
-    this.#entity.hidden = false;
+    this.#entity.id = value.n;
+    super.PUT(value, (v) => this.#entity.replaceChildren(v.c));
     return this.#entity;
   }
-  // putCoinInEntity(value) {
-  //   const coin = this.#entity.lastChild;
-  //   super.PUT(value, (c) =>
-  //     coin ? this.#entity.replaceChild(c, coin) : this.#entity.append(c),
-  //   );
-  //   this.#entity.hidden = false;
-  // }
+  putCacheCoinInSession(value) {
+    this.#browser.putNewItemInSessionByKey(this.#cacheId, value.k, value.c);
+  }
 }

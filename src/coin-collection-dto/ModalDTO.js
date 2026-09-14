@@ -4,10 +4,21 @@ export class ModalDTO {
   #stateModal;
   #loginModal;
   #signupModal;
-  #collectedId;
+  #modalId;
+  #name;
+  #year;
   #coin;
   constructor(entity) {
     entity = { ...ModalDTO.#json, ...entity };
+    this.#html = entity;
+    this.#modalId = entity.id;
+    this.#name = entity.name;
+    this.#year = entity.year;
+    this.#coin = entity.coin;
+    ModalDTO.#json = this.#toJSON();
+  }
+
+  set #html(entity) {
     this.#modal = `
         <div class="modal-header">
           <h2></h2>
@@ -17,7 +28,7 @@ export class ModalDTO {
         <div class="modal-footer"></div>`;
     this.#stateModal = {
       title: `<h2>${entity.name}</h2>`,
-      body: `<div class="collected" hidden=${entity.favorites?.includes(entity.name) ? false : true}> You Already Collected ${entity.name}! ⭐️</div>`,
+      body: `<div class="collected" ${entity.favorites?.includes(entity.name) ? "" : "hidden"}> You Already Collected ${entity.name}! ⭐️</div>`,
       footer: `<div>Year Minted: ${entity.year}</div>
               <a href="https://www.usa.gov/states/${entity.name}">Find Out More About ${entity.name}</a>`,
     };
@@ -61,9 +72,6 @@ export class ModalDTO {
              </form>`,
       footer: `<span>Already have an account? <button id="login" data-name="login" type="button">Login</button></span>`,
     };
-    this.#collectedId = entity.collectedId;
-    this.#coin = entity.coin;
-    ModalDTO.#json = this.#toJSON();
   }
 
   #toJSON() {
@@ -73,7 +81,9 @@ export class ModalDTO {
       login: this.#loginModal,
       signup: this.#signupModal,
       coin: this.#coin,
-      id: this.#collectedId,
+      id: this.#modalId,
+      name: this.#name,
+      year: this.#year,
     };
   }
   static fromEntity(entity) {

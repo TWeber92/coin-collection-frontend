@@ -1,11 +1,14 @@
 import { EventRegister } from "../src/EventRegister.js";
 
 export const handler = async (e) => {
+  document.body.style.cursor = "wait";
+  e.target.style.cursor = "wait";
   let responseBody;
   const req = {
     body: {
       name: e.target.dataset.name,
       menuId: "hamburger",
+      favoritesId: "favorites",
       id: e.target.id,
     },
   };
@@ -17,8 +20,8 @@ export const handler = async (e) => {
   const coinController = EventRegister.controllers.coinController;
   const id = e.target.id;
   if (id === "state") {
-    // await collectionController.getFavoritesList(null, res);
-    // req.body.favorites = responseBody;
+    await collectionController.getCollectedFavoriteNames(req, res);
+    req.body.favorites = responseBody;
     await coinController.updateCoinEntity(req, res);
     req.body = { ...req.body, ...responseBody }; //{ name: e.target.dataset.name, favorites, coin, year, collectedId }
   }
@@ -29,4 +32,6 @@ export const handler = async (e) => {
   };
   await router[id]();
   if (navIsOpen) headerController.putMenuNavOnOffDisplay(req, res);
+  document.body.style.cursor = "default";
+  e.target.style.cursor = "pointer";
 };

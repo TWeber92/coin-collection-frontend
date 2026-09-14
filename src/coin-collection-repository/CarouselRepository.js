@@ -2,13 +2,19 @@ import { DocumentStore } from "../DocumentStore.js";
 import { DocumentClient } from "./DocumentClient.js";
 
 export class CarouselRepository extends DocumentClient {
-  constructor(entity) {
-    super(entity);
+  constructor() {
+    super();
   }
 
-  static getCarouselNavElement(value) {
+  #entity = this.#getCarouselNavElement();
+
+  #getCarouselNavElement() {
     return document.body.appendChild(
-      DocumentStore.createNavElement(value).node,
+      DocumentStore.createNavElement({
+        id: "carousel-nav",
+        className: "carousel-nav",
+        ariaLabel: "State Carousel",
+      }).node,
     );
   }
   getStateCarouselLayout(value) {
@@ -23,15 +29,15 @@ export class CarouselRepository extends DocumentClient {
     return super.GET(value, (v) => v.s.querySelector(`[data-option=${v.o}]`));
   }
   putNavInCarouselLayout(value) {
-    super.PUT(value, (l) => l.append(this.entity));
+    super.PUT(value, (l) => l.append(this.#entity));
   }
   putSlidesInCarousel(value) {
     super.PUT(value, (s) =>
-      this.entity.firstElementChild.replaceChildren(...s),
+      this.#entity.firstElementChild.replaceChildren(...s),
     );
   }
   putCarouselInNav(value) {
-    super.PUT(value, (c) => this.entity.append(...c));
+    super.PUT(value, (c) => this.#entity.append(...c));
   }
   putPathInSlideSvg(value) {
     super.PUT(value, (v) => v.svg.append(v.p));
@@ -42,7 +48,7 @@ export class CarouselRepository extends DocumentClient {
   putCarouselOnOffDisplay() {
     super.PUT(
       window.matchMedia("(max-width: 768px)").matches,
-      (m) => (this.entity.parentElement.hidden = !m),
+      (m) => (this.#entity.parentElement.hidden = !m),
     );
   }
 }

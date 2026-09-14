@@ -19,13 +19,13 @@ export class Application {
   #init = (async () => {
     const promise = (service, name) =>
       new Promise((resolve) => (this.#services[name] = new service(resolve)));
+    this.#services.collectionService = new CollectionService();
     this.#services.headerService = new HeaderService();
     await promise(USMapService, "usMapService");
     // console.log(this.#services.usMapService);
     this.#services = {
       ...this.#services,
       carouselService: new CarouselService(),
-      collectionService: new CollectionService(),
       coinService: new CoinService(),
       pageService: new PageService(),
       modalService: new ModalService(),

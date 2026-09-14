@@ -6,12 +6,10 @@ export class CarouselEntity {
   #navPaths;
   #svgId;
   constructor(dto) {
-    [
-      ...(this.#nodes = new DOMParser().parseFromString(
-        dto.template,
-        "text/html",
-      ).body.children),
-    ];
+    this.#nodes = new DOMParser().parseFromString(
+      dto.template,
+      "text/html",
+    ).body.children;
     this.#active = dto.active;
     this.#next = dto.next;
     this.#prev = dto.prev;

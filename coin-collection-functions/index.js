@@ -13,7 +13,7 @@ import { handler as updateAuthInput } from "./updateAuthInput.js";
 import { handler as postAuthForm } from "./postAuthForm.js";
 import { handler as updateUiMode } from "./updateUi.js";
 
-export const event = async (e) => {
+export const event = async (e, c) => {
   const type = e.type;
   const [tag] = e.composedPath();
   const tagName = tag.tagName.toLowerCase() || "document";
@@ -73,6 +73,7 @@ export const event = async (e) => {
     "load:/ui/update": async () => await updateUiMode(e),
     "change:/ui/update": async () => await updateUiMode(e),
     "click:/svg/state": async () => await updateModalView(e),
+    "click:/foreignobject/state": async () => await updateModalView(e),
     "click:/path/state": async () => await updateModalView(e),
     "click:/div/state": async () => await updateModalView(e),
     "click:/button/login": async () => await updateModalView(e),
@@ -87,9 +88,15 @@ export const event = async (e) => {
     "input:/input/password": async () => await updateAuthInput(e),
     "input:/input/confirm": async () => await updateAuthInput(e),
     "click:/div/coin": async () => await updateTooltip(e),
-    "mouseout:/div/coin": async () => await deleteTooltip(e),
     "click:/button/favorites": async () => await updatePageView(e),
+    "click:/button/archive": async () => await updatePageView(e),
+    "click:/button/scrollable": async () => await updatePageView(e),
+    "mouseout:/button/tooltip": async () => await deleteTooltip(e),
     "click:/button/tooltip": async () => await updateUserCollection(e),
+    "mouseover:/foreignobject/state": async () => await updateFoLocation(e),
+    "mouseout:/foreignobject/state": async () => await updateFoLocation(e),
+    "mouseover:/path/state": async () => await updatePathLocation(e),
+    "mouseout:/path/state": async () => await updatePathLocation(e),
     // ...collectionRouter,
     // ...uiRouter,
     // ...authRouter,
@@ -99,9 +106,12 @@ export const event = async (e) => {
     // ...mapRouter(),
   };
   try {
-    if (type !== "mouseout") console.log(route);
+    // console.log(route);
+    // if (route === "mouseout:/button/tooltip") console.log(route);
+    if (router[route]) console.log(route);
     if (router[route]) await router[route]();
   } catch (err) {
+    console.trace(err);
     const error = err.toJSON();
     const map = {
       ValidationError: () => err.toSpan(),

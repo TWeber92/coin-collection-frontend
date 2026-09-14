@@ -8,6 +8,7 @@
 
 body {
   height: 100%;
+  pointer-events: none;
 }
 body[data-overlay="true"]::before {
   content: "";
@@ -28,6 +29,8 @@ body:has(.modal-overlay:not([hidden])) .doc-header {
 #close {
   all: unset;
   padding-left: 5px;
+  pointer-events: auto;
+  z-index: 10;
 }
 #close:hover {
   cursor: pointer;

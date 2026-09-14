@@ -8,6 +8,13 @@ export class TooltipDTO {
   #relative;
   constructor(entity) {
     entity = { ...TooltipDTO.#json, ...entity };
+    this.#html = entity;
+    this.#coin = entity.coin;
+    this.#relative = entity.e?.relatedTarget;
+    TooltipDTO.#json = this.#toJSON();
+  }
+
+  set #html(entity) {
     this.position = (sweep, top, bottom, full) =>
       sweep != null ? (sweep ? top : bottom) : full;
     this.#svg = `<svg viewBox="${this.position(entity.sweep, "0 0 120 60", "0 60 120 60", "0 0 120 120")}">
@@ -16,7 +23,7 @@ export class TooltipDTO {
                     </defs>
                     <circle cx="60" cy="60" r="55"/>
                     <text dominant-baseline="text-${this.position(entity.sweep, "after", "before", "")}-edge">
-                      <textPath href="#arc${this.position(entity.sweep, "-top", "-bottom", "")}" startOffset="50%" text-anchor="middle"> ${entity.child?.id}?</textPath>
+                      <textPath href="#arc${this.position(entity.sweep, "-top", "-bottom", "")}" startOffset="50%" text-anchor="middle"> ${entity.coin?.id}?</textPath>
                     </text>
                     <text x="60" y="${this.position(entity.sweep, "40", "80", "60")}" text-anchor="middle" dominant-baseline="central" style="font-size: 20px">
                     </text>
@@ -27,9 +34,6 @@ export class TooltipDTO {
       <button id="tooltip" value="coin" data-action="delete">Delete 🗑️</button>
       <button id="tooltip" value="coin" data-action="restore">Restore ♻️</button>
     `;
-    this.#coin = entity.coin;
-    this.#relative = entity.e.relatedTarget;
-    TooltipDTO.#json = this.#toJSON();
   }
 
   #toJSON() {

@@ -3,10 +3,13 @@ import { AuthEntity } from "../coin-collection-entity/AuthEntity.js";
 import { AuthRepository } from "../coin-collection-repository/AuthRepository.js";
 import { UserValidator } from "../coin-collection-validation/UserValidator.js";
 
-export class AuthService extends AuthRepository {
+export class AuthService {
   constructor() {
-    super();
+    this.#repo = new AuthRepository();
   }
+
+  #repo;
+
   getEmailInputValidation(body) {
     this.#getInputValidation(body);
   }
@@ -17,13 +20,13 @@ export class AuthService extends AuthRepository {
     this.#getInputValidation(body);
   }
   #getInputValidation(body) {
-    const setSpan = (s, n) => this.putSpanContextOnDisplay({ s, n });
+    const setSpan = (s, n) => this.#repo.putSpanContextOnDisplay({ s, n });
     const setButton = (button, inputs) =>
       (button.disabled = !inputs.every((i) => i.checkValidity()));
     const dto = AuthDTO.fromEntity({
       ...body,
-      inputs: [...this.getInputsFromForm(body.input)],
-      span: this.getSpanSibling(body.input),
+      inputs: [...this.#repo.getInputsFromForm(body.input)],
+      span: this.#repo.getSpanSibling(body.input),
     });
     body.input.disable = () => setButton(dto.button, dto.inputs);
     const confirm = UserValidator.validateUserInput(body.input);
@@ -31,8 +34,11 @@ export class AuthService extends AuthRepository {
     setSpan(entity.sibling, entity.node[0]);
     if (confirm?.interacted) {
       UserValidator.validateUserInput(confirm);
-      setSpan(this.getSpanSibling(confirm), entity.node[0]);
+      setSpan(this.#repo.getSpanSibling(confirm), entity.node[0]);
     }
     setButton(entity.button, entity.inputs);
+  }
+  putNamesInUserCollection(body) {
+    const dto = AuthDTO.fromEntity(body.user);
   }
 }

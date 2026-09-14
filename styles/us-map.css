@@ -6,5 +6,9 @@
   display: none;
 }
 path {
+  pointer-events: auto;
   cursor: pointer;
+}
+svg:has(.fo-svg[data-mouseover="true"]) path {
+  pointer-events: none;
 }

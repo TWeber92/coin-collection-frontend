@@ -17,9 +17,9 @@ export class USMapController extends AppController {
       this.#usMapService.getCarouselPathsByIndex(),
     );
   }
-  postCoinInForeignObj(req, res) {
-    super.POST(req, res, () =>
-      this.#usMapService.postCoinInForeignObj(req.body),
+  putCoinInForeignObj(req, res) {
+    return super.POST(req, res, () =>
+      this.#usMapService.putCoinInForeignObj(req.body),
     );
   }
   postAllSvgPaths(req, res) {
@@ -32,7 +32,7 @@ export class USMapController extends AppController {
     super.PUT(req, res, () => this.#usMapService.putStatesBackInMap());
   }
   putPathBack(req, res) {
-    super.PUT(req, res, () => this.#usMapService.putPathBack(req.body));
+    return super.PUT(req, res, () => this.#usMapService.putPathBack(req.body));
   }
   putPathLast(req, res) {
     super.PUT(req, res, () => this.#usMapService.putPathLast(req.body));
