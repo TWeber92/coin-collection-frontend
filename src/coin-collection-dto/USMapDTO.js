@@ -2,7 +2,8 @@ import { CarouselDTO } from "./CarouselDTO.js";
 
 export class USMapDTO {
   static #json = {};
-  #siblings;
+  #pathSiblings;
+  #foSiblings;
   #navPaths;
   #index;
   #path;
@@ -21,7 +22,8 @@ export class USMapDTO {
   #y;
   constructor(entity) {
     entity = { ...USMapDTO.#json, ...entity };
-    this.#siblings = entity.siblings;
+    this.#pathSiblings = entity.pathSiblings;
+    this.#foSiblings = entity.foSiblings;
     this.#navPaths = entity.navPaths;
     this.#path = entity.path;
     this.#paths = entity.paths;
@@ -49,7 +51,8 @@ export class USMapDTO {
       path: this.#path,
       fo: this.#fo,
       foTag: this.#foTag,
-      siblings: this.#siblings,
+      pathSiblings: this.#pathSiblings,
+      foSiblings: this.#foSiblings,
       navPaths: this.#navPaths,
       name: this.#name,
       coin: this.#coin,

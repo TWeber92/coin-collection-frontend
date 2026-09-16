@@ -21,8 +21,6 @@ export class ModalRepository extends DocumentClient {
     return super.GET(value, (e) => e.body.querySelector(e.collectedId));
   }
   #postAuthenticationModal(value) {
-    console.log(value.b);
-
     super.POST(value, (v) => {
       const [header, body, footer] = this.#entity.children;
       header.replaceChild(v.t, header.querySelector("h2"));

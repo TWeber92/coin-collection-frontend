@@ -29,6 +29,7 @@
     box-shadow 0.4s ease;
   pointer-events: auto;
   cursor: pointer;
+  user-select: none;
 }
 
 .coin-heads,
@@ -96,8 +97,8 @@ foreignObject.fo-svg:hover .coin-container {
 foreignObject.fo-svg:hover .coin-entity {
   width: 125px;
   height: 125px;
-  transform: translate(-40%, -40%);
-  pointer-events: auto;
+  transform: translate(-32.5%, -32.5%);
+  /* pointer-events: auto; */
 }
 /* ═══════════════════════════════════════════
    COIN — MODAL CONTEXT

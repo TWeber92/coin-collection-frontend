@@ -13,7 +13,7 @@ import { handler as updateAuthInput } from "./updateAuthInput.js";
 import { handler as postAuthForm } from "./postAuthForm.js";
 import { handler as updateUiMode } from "./updateUi.js";
 
-export const event = async (e, c) => {
+export const event = async (e) => {
   const type = e.type;
   const [tag] = e.composedPath();
   const tagName = tag.tagName.toLowerCase() || "document";
@@ -27,53 +27,10 @@ export const event = async (e, c) => {
   //     {},
   //   );
 
-  // const collectionRouter = {
-  //   "click:/button/tooltip": async () => await updateUserCollection(e),
-  //   "click:/div/coin": async () => await updateTooltip(e),
-  //   "mouseout:/div/coin": async () => await deleteTooltip(e),
-  // };
-  // const carouselRouter = {
-  //   "click:/*/carousel": async () => await updateCarousel(e),
-  // };
-  // const uiRouter = {
-  //   "click:/button/hamburger": async () => await updateMenuView(e),
-  //   "click:/body/body": async () => await deleteBackdrop(e),
-  //   "click:/button/close": async () => await deleteOverlay(e),
-  //   "*:/ui/update": async () => await updateUiMode(e),
-  // };
-  // const authRouter = {
-  //   "input:/input/auth": async () => await updateAuthInput(e),
-  //   "submit:/button/auth": async () => await postAuthForm(e),
-  // };
-  // const pageRouter = () => {
-  //   const map = {
-  //     [["click:/div/favorites", "click:/div/archived"]]: async () =>
-  //       await updatePageView(e),
-  //   };
-  //   return reduce(map);
-  // };
-  // const modalRouter = () => {
-  //   const map = {
-  //     [["click:/*/state", "click:/a/login", "click:/a/signup"]]: async () =>
-  //       await updateModalView(e),
-  //   };
-  //   return reduce(map);
-  // };
-
-  // const mapRouter = () => {
-  //   const map = {
-  //     [["mouseover:/path/state", "mouseout:/path/state"]]: async () =>
-  //       await updatePathLocation(e),
-  //     [["mouseover:/foreignObject/fo", "mouseout:/foreignObject/fo"]]:
-  //       async () => await updateFoLocation(e),
-  //   };
-  //   return reduce(map);
-  // };
   const router = {
     "load:/ui/update": async () => await updateUiMode(e),
     "change:/ui/update": async () => await updateUiMode(e),
     "click:/svg/state": async () => await updateModalView(e),
-    "click:/foreignobject/state": async () => await updateModalView(e),
     "click:/path/state": async () => await updateModalView(e),
     "click:/div/state": async () => await updateModalView(e),
     "click:/button/login": async () => await updateModalView(e),
@@ -93,22 +50,11 @@ export const event = async (e, c) => {
     "click:/button/scrollable": async () => await updatePageView(e),
     "mouseout:/button/tooltip": async () => await deleteTooltip(e),
     "click:/button/tooltip": async () => await updateUserCollection(e),
-    "mouseover:/foreignobject/state": async () => await updateFoLocation(e),
-    "mouseout:/foreignobject/state": async () => await updateFoLocation(e),
-    "mouseover:/path/state": async () => await updatePathLocation(e),
-    "mouseout:/path/state": async () => await updatePathLocation(e),
-    // ...collectionRouter,
-    // ...uiRouter,
-    // ...authRouter,
-    // ...carouselRouter,
-    // ...pageRouter(),
-    // ...modalRouter(),
-    // ...mapRouter(),
+    "pointermove:/path/state": async () => await updatePathLocation(e),
+    "pointermove:/foreignobject/state": async () => await updateFoLocation(e),
   };
   try {
-    // console.log(route);
-    // if (route === "mouseout:/button/tooltip") console.log(route);
-    if (router[route]) console.log(route);
+    // if (router[route]) console.log(route);
     if (router[route]) await router[route]();
   } catch (err) {
     console.trace(err);

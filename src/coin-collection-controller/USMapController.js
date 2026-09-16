@@ -25,8 +25,12 @@ export class USMapController extends AppController {
   postAllSvgPaths(req, res) {
     super.POST(req, res, () => this.#usMapService.postAllSvgPaths());
   }
-  putCoinsBackInMap(req, res) {
-    super.PUT(req, res, () => this.#usMapService.putCoinsBackInMap(req.body));
+  async putCoinsBackInMap(req, res) {
+    super.PUT(
+      req,
+      res,
+      async () => await this.#usMapService.putCoinsBackInMap(req.body),
+    );
   }
   putStatesBackInMap(req, res) {
     super.PUT(req, res, () => this.#usMapService.putStatesBackInMap());
@@ -44,6 +48,6 @@ export class USMapController extends AppController {
     super.PUT(req, res, () => this.#usMapService.putFOLast(req.body));
   }
   putMapOnOffDisplay(req, res) {
-    super.PUT(req, res, () => this.#usMapService.putMapOnOffDisplay(req.body));
+    super.PUT(req, res, () => this.#usMapService.putMapOnOffDisplay());
   }
 }

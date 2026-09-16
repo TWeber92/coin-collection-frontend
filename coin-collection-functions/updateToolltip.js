@@ -1,7 +1,6 @@
 import { EventRegister } from "../src/EventRegister.js";
 
 export const handler = async (e) => {
-  let responseBody;
   const location = e.target.closest("[data-location]").dataset.location;
   const tooltipController = EventRegister.controllers.tooltipController;
   const coinController = EventRegister.controllers.coinController;
@@ -16,4 +15,5 @@ export const handler = async (e) => {
       await tooltipController.postRestoreOrDeleteTooltip(req, null),
   };
   await router[location]();
+  // EventRegister.timer = setTimeout(async () => await router[location](), 500);
 };

@@ -82,6 +82,7 @@
   border-radius: 50%;
   background: #ccc;
   cursor: pointer;
+  pointer-events: auto;
 }
 
 #active.dot {
@@ -107,6 +108,7 @@
   max-width: 50px;
   font-size: clamp(0.825rem, 6cqw, 1.5rem);
   cursor: pointer;
+  pointer-events: auto;
   aspect-ratio: 1 / 1;
 }
 

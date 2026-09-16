@@ -23,8 +23,6 @@ export class HeaderService {
     const dto = HeaderDTO.fromEntity(body);
     const count = dto.collection.archive.count;
     const archive = this.#repo.getExistingArchiveButton(dto.archiveId);
-    console.log(archive);
-
     const entity = HeaderEntity.fromDTO(dto);
     if (!archive && count > 0)
       this.#repo.putArchiveButtonInEntity({

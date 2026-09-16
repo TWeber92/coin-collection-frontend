@@ -16,9 +16,6 @@ export class HeaderRepository extends DocumentClient {
       }).node,
     );
   }
-  // getMenuNavSibling() {
-  //   return super.GET(this.#entity, (e) => e.nextElementSibling);
-  // }
   getMenuButtonById(value) {
     return super.GET(value, (id) => this.#entity.header.querySelector(id));
   }
@@ -35,12 +32,6 @@ export class HeaderRepository extends DocumentClient {
       return !!nav || !!header;
     });
   }
-  // getBadgesfromNav(value) {
-  //   return super.GET(value, (id) => this.#entity.nav.querySelectorAll(id));
-  // }
-  // getBadgesFromHeader(value) {
-  //   return super.GET(value, (id) => this.#entity.header.querySelectorAll(id));
-  // }
   getNavItemsFromDocBody() {
     return super.GET(document.body, (b) =>
       b.querySelectorAll("[data-nav-item]"),

@@ -51,6 +51,7 @@ export const handler = async (e) => {
 
 export const restore = async (req) => {
   document.body.style.cursor = "wait";
+  document.body.children["usmap"].style.cursor = "wait";
   const userController = EventRegister.controllers.userController;
   const collectionController = EventRegister.controllers.collectionController;
   const coinController = EventRegister.controllers.coinController;
@@ -61,7 +62,6 @@ export const restore = async (req) => {
   // req.body.user = responseBody;
   await collectionController.getUserSyncedCollection(req, res);
   req.body.collection = responseBody.names;
-  console.log(req.body.collection);
   // req.body.user.authenticated = responseBody.authenticated;
   for (const [k, v] of Object.entries(req.body.collection)) {
     req.body.collectionId = k;
@@ -83,6 +83,7 @@ export const restore = async (req) => {
     await headerController.putNewCountInBadge(req, res);
   }
   // if (req.body.user.authenticated)
-  //   userController.putNamesInUserCollection(req, res);
+  //  await userController.putNamesInUserCollection(req, res);
   document.body.style.cursor = "default";
+  document.body.children["usmap"].style.cursor = "default";
 };

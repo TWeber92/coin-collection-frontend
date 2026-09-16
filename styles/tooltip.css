@@ -11,7 +11,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease;
+  /* transition: transform 0.2s ease; */
+  user-select: none;
   z-index: 6;
 }
 #tooltip svg {
@@ -30,10 +31,8 @@
 }
 #tooltip[hidden] {
   display: none;
+  transform: scale(0);
 }
-/* .tooltip-wrapper:hover {
-  transform: scale(1.15);
-} */
 .tooltip-wrapper svg circle {
   fill: rgba(0, 0, 0, 0.25);
   stroke: #f9f9f9;
@@ -75,7 +74,6 @@ button[data-action="delete"]:hover svg text {
   font-family: "Oswald", sans-serif;
   font-weight: 700;
   text-transform: uppercase;
-  /* transition: fill 0.25s ease; */
 }
 #tooltip:hover svg text {
   fill: #ffd700;
@@ -86,8 +84,30 @@ textPath {
 button text[dominant-baseline="text-before-edge"] {
   transform: translateY(-1%);
 }
+/* [data-collection] #tooltip,
+foreignObject.fo-svg #tooltip {
+  width: 125px;
+  height: 125px;
+  transition:
+    height 0.8s ease,
+    width 0.8s ease;
+} */
 [data-collection] #tooltip,
 foreignObject.fo-svg #tooltip {
   width: 125px;
   height: 125px;
+  transition:
+    display 0.4s allow-discrete,
+    transform 0.4s ease;
+}
+
+[data-collection] #tooltip.visible,
+foreignObject.fo-svg #tooltip.visible {
+  transform: scale(1); /* Grows to full 125px size */
+}
+@starting-style {
+  #tooltip,
+  foreignObject.fo-svg #tooltip {
+    transform: scale(0);
+  }
 }

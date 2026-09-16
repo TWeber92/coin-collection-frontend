@@ -49,10 +49,7 @@ export class PageService {
   }
   putArchiveInNewPosition(body) {
     const dto = PageDTO.fromEntity(body);
-    console.log(dto.button.name);
-
     const archive = this.#repo.getCollectionById({ id: dto.button.name });
-    console.log(archive);
     const entity = PageEntity.fromDTO({ ...dto, collection: archive });
     this.#repo.putArchiveInNewPosition({
       c: entity.collection,

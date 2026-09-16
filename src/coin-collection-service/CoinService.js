@@ -25,7 +25,6 @@ export class CoinService {
   }
 
   async updateCoinEntity(body) {
-    console.log("creating coin");
     const coin = this.#repo.getCacheCoinFromSession(body.name);
     const dto = coin
       ? CoinDTO.fromEntity({ ...body, ...coin })

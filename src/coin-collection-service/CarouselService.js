@@ -39,17 +39,17 @@ export class CarouselService {
     //This is not where the story ends. This updates USMapDTO index relationship.
   }
 
-  putSlidesInPosition(body) {
+  async putSlidesInPosition(body) {
     const dto = CarouselDTO.fromEntity(body);
     const entity = CarouselEntity.fromDTO(dto);
     const { prev, active, next } = entity;
-    Object.entries({ prev, active, next }).forEach(([key, slide]) => {
+    for (const [key, slide] of Object.entries({ prev, active, next })) {
       const path = entity.navPaths[key];
       const container = this.#repo.getSlideContainer({
         s: [...slide][0],
         o: key,
       });
-      const { geo } = GeoUtility.getGeometryForSlide(path);
+      const { geo } = await GeoUtility.getGeometryForSlide(path);
       const svg = this.#repo.getSvgForSlidePath({
         ...geo,
         id: entity.svgId,
@@ -57,7 +57,7 @@ export class CarouselService {
       });
       this.#repo.putPathInSlideSvg({ svg, p: path });
       this.#repo.putSvgInCarouselSlide({ cs: container, svg });
-    });
+    }
     this.#repo.putSlidesInCarousel([...prev, ...active, ...next]);
   }
 

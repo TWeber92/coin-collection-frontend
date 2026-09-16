@@ -6,7 +6,8 @@ export class USMapEntity {
   #path;
   #fo;
   #fos;
-  #siblings;
+  #pathSiblings;
+  #foSiblings;
   #prev;
   #active;
   #next;
@@ -23,10 +24,11 @@ export class USMapEntity {
       "image/svg+xml",
     ).documentElement;
     this.#favorites = dto.favorites;
+    this.#pathSiblings = dto.pathSiblings;
+    this.#foSiblings = dto.foSiblings;
     this.#path = dto.path;
     this.#fo = dto.fo;
     this.#fos = dto.fos;
-    this.#siblings = dto.siblings;
     this.#prev = dto.navPaths?.[0];
     this.#active = dto.navPaths?.[1];
     this.#next = dto.navPaths?.[2];
@@ -59,7 +61,8 @@ export class USMapEntity {
       path: this.#path,
       fo: this.#fo,
       fos: this.#fos,
-      siblings: this.#siblings,
+      pathSiblings: this.#pathSiblings,
+      foSiblings: this.#foSiblings,
       prev: this.#prev,
       active: this.#active,
       next: this.#next,

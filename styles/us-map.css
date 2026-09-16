@@ -6,9 +6,29 @@
   display: none;
 }
 path {
-  pointer-events: auto;
+  pointer-events: all;
   cursor: pointer;
+  stroke-width: 1.5 !important;
 }
-svg:has(.fo-svg[data-mouseover="true"]) path {
+
+#tooltip:hover .fo-svg {
   pointer-events: none;
+}
+svg:has(.fo-svg[data-mouse="over"]) path {
+  pointer-events: none !important;
+}
+svg:has(path[data-mouse="over"]) path[data-mouse="out"],
+svg:has(path[data-mouse="over"]) .fo-svg {
+  pointer-events: none;
+}
+path[data-mouse="over"] {
+  stroke: red;
+  stroke-width: 2.5 !important;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.35));
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: translateY(-4px) scale(1.02);
+  transition:
+    transform 1.1s ease,
+    filter 1.1s ease;
 }

@@ -47,8 +47,6 @@ export class CollectionService {
   getCollectionById(body) {
     const collection = this.#repo.getCollectionById({ id: body.collectionId });
     const dto = CollectionDTO.fromEntity({ ...body, collection });
-    console.log(dto.collection);
-
     return CollectionEntity.fromDTO(dto);
   }
   getCoinFromArchiveCollection(body) {

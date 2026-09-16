@@ -25,8 +25,6 @@ export class CollectionRepository extends DocumentClient {
     );
   }
   getLocalStorageByKey(value) {
-    console.log(value);
-
     return this.#browser.getLocalStorageByKey(value);
   }
   async postToFavoritesCollection(value) {

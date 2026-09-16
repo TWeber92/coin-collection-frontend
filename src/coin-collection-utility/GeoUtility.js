@@ -21,7 +21,7 @@ export class GeoUtility {
     return GeoUtility.#POSITION_OVERRIDES[id] || { xAdjust: 0, yAdjust: 0 };
   }
 
-  static #getStatePathsGeometry() {
+  static async #getStatePathsGeometry() {
     let currentX = 0;
     let currentY = 0;
     const { numbers, pathData, xCoords, yCoords } = GeoState.fromGeo();
@@ -50,17 +50,17 @@ export class GeoUtility {
     });
   }
 
-  static getGeometryForSlide(path) {
+  static async getGeometryForSlide(path) {
     const pathData = path.getAttribute("d");
     const numbers = pathData.match(/[-+]?(\d*\.\d+|\d+\.?)/g);
     GeoState.fromSVG({
       pathData,
       numbers,
     });
-    return this.#getStatePathsGeometry(); //{ #fromEntity }
+    return await this.#getStatePathsGeometry(); //{ #fromEntity }
   }
 
-  static getPositionForCoin(path) {
+  static async getPositionForCoin(path) {
     const id = path.dataset.id;
     const bbox = path.getBBox();
     const pathData = path.getAttribute("d");
@@ -74,6 +74,6 @@ export class GeoUtility {
       override,
       coinSize,
     });
-    return this.#getStatePathsGeometry();
+    return await this.#getStatePathsGeometry();
   }
 }
