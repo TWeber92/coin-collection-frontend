@@ -6,7 +6,7 @@ export class USMapRepository extends DocumentClient {
   constructor() {
     super();
   }
-  #api = new APIClient("/assets");
+  #api = new APIClient("./assets");
   #entity = this.#getMapLayout();
 
   #getMapLayout() {
