@@ -32,7 +32,11 @@ export class CoinService {
           ...(await this.#repo.getCoinByStateName(body.name)),
         });
     this.#repo.putCacheCoinInSession({ k: dto.name, c: dto.cache });
-    const entity = CoinEntity.fromDTO(dto);
+    const entity = CoinEntity.fromDTO({
+      ...dto,
+      year: coin ? dto.cache.year : dto.year,
+    });
+    console.log(entity);
     return {
       ...entity,
       coin: this.#repo.putCoinInEntity({ c: entity.node[0], n: entity.name }),
