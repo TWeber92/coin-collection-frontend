@@ -19,7 +19,7 @@ export class CoinDTO {
       stateName: data.stateName,
       obvThumb: data.obvThumb,
       revThumb: data.revThumb,
-      year: data.year,
+      year: data.mintYear,
     };
     CoinDTO.#json = this.#toJSON();
   }
