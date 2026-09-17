@@ -31,9 +31,6 @@ export class USMapRepository extends DocumentClient {
     return super.GET(value, (tag) => this.#entity.querySelectorAll(tag));
   }
   getCoinFromForeignObj(value) {
-    console.log(value);
-    console.log(value.lastChild);
-
     return super.GET(value, (fo) => fo.firstChild);
   }
   getCollectionContainer(value) {
