@@ -1,6 +1,7 @@
 import { DocumentStore } from "../DocumentStore.js";
 import { DocumentClient } from "./DocumentClient.js";
 import { APIClient } from "./APIClient.js";
+import { BrowserRepository } from "./BrowserRepository.js";
 
 export class USMapRepository extends DocumentClient {
   constructor() {
@@ -8,6 +9,7 @@ export class USMapRepository extends DocumentClient {
   }
   #api = new APIClient("./assets");
   #entity = this.#getMapLayout();
+  #browser = new BrowserRepository();
 
   #getMapLayout() {
     return document.body.appendChild(
@@ -23,6 +25,10 @@ export class USMapRepository extends DocumentClient {
         DocumentStore.createForeignObjectElement(p).node,
       ),
     );
+  }
+  getCacheMapFromSession(value) {
+    const session = this.#browser.getSessionStorageByKey(value);
+    return session[this.#entity.id];
   }
   getSvgUSMapText(value) {
     return this.#api.GET(value);
@@ -79,25 +85,29 @@ export class USMapRepository extends DocumentClient {
   putForeignObjectBack(value) {
     super.PUT(value, (v) => v.siblings.previous.after(v.fo));
   }
+  putCacheMapInSession(value) {
+    this.#browser.putNewItemInSessionByKey(
+      value.key,
+      this.#entity.id,
+      value.usmap,
+    );
+  }
   putPathAndSiblingLast(value) {
-    const children =
-      value.siblings.next.tagName === "foreignObject"
-        ? [value.path, value.siblings.next]
-        : [value.path];
+    const children = [value.path];
+    if (value.siblings.next.tagName === "foreignObject")
+      children.push(value.siblings.next);
     super.PUT(value, (v) => v.map.append(...children));
   }
   putPathAndSiblingFirst(value) {
-    const children =
-      value.siblings.next.tagName === "foreignObject"
-        ? [value.path, value.siblings.next]
-        : [value.path];
+    const children = [value.path];
+    if (value.siblings.next.tagName === "foreignObject")
+      children.push(value.siblings.next);
     super.PUT(value, (v) => v.map.prepend(...children));
   }
   putPathAndSiblingBack(value) {
-    const children =
-      value.siblings.next.tagName === "foreignObject"
-        ? [value.path, value.siblings.next]
-        : [value.path];
+    const children = [value.path];
+    if (value.siblings.next.tagName === "foreignObject")
+      children.push(value.siblings.next);
     super.PUT(value, (v) => v.siblings.previous.after(...children));
   }
   putCoinInForeignObject(value) {

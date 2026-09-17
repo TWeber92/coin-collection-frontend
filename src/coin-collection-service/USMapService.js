@@ -17,11 +17,15 @@ export class USMapService {
   }
 
   async #putMapOnDisplay(resolve) {
-    const text = await this.#repo
-      .getSvgUSMapText("/us.svg")
-      .then((t) => t.replace(/<path[^>]*\bid="DC"[^>]*\/>/gi, ""));
+    const usmap = this.#repo.getCacheMapFromSession("svg");
+    const text =
+      usmap ||
+      (await this.#repo
+        .getSvgUSMapText("/us.svg")
+        .then((t) => t.replace(/<path[^>]*\bid="DC"[^>]*\/>/gi, "")));
     const dto = USMapDTO.fromEntity({ html: text });
     const { node } = USMapEntity.fromDTO(dto);
+    this.#repo.putCacheMapInSession({ usmap: text, key: node.tagName });
     node.setAttribute("viewBox", "80 0 1000 589");
     USMapEntity.map = node;
     this.#repo.putMapInEntity(node);
