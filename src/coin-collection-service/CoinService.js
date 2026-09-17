@@ -26,6 +26,8 @@ export class CoinService {
 
   async updateCoinEntity(body) {
     const coin = this.#repo.getCacheCoinFromSession(body.name);
+    console.log(coin);
+
     const dto = coin
       ? CoinDTO.fromEntity({ ...body, ...coin })
       : CoinDTO.fromAPI({
@@ -34,7 +36,7 @@ export class CoinService {
     this.#repo.putCacheCoinInSession({ k: dto.name, c: dto.cache });
     const entity = CoinEntity.fromDTO({
       ...dto,
-      year: coin ? dto.cache.year : dto.year,
+      year: coin ? dto.cache.mintYear : dto.year,
     });
     console.log(entity);
     return {
