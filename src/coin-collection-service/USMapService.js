@@ -1,178 +1,135 @@
 import { USMapDTO } from "../coin-collection-dto/USMapDTO.js";
-import { USMapEntity } from "../coin-collection-entity/USMapEntity.js";
-import { USMapRepository } from "../coin-collection-repository/USMapRepository.js";
+import { UsMap } from "../coin-collection-entity/UsMap.js";
 import { GeoUtility } from "../coin-collection-utility/GeoUtility.js";
-import { EventRegister } from "../EventRegister.js";
+import { UsMapView } from "../coin-collection-view/UsMapView.js";
+// import { EventRegister } from "../EventRegister.js";
 
 export class USMapService {
-  constructor(resolve) {
-    this.#repo = new USMapRepository();
-    this.#init(resolve);
+  constructor(repo) {
+    this.#repo = repo;
   }
 
   #repo;
 
-  async #init(resolve) {
-    await this.#putMapOnDisplay(resolve);
+  async getUSMapSvgText() {
+    const text = await this.#repo.getUSMapSvgText();
+    return UsMapView.from({ text });
   }
-
-  async #putMapOnDisplay(resolve) {
-    const usmap = this.#repo.getCacheMapFromSession("svg");
-    const text =
-      usmap ||
-      (await this.#repo
-        .getSvgUSMapText("/us.svg")
-        .then((t) => t.replace(/<path[^>]*\bid="DC"[^>]*\/>/gi, "")));
-    const dto = USMapDTO.fromEntity({ html: text });
-    const { node } = USMapEntity.fromDTO(dto);
-    this.#repo.putCacheMapInSession({ usmap: text, key: node.tagName });
-    node.setAttribute("viewBox", "80 0 1000 589");
-    USMapEntity.map = node;
-    this.#repo.putMapInEntity(node);
-    this.#repo.putMapOnOffDisplay();
-    this.#getAndSerializePaths();
-    resolve();
+  putMapOnDisplay(text) {
+    this.#repo.putMapOnDisplay(text);
   }
-
-  #getAndSerializePaths() {
-    const dto = USMapDTO.fromEntity({
-      paths: [...this.#repo.getAllPathsFromSVG("path")].map((p) => {
-        p.id = "state";
-        p.dataset.mouse = "out";
-        return p;
-      }),
+  getAndSerializePaths() {
+    const paths = [...this.#repo.getAllPathsFromSVG("path")].map((p) => {
+      p.id = "state";
+      p.dataset.mouse = "out";
+      return p;
     });
-    USMapEntity.paths = dto.paths;
+    this.#repo.entity.paths = paths;
+    return paths;
   }
-
-  getAllCoinsFromForeignObjects(body) {
-    const dto = USMapDTO.fromEntity(body);
-    const { fos } = USMapEntity.fromDTO({
-      ...dto,
-      fos: this.#repo.getAllForeignObjects(dto.foTag),
-    });
-    if (fos.length)
-      return [...fos]
-        .map((fo) => this.#repo.getCoinFromForeignObj(fo))
-        .filter(Boolean);
-  }
-  getCarouselPathsByIndex() {
-    const getPathAndSibling = (paths) =>
-      [paths].map((p) =>
-        this.#repo.getPathAndPreviousSibling({
-          p,
-          name: p.dataset.name,
-          map: USMapEntity.map,
-        }),
-      );
-    const paths = USMapEntity.paths;
+  getCarouselPathsByIndex(index) {
+    const getPathAndSibling = (path) =>
+      [path].map((p) => this.#repo.getPathAndPreviousSibling(p.dataset.name));
+    const paths = this.#repo.entity.paths;
     const getNavPaths = (i) =>
       [i - 1 + paths.length, i, i + 1]
         .map((cal) => getPathAndSibling(paths[cal % paths.length]))
         .flat();
-    const { index } = USMapDTO.fromEntity({});
-    const dto = USMapDTO.fromEntity({ navPaths: getNavPaths(index) });
-    return USMapEntity.fromDTO(dto); //{ prev, active, next }
+    this.#repo.navPaths = getNavPaths(index);
+    const entity = UsMap.from({
+      index,
+      prev: this.#repo.navPaths[0],
+      active: this.#repo.navPaths[1],
+      next: this.#repo.navPaths[2],
+    });
+    return USMapDTO.from(entity.to());
   }
-
+  getAllCoinsFromForeignObjects(foTag) {
+    const fos = this.#repo.getAllForeignObjects(foTag);
+    if (fos.length)
+      return USMapDTO.from({
+        coins: [...fos]
+          .map((fo) => this.#repo.getCoinFromForeignObj(fo))
+          .filter(Boolean),
+      });
+  }
   putStatesBackInMap() {
-    const dto = USMapDTO.fromEntity({});
-    if (!dto.navPaths) return;
-    const { prev, active, next } = USMapEntity.fromDTO(dto);
-    Object.entries({ prev, active, next }).forEach(([_, val]) =>
+    if (!this.#repo.navPaths) return;
+    const paths = this.#repo.navPaths;
+    const entity = UsMap.from({
+      prev: paths[0],
+      active: paths[1],
+      next: paths[2],
+    }).to();
+    Object.entries(entity.navPaths).forEach(([_, val]) =>
       this.#repo.putStatePathBack({
         path: val.path,
         sibling: val.sibling,
       }),
     );
   }
-
-  async putCoinInForeignObj(body) {
-    const dto = USMapDTO.fromEntity(body);
-    const match = this.#repo.getForeignObjByName(dto.name);
-    const path = this.#repo.getStatePathByName(dto.name);
-    const { width, height, x, y, coin, name } = USMapEntity.fromDTO({
-      ...dto,
-      ...(await GeoUtility.getPositionForCoin(path)),
-    });
-    const map = {
-      [!!match]: () => match,
-      [!match]: () =>
-        this.#repo.getForeignObjectSVG({
+  async putCoinInForeignObj(coin) {
+    const match = this.#repo.getForeignObjByName(coin.id);
+    const path = this.#repo.getStatePathByName(coin.id);
+    const { size, x, y } = await GeoUtility.getPositionForCoin(path);
+    const fo = match
+      ? match
+      : this.#repo.getForeignObjectSVG({
           id: path.id,
           className: "fo-svg",
-          data: { name, mouse: "out" },
-          width,
-          height,
+          data: { name: coin.id, mouse: "out" },
+          width: size,
+          height: size,
           x,
           y,
-        }),
-    };
-    const fo = map[true]();
+        });
+    if (match) fo.dataset.mouse = "out";
     this.#repo.putCoinInForeignObject({ fo, c: coin });
     coin.dataset.location = fo.id;
-    if (!match) this.#repo.putForeignObjAfterPath({ fo, path });
+    if (!match) this.#repo.putForeignObjAfterPath({ path, fo });
   }
-  async putCoinsBackInMap(body) {
-    const dto = USMapDTO.fromEntity(body);
-    const entity = USMapEntity.fromDTO({
-      ...dto,
-      favorites: this.#repo.getCollectionContainer(dto.favorites),
-    });
-    const coins = this.#repo.getAllFavoriteCoins(entity.favorites);
+  async putCoinsBackInMap(container) {
+    const favorites = this.#repo.getCollectionFromContainer(container);
+    const coins = this.#repo.getAllFavoriteCoins(favorites);
     if (coins)
-      for (const coin of [...coins]) await this.putCoinInForeignObj({ coin });
+      for (const coin of [...coins]) await this.putCoinInForeignObj(coin);
   }
-
-  putPathLast(body) {
-    const getNextAndPrev = (p) => this.#repo.getNextAndPreviousSibling(p);
-    const dto = USMapDTO.fromEntity({
-      ...body,
-      pathSiblings: getNextAndPrev(body.path),
-    });
-    const { path, pathSiblings } = USMapEntity.fromDTO(dto);
+  putPathLast(path) {
+    this.#repo.pathSiblings = this.#repo.getNextAndPreviousSibling(path);
     this.#repo.putPathAndSiblingLast({
       path,
-      siblings: pathSiblings,
-      map: USMapEntity.map,
+      siblings: this.#repo.pathSiblings,
     });
   }
 
-  putPathBack(body) {
-    const dto = USMapDTO.fromEntity(body);
-    const { path, pathSiblings } = USMapEntity.fromDTO(dto);
-    EventRegister.mutation = {
-      node: USMapEntity.map,
-      fn: () => (path.dataset.mouse = "out"),
-    };
-    if (!pathSiblings.previous)
+  putPathBack(path) {
+    // EventRegister.mutation = {
+    //   node: this.#repo.entity.svg,
+    //   fn: () => (path.dataset.mouse = "out"),
+    // };
+    if (!this.#repo.pathSiblings.previous)
       this.#repo.putPathAndSiblingFirst({
         path,
-        siblings: pathSiblings,
-        map: USMapEntity.map,
+        siblings: this.#repo.pathSiblings,
       });
-    else this.#repo.putPathAndSiblingBack({ path, siblings: pathSiblings });
-  }
-  putFOLast(body) {
-    EventRegister.transition = () => {
-      const dto = USMapDTO.fromEntity({
-        ...body,
-        foSiblings: this.#repo.getNextAndPreviousSibling(body.fo),
+    else
+      this.#repo.putPathAndSiblingBack({
+        path,
+        siblings: this.#repo.pathSiblings,
       });
-      const { fo } = USMapEntity.fromDTO(dto);
-      this.#repo.putForeignObjectLast({ fo, map: USMapEntity.map });
-    };
+    path.dataset.mouse = "out";
   }
-  putFOBack(body) {
-    EventRegister.transition = () => {
-      const dto = USMapDTO.fromEntity(body);
-      const { fo, foSiblings } = USMapEntity.fromDTO(dto);
-      EventRegister.mutation = {
-        node: USMapEntity.map,
-        fn: () => (fo.dataset.mouse = "out"),
-      };
-      this.#repo.putForeignObjectBack({ fo, siblings: foSiblings });
-    };
+
+  putFOLast(fo) {
+    this.#repo.foSiblings = this.#repo.getNextAndPreviousSibling(fo);
+    this.#repo.putForeignObjectLast(fo);
+  }
+  putFOBack(fo) {
+    this.#repo.putForeignObjectBack({
+      fo,
+      siblings: this.#repo.foSiblings,
+    });
+    fo.dataset.mouse = "out";
   }
   putMapOnOffDisplay() {
     this.#repo.putMapOnOffDisplay();

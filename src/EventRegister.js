@@ -8,16 +8,12 @@ import { ModalController } from "./coin-collection-controller/ModalController.js
 import { PageController } from "./coin-collection-controller/PageController.js";
 import { TooltipController } from "./coin-collection-controller/TooltipController.js";
 import { USMapController } from "./coin-collection-controller/USMapController.js";
-import { USMapEntity } from "./coin-collection-entity/USMapEntity.js";
 
 export class EventRegister {
-  static #transition;
-  static #timer;
-  static #controllers = {};
-  #service;
-  constructor(services) {
-    this.#service = services;
-    this.#registerControllers();
+  static #transitionstart;
+  static #transitionend;
+  #currentRegion;
+  constructor() {
     this.#registerListeners();
   }
   static set mutation({ node, fn }) {
@@ -27,44 +23,11 @@ export class EventRegister {
     });
     mo.observe(node, { childList: true, subtree: true });
   }
-  static set transition(transition) {
-    EventRegister.#transition = transition;
+  static set transitionstart(transition) {
+    EventRegister.#transitionstart = transition;
   }
-  static set timer(transition) {
-    EventRegister.#timer = transition;
-  }
-  static get controllers() {
-    return EventRegister.#controllers;
-  }
-  #registerControllers() {
-    const controllers = EventRegister.controllers;
-    controllers.authController = new AuthController(this.#service.authService);
-    controllers.headerController = new HeaderController(
-      this.#service.headerService,
-    );
-    controllers.usMapController = new USMapController(
-      this.#service.usMapService,
-    );
-    controllers.carouselController = new CarouselController(
-      this.#service.carouselService,
-    );
-    controllers.collectionController = new CollectionController(
-      this.#service.collectionService,
-    );
-    controllers.coinController = new CoinController(this.#service.coinService);
-    controllers.pageController = new PageController(this.#service.pageService);
-    controllers.modalController = new ModalController(
-      this.#service.modalService,
-    );
-    controllers.tooltipController = new TooltipController(
-      this.#service.tooltipService,
-    );
-    // this.controllers.scrollController = new ScrollController(
-    //   this.#service.scrollService,
-    // );
-    // this.controllers.sortController = new SortController(
-    //   this.#service.sortService,
-    // );
+  static set transitionend(transition) {
+    EventRegister.#transitionend = transition;
   }
   #registerListeners() {
     this.#registerClickListener();
@@ -72,7 +35,6 @@ export class EventRegister {
     // this.#registerSubmitListener();
     this.#registerPointerListeners();
     this.#registerTransitionListener();
-    // this.#registerMutationListener();
     this.#registerLoadedListener();
     this.#registerResizeListener();
   }
@@ -82,13 +44,6 @@ export class EventRegister {
       if (e.target.nodeType !== 1) return;
       await event(e);
     });
-    // document.addEventListener("pointerdown", async (e) => {
-    //   if (e.target.nodeType !== 1) return;
-    //   await event(e);
-    // });
-    // document.addEventListener("pointerup", async (e) =>
-    //   clearTimeout(EventRegister.#timer)
-    // );
   }
   #registerInputListener() {
     document.addEventListener("input", async (e) => {
@@ -102,7 +57,6 @@ export class EventRegister {
       await event(e);
     });
   }
-  #currentRegion;
   async #registerPointerListeners() {
     document.addEventListener("mouseover", async (e) => {
       if (e.target.nodeType !== 1) return;
@@ -137,12 +91,13 @@ export class EventRegister {
   }
   #registerTransitionListener() {
     document.addEventListener("transitionend", async (e) => {
-      if (EventRegister.#transition) await EventRegister.#transition();
-      EventRegister.#transition = null;
+      if (EventRegister.#transitionend) await EventRegister.#transitionend();
+      EventRegister.transitionend = null;
     });
     document.addEventListener("transitionstart", async (e) => {
-      if (EventRegister.#transition) await EventRegister.#transition();
-      EventRegister.#transition = null;
+      if (EventRegister.#transitionstart)
+        await EventRegister.#transitionstart();
+      EventRegister.transitionstart = null;
     });
   }
   async #registerResizeListener() {

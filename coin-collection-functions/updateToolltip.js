@@ -1,19 +1,17 @@
-import { EventRegister } from "../src/EventRegister.js";
+import { Application } from "../src/Application.js";
+// import { EventRegister } from "../src/EventRegister.js";
 
 export const handler = async (e) => {
   const location = e.target.closest("[data-location]").dataset.location;
-  const tooltipController = EventRegister.controllers.tooltipController;
-  const coinController = EventRegister.controllers.coinController;
+  const { tooltipController } = Application.controllers;
   const req = { body: { e, coin: e.target, location } };
-  await coinController.updateCoinEntityState(req, null);
   const router = {
-    state: async () => await tooltipController.postArchiveTooltip(req, null),
-    modal: async () => await tooltipController.postAddTooltip(req, null),
+    state: async () => await tooltipController.postArchiveTooltip(req, null), //args - coin
+    modal: async () => await tooltipController.postAddTooltip(req, null), //args - coin
     favorites: async () =>
-      await tooltipController.postArchiveTooltip(req, null),
+      await tooltipController.postArchiveTooltip(req, null), //args - coin
     archive: async () =>
-      await tooltipController.postRestoreOrDeleteTooltip(req, null),
+      await tooltipController.postRestoreOrDeleteTooltip(req, null), //args - coin
   };
   await router[location]();
-  // EventRegister.timer = setTimeout(async () => await router[location](), 500);
 };

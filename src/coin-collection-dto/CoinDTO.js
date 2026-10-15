@@ -1,53 +1,20 @@
 export class CoinDTO {
-  static #json = {};
-  #template;
   #coin;
   #year;
   #name;
-  #clone;
-  #tooltip;
-  #cache;
-  constructor(data) {
-    data = { ...CoinDTO.#json, ...data };
-    this.#html = data;
-    this.#name = data.stateName;
-    this.#year = data.mintYear;
-    this.#coin = data.coin;
-    this.#clone = data.clone;
-    this.#tooltip = data.tooltip;
-    this.#cache = {
-      stateName: data.stateName,
-      obvThumb: data.obvThumb,
-      revThumb: data.revThumb,
-      mintYear: data.mintYear,
-    };
-    CoinDTO.#json = this.#toJSON();
+  constructor(data){
+    this.#coin = data.entity;
+    this.#name = data.name;
+    this.#year = data.year
   }
-
-  set #html(data) {
-    this.#template = `
-          <div id="coin" class="coin-container">
-            <img class="coin-heads coin-front" src="${data.obvThumb}" alt="${data.stateName} front" />
-            <img class="coin-tails coin-back" src="${data.revThumb}" alt="${data.stateName} back" />
-          </div>`;
-  }
-
-  #toJSON() {
+  to() {
     return {
-      template: this.#template,
-      year: this.#year,
-      coin: this.#coin,
       name: this.#name,
-      clone: this.#clone,
-      tooltip: this.#tooltip,
-      cache: this.#cache,
-    };
+      year: this.#year,
+      entity: this.#coin,
+    }
   }
-
-  static fromAPI(dto) {
-    return new CoinDTO(dto).#toJSON();
-  }
-  static fromEntity(entity) {
-    return new CoinDTO(entity).#toJSON();
+  static from(data) {
+    return new CoinDTO(data)
   }
 }

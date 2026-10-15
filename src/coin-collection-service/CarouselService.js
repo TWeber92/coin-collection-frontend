@@ -1,75 +1,69 @@
 import { CarouselDTO } from "../coin-collection-dto/CarouselDTO.js";
-import { CarouselEntity } from "../coin-collection-entity/CarouselEntity.js";
-import { CarouselRepository } from "../coin-collection-repository/CarouselRepository.js";
+import { Carousel } from "../coin-collection-entity/Carousel.js";
 import { GeoUtility } from "../coin-collection-utility/GeoUtility.js";
+import { CarouselView } from "../coin-collection-view/CarouselView.js";
 
 export class CarouselService {
-  constructor() {
-    this.#repo = new CarouselRepository();
-    this.#putCarouselAssemblyinNav();
+  constructor(repo) {
+    this.#repo = repo;
   }
 
   #repo;
+  #pathCount;
 
-  #putCarouselAssemblyinNav() {
-    const dto = this.#getRandomIndex();
-    const entity = CarouselEntity.fromDTO(dto);
-    const layout = this.#repo.getStateCarouselLayout({
+  getRandomIndex(pathCount) {
+    this.#pathCount = pathCount
+    const calc = (l) => Math.floor(Math.random() * l);
+    return CarouselDTO.from({ index: calc(pathCount) });
+  }
+  putCarouselAssemblyinNav(index) {
+    this.#repo.index = index;
+    const carousel = CarouselView.from({}).carousel;
+    const { active, next, prev } = CarouselView.from({});
+    const navigation = this.#repo.getCarouselPartsWithHtml(carousel);
+    const slides = this.#repo.getCarouselPartsWithHtml(prev + active + next);
+    const entity = Carousel.from({
+      navigation,
+      prev: slides[0],
+      active: slides[1],
+      next: slides[2],
+    });
+    this.#repo.getStateCarouselLayout({
       id: "state-carousel",
       className: "state-carousel",
     });
-    this.#repo.putNavInCarouselLayout(layout); // Nav is the repository's entity
-    this.#repo.putCarouselInNav(entity.nodes);
-    this.#repo.putSlidesInCarousel([
-      ...entity.prev,
-      ...entity.active,
-      ...entity.next,
-    ]);
+    this.#repo.putCarouselNavTogether(entity.to());
   }
   postPreviousStateSlide() {
-    const { length, index } = CarouselDTO.fromEntity({});
     const calc = (l, i) => (i - 1 + l) % l;
-    CarouselDTO.fromEntity({ index: calc(length, index) });
-    //This is not where the story ends. This updates USMapDTO index relationship.
+    this.#repo.index = calc(this.#pathCount, this.#repo.index);
+    return CarouselDTO.from({ index: this.#repo.index });
   }
   postNextStateSlide() {
-    const { length, index } = CarouselDTO.fromEntity({});
     const calc = (l, i) => (i + 1) % l;
-    CarouselDTO.fromEntity({ index: calc(length, index) });
-    //This is not where the story ends. This updates USMapDTO index relationship.
+    this.#repo.index = calc(this.#pathCount, this.#repo.index);
+    return CarouselDTO.from({ index: this.#repo.index });
   }
-
-  async putSlidesInPosition(body) {
-    const dto = CarouselDTO.fromEntity(body);
-    const entity = CarouselEntity.fromDTO(dto);
-    const { prev, active, next } = entity;
-    for (const [key, slide] of Object.entries({ prev, active, next })) {
-      const path = entity.navPaths[key];
-      const container = this.#repo.getSlideContainer({
-        s: [...slide][0],
-        o: key,
-      });
+  async putSlidesInPosition(navPaths) {
+    const [prev, active, next] = this.#repo.getSlidesFromCarousel();
+    const entity = Carousel.from({ prev, active, next }).to();
+    for (const [key, slide] of Object.entries(entity.slides)) {
+      const path = navPaths[key].path;
+      const name = path.dataset.name;
+      const html = CarouselView.from({ name });
+      const span = this.#repo.getCarouselPartsWithHtml(html.span);
+      const container = this.#repo.getSlideContainer(slide);
+      container.dataset.name = name;
       const { geo } = await GeoUtility.getGeometryForSlide(path);
       const svg = this.#repo.getSvgForSlidePath({
         ...geo,
-        id: entity.svgId,
-        data: { name: path.dataset.name },
+        id: path.id,
+        data: { name },
       });
-      this.#repo.putPathInSlideSvg({ svg, p: path });
-      this.#repo.putSvgInCarouselSlide({ cs: container, svg });
+      this.#repo.putSlideTogether({ svg, p: path, cs: container, s: span[0] });
     }
-    this.#repo.putSlidesInCarousel([...prev, ...active, ...next]);
   }
-
   putCarouselOnOffDisplay() {
     this.#repo.putCarouselOnOffDisplay();
-  }
-
-  #getRandomIndex() {
-    const dto = CarouselDTO.fromEntity({});
-    const calc = (l) => Math.floor(Math.random() * l);
-    return CarouselDTO.fromEntity({
-      index: calc(dto.length),
-    });
   }
 }

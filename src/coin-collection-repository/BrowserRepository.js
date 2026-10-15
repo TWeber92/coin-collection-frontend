@@ -12,6 +12,9 @@ export class BrowserRepository extends BrowserClient {
     const updated = [...local, value];
     super.LOCAL.PUT(key, updated);
   }
+  putLocalStorageByKey(key, array) {
+    super.LOCAL.PUT(key, array);
+  }
   deleteItemInLocalByKey(key, value) {
     const local = super.LOCAL.GET(key);
     const updated = local.filter((item) => item !== value);

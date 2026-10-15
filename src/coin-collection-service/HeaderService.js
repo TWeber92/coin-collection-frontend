@@ -1,50 +1,86 @@
 import { HeaderDTO } from "../coin-collection-dto/HeaderDTO.js";
-import { HeaderEntity } from "../coin-collection-entity/HeaderEntity.js";
-import { HeaderRepository } from "../coin-collection-repository/HeaderRepository.js";
+import { Header } from "../coin-collection-entity/Header.js";
+import { BrowserRepository } from "../coin-collection-repository/BrowserRepository.js";
+import { HeaderView } from "../coin-collection-view/HeaderView.js";
 
 export class HeaderService {
-  constructor() {
-    this.#repo = new HeaderRepository();
-    this.#putContextInHeader();
+  constructor(repo, browser) {
+    this.#repo = repo;
+    this.#browser = browser;
   }
 
   #repo;
+  #browser;
 
-  #putContextInHeader() {
-    const dto = HeaderDTO.fromEntity({});
-    const entity = HeaderEntity.fromDTO(dto);
-    if (dto.collection.archive.count < 1) entity.buttons[2].remove();
-    const [h3, menu, btn, nav] = entity.nodes;
-    this.#repo.putContextInHeader([h3, menu, btn]);
-    this.#repo.putNavItemsInMenu({ menu, items: entity.buttons });
-    this.#repo.putNavAfterHeader(nav);
-  }
-  putNewCountInBadge(body) {
-    const dto = HeaderDTO.fromEntity(body);
-    const count = dto.collection.archive.count;
-    const archive = this.#repo.getExistingArchiveButton(dto.archiveId);
-    const entity = HeaderEntity.fromDTO(dto);
-    if (!archive && count > 0)
-      this.#repo.putArchiveButtonInEntity({
-        b: entity.buttons[2],
-        id: entity.menuBtnId,
-      });
-    const badges = [...this.#repo.getBadgesFromEntity(entity.badgeId)];
-    Object.entries(dto.collection).forEach(([key, value]) => {
-      const badge = badges.find((b) => b.dataset.badge === key);
-      if (badge) this.#repo.putNewCountInBadge({ b: badge, c: value.count });
+  getHeaderContext() {
+    const header = this.#repo.entity.header.children;
+    const buttons = this.#repo.getButtonsFromEntity();
+    const entity = Header.from({
+      header: this.#repo.entity.header,
+      mobile: this.#repo.entity.nav,
+      menu: header[1],
+      hamburger: header[2],
+      buttons,
     });
-    return this.#repo.getFavoritesButtonFromEntity(entity.favoritesId);
+    return HeaderDTO.from(entity.to());
   }
-  putNewIconInHeader(body) {
-    const dto = HeaderDTO.fromEntity(body);
-    const { menuBtnId } = HeaderEntity.fromDTO(dto);
-    const buttons = this.#repo.getNavItemsFromDocBody();
-    const menuBtn = this.#repo.getMenuButtonById(menuBtnId);
+  putContextInHeader(user) {
+    const { headerContext, headerBtns } = HeaderView.from({ user });
+    const context = this.#repo.getHeaderContextWithHtml(headerContext);
+    const buttons = this.#repo.getHeaderContextWithHtml(headerBtns);
+    const entity = Header.from({
+      title: context[0],
+      menu: context[1],
+      hamburger: context[2],
+      mobile: context[3],
+      buttons,
+    }).to();
+    const { archive } = entity.buttons;
+    const localArchive = this.#browser.getLocalStorageByKey(archive.id);
+    if (localArchive.length < 1) entity.buttons.archive.remove();
+    this.#repo.putHeaderAssemblyTogether(entity);
+  }
+  putNewCountInBadge(collection) {
+    const html = HeaderView.from({});
+    const headerBtns = [
+      ...this.#repo.getHeaderContextWithHtml(html.headerBtns),
+    ];
+    const header = this.#repo.entity.header.children;
+    const buttons = this.#repo.getButtonsFromEntity();
+    const entity = Header.from({
+      menu: header[1],
+      buttons,
+      ...collection,
+    }).to();
+    const { favorites, archive } = entity.buttons;
+    const count = entity.collection.archive;
+    // const archive = entity.buttons[2] || null;
+    const badge = this.#repo.getExistingBadgeFromButton(favorites);
+    if (!archive && count > 0)
+      this.#repo.putArchiveButtonInEntity(headerBtns[2]);
+    const badges = [...this.#repo.getBadgesFromEntity(badge.id)];
+    Object.entries(entity.collection).forEach(([key, count]) => {
+      const badge = badges.find((b) => b.dataset.badge === key);
+      if (badge) this.#repo.putNewCountInBadge({ b: badge, c: count });
+    });
+    if (count < 1 && archive) entity.buttons.archive.remove();
+    return HeaderDTO.from({ ...entity, buttons });
+  }
+  putMenuNavOnOffDisplay(menuBtn) {
+    const buttons = this.#repo.getButtonsFromEntity();
     this.#repo.putMenuNavOnOffDisplay(buttons);
+    this.putNewIconInHeader(menuBtn);
+  }
+  putNewIconInHeader(menuBtn) {
     this.#repo.putNewMenuButtonInHeader(menuBtn);
   }
-  putMenuNavOnOffDisplay(body) {
-    this.putNewIconInHeader(body);
+  deleteAboutHeaderButton(user) {
+    console.log(user);
+    
+    const buttons = this.#repo.getButtonsFromEntity();
+    const authenticated = user.authenticated;
+    const entity = Header.from({ buttons }).to();
+    entity.buttons.about.hidden = !authenticated;
+    entity.buttons.login.hidden = authenticated
   }
 }

@@ -42,7 +42,6 @@ nav[hidden] {
   right: 0;
 }
 .nav-mobile #close {
-  /* font-size: 1.25rem; */
   align-self: flex-end;
   cursor: pointer;
   margin-bottom: 16px;
@@ -76,9 +75,14 @@ nav[hidden] {
 #favorites[data-nav-item] {
   pointer-events: none;
 }
+#about[data-nav-item],
 #login[data-nav-item],
 #archive[data-nav-item] {
   pointer-events: auto;
+}
+#about[hidden],
+#login[hidden] {
+  display: none;
 }
 
 @media (max-width: 768px) {

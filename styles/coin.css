@@ -4,6 +4,7 @@
    ═══════════════════════════════════════════ */
 
 .coin-entity {
+  position: relative;
   margin: 0;
   display: flex;
   align-items: center;
@@ -11,6 +12,7 @@
   pointer-events: none;
   width: 100%;
   height: 100%;
+  z-index: 5;
 }
 
 .coin-entity[hidden] {
@@ -18,7 +20,6 @@
 }
 
 .coin-container {
-  position: relative;
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
@@ -53,9 +54,12 @@
   transform: rotateY(180deg);
 }
 
-/* Shared hover flip */
+/* Flip state — driven by id swap, not hover */
+#coin {
+  transform: rotateY(0deg);
+}
 
-.coin-container:hover {
+#coined {
   transform: rotateY(180deg);
   box-shadow:
     0 0 20px rgba(255, 215, 0, 0.7),
@@ -89,23 +93,25 @@ foreignObject.fo-svg .coin-entity {
     width 0.8s ease,
     transform 0.8s ease;
 }
-foreignObject.fo-svg:hover .coin-container {
-  transition:
-    transform 1.1s ease,
-    box-shadow 0.4s ease;
+foreignObject.fo-svg:hover {
+  box-shadow:
+    0 0 20px rgba(255, 215, 0, 0.7),
+    0 0 40px rgba(255, 215, 0, 0.3);
 }
-foreignObject.fo-svg:hover .coin-entity {
+
+/* Resize driven by flipped state, not hover */
+foreignObject.fo-svg:has(#coined) .coin-entity {
   width: 125px;
   height: 125px;
   transform: translate(-32.5%, -32.5%);
-  /* pointer-events: auto; */
 }
+
 /* ═══════════════════════════════════════════
    COIN — MODAL CONTEXT
    Only what's different from the base.
    ═══════════════════════════════════════════ */
 
-.modal-overlay .coin-container {
+.modal .coin-container {
   width: max(50cqw, 50cqh);
   height: max(50cqw, 50cqh);
 }
@@ -120,12 +126,12 @@ foreignObject.fo-svg:hover .coin-entity {
   height: 100px;
 }
 
-[data-collection] .coin-container:hover,
-.coin-entity:has(#tooltip:hover) .coin-container {
+[data-collection] .coin-container#coined {
   transform: rotateY(180deg);
   width: 125px;
   height: 125px;
 }
+
 [data-collection] .coin-entity {
   height: auto;
   margin: 0 auto;

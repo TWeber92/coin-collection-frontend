@@ -1,87 +1,75 @@
 import { DocumentStore } from "../DocumentStore.js";
+import { HtmlStore } from "../HtmlStore.js";
 import { DocumentClient } from "./DocumentClient.js";
 
 export class PageRepository extends DocumentClient {
-  constructor() {
+  constructor(view) {
     super();
+    this.#entity = view.entity;
   }
 
-  #entity = this.#getPageElement();
+  #entity;
 
-  #getPageElement() {
-    return document.body.appendChild(
-      DocumentStore.createDivElement({
-        id: "overlay",
-        className: "page-overlay",
-        hidden: true,
-      }).node,
-    );
-  }
-  getCollectionHiddenState(value) {
-    return super.GET(value.collection, (c) => c.hidden);
-  }
-  getCollectionById(value) {
-    return super.GET(value, (v) =>
-      this.#entity.querySelector(`#${v.id}-collection`),
-    );
-  }
-  getBodySectionById(value) {
-    return super.GET(value, (id) => this.#entity.querySelector(`#${id}`));
-  }
-  getFooterContentById(value) {
-    return super.GET(value, (id) =>
-      this.#entity.querySelectorAll(`[name=${id}]`),
-    );
-  }
-  getExistingArchiveSibling(value) {
-    return super.GET(value, (btn) => btn.nextSibling);
+  get entity() {
+    return this.#entity;
   }
 
-  postTemplateToPageEntity(value) {
-    super.POST(value, (t) => this.#entity.replaceChildren(...t));
+  getPageContextWithHtml(html) {
+    return super.GET(html, (t) => HtmlStore.from(t).nodes);
   }
-  putCollectionInPageBody(value) {
-    super.PUT(value, (v) => v.b[v.id].append(v.col));
+  getBodySectionById(id) {
+    return super.GET(id, (id) => {
+       const body = this.#entity.children[1]
+       if(body) return body[id]
+    });
   }
-  getCollectionHiddenState(value) {
-    return super.GET(value, (v) => v.collection.hidden);
+  getFooterContentById(id) {
+    return super.GET(`[name=${id}]`, (id) => this.#entity.querySelectorAll(id));
   }
-  getPageEntityHiddenState() {
-    return super.GET(this.#entity, (e) => e.hidden);
+  putCollectionInPageById(context) {
+    super.PUT(context, ({ id, c }) => {
+      const body = this.#entity.children[1];
+      body.children[id].append(c);
+    });
   }
-  putArchiveInNewPosition(value) {
-    super.PUT(value, (v) =>
-      v.c.lastChild.scrollBy({
-        left: v.d,
+  putPageTogether(entity) {
+    super.PUT(entity, ({ page, header, body, footer }) => {
+      const [h, b, f] = page;
+      h.append(...header);
+      b.append(...body);
+      f.append(...footer);
+      this.#entity.replaceChildren(h, b, f);
+    });
+  }
+  putAboutPageTogether(entity) {
+    this.putPageTogether(entity)
+  }
+  putCollectionPageTogether(entity) {
+    this.putPageTogether(entity)
+  }
+  putPageOnOffDisplay() {
+    super.PUT(this.#entity, (e) => {
+      e.hidden = !e.hidden;
+      document.body.dataset.overlay = e.hidden ? "false" : "true";
+    });
+  }
+  putArchiveInNewPosition(context) {
+    super.PUT(context, ({ a, d }) =>
+      a.lastChild.scrollBy({
+        left: d,
         behavior: "smooth",
       }),
     );
   }
-
-  putCollectionPageTogether(value) {
-    const [header, body, footer] = value.t;
-    super.PUT(value, (v) => {
-      header.append(...v.h);
-      body.append(...v.b);
-      footer.append(...v.f);
+  putArrowInNewOrientation(context) {
+    super.PUT(context, ({ col, id }) => {
+      const body = this.#entity.children[1];
+      const container = body.children[id];
+      const button = container.firstChild.children[id];
+      button.textContent = col.hidden ? "﹀" : "︿";
     });
   }
-  putPageOnDisplayIfHidden() {
-    // const pathUrl = window.location.pathname
-    // if (hidden && pathUrl === '/') {
-    //   this.#entity.hidden = false;
-    //   document.body.dataset.overlay = "true";
-    //   history.pushState({ method: 'getPageEntityHiddenState' }, '', '/page');
-    // }
-    // if (!hidden && pathUrl === '/page') {
-    //   this.#entity.hidden = true;
-    //   document.body.dataset.overlay = "false";
-    //   history.pushState({ method: {'getPageEntityHiddenState': null} }, '', '/');
-    // }
-    const hidden = this.#entity.hidden;
-    if (hidden) {
-      this.#entity.hidden = false;
-      document.body.dataset.overlay = "true";
-    }
+  deleteArchiveButton() {
+    super.DELETE(this.#entity.children[1], (body) => body.lastChild.remove());
   }
 }

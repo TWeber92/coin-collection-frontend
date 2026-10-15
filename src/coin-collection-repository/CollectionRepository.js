@@ -1,65 +1,74 @@
+import { HtmlStore } from "../HtmlStore.js";
 import { APIClient } from "./APIClient.js";
 import { BrowserRepository } from "./BrowserRepository.js";
 import { DocumentClient } from "./DocumentClient.js";
 
 export class CollectionRepository extends DocumentClient {
-  constructor({ collection }) {
+  constructor(view, api) {
     super();
-    this.#entity = { favorites: collection.favorites };
+    this.#api = api;
+    this.#entity = view.entity;
+    this.#mq = window.matchMedia("(max-width: 768px)").matches;
   }
 
+  #mq;
   #entity;
-  #mq = window.matchMedia("(max-width: 768px)").matches;
-  #api = new APIClient("https://coin-api.coin-collection.workers.dev");
-  #browser = new BrowserRepository();
+  #api;
 
-  getCollectionById(value) {
-    return super.GET(value.id, (id) => this.#entity[id]);
+  get entity() {
+    return this.#entity;
   }
-  getStateNameFromCoin(value) {
-    return super.GET(value, (v) => v.c.lastChild.id);
+  getCollectionWithHtml(html) {
+    return super.GET(html, (t) => HtmlStore.from(t).nodes);
   }
-  getCoinFromArchiveCollection(value) {
-    return super.GET(value, (n) =>
-      this.#entity.archive?.lastChild.querySelector(`#${n}`),
+  getCollectionById(collectionId) {
+    return super.GET(collectionId, (id) => this.#entity[id]);
+  }
+  getCoinFromArchiveCollection(coinId) {
+    return super.GET(
+      coinId,
+      (id) => this.#entity.archive?.lastChild.children[id],
     );
   }
-  getLocalStorageByKey(value) {
-    return this.#browser.getLocalStorageByKey(value);
-  }
-  async postToFavoritesCollection(value) {
-    if (value.user?.authenticated) await this.#api.POST("", value.user);
-    this.#browser.putNewItemInLocalByKey(value.id.fid, value.name);
+  async postToFavoritesCollection(context) {
+    const coin = context.c;
+    const result = context.auth
+      ? await this.#api.POST("/api/user/collection", context.uc)
+      : {};
+    if (result.message) return result;
     if (this.#mq)
-      super.POST(value.coin, (c) => this.#entity.favorites.lastChild.append(c));
-    this.#deleteArchivedCoin(value);
+      super.POST(coin, (c) => this.#entity.favorites.lastChild.append(c));
+    return result;
   }
-  async postToArchiveCollection(value) {
-    if (value.user.authenticated) await this.#api.POST("", value.user);
-    this.#browser.putNewItemInLocalByKey(value.id.aid, value.name);
-    super.POST(value.coin, (c) => this.#entity.archive.lastChild.append(c));
-    this.#browser.deleteItemInLocalByKey(value.id.fid, value.name);
+  async postToArchiveCollection(context) {
+    const coin = context.c;
+    const result = context.auth
+      ? await this.#api.PUT("/api/user/collection", context.uc)
+      : {};
+    if (result.message) return result;
+    super.POST(coin, (c) => this.#entity.archive.lastChild.append(c));
+    return result;
   }
-  putFavoriteBackInContainer(value) {
-    super.PUT(value, (c) => this.#entity.favorites.lastChild.append(c));
+  putCollectionInEntity(collection) {
+    const key = collection.lastChild.dataset.collection;
+    if (!this.#entity[key]) this.#entity[key] = collection;
   }
-  putCollectionOnOrOffDisplay(value) {
-    super.PUT(value, (c) => {
-      c.hidden = !c.hidden;
-      c.previousSibling.children[c.parentNode.id].textContent = c.hidden
-        ? "︿"
-        : "﹀";
+  putCollectionOnOrOffPage(context) {
+    super.PUT(context, ({ c, p }) => {
+      c.hidden = !p.hidden ? !c.hidden : c.hidden;
+      if (p.wasClosed) c.hidden = false;
     });
   }
-  putArchiveCollectionInEntity(value) {
-    this.#entity.archive = value;
+  putFavoriteBackInContainer(coin) {
+    super.PUT(coin, (c) => this.#entity.favorites.lastChild.append(c));
   }
-  async deleteFromArchiveCollection(value) {
-    if (value.user.authenticated) await this.#api.DELETE("", value.user);
-    this.#deleteArchivedCoin(value);
-    super.DELETE(value.coin, (c) => c.remove());
-  }
-  #deleteArchivedCoin(value) {
-    this.#browser.deleteItemInLocalByKey(value.id.aid, value.name);
+  async deleteFromArchiveCollection(context) {
+    const coin = context.c;
+    const result = context.auth
+      ? await this.#api.DELETE("/api/user/collection", context.uc)
+      : {};
+    if (result.message) return result;
+    super.DELETE(coin, (c) => c.remove());
+    return result;
   }
 }

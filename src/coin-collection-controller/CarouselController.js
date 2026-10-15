@@ -6,21 +6,35 @@ export class CarouselController extends AppController {
     super();
     this.#carouselService = service;
   }
-  postNewRandomIndex(req, res) {
-    super.POST(req, res, () => this.#carouselService.postNewRandomIndex());
+  // postNewRandomIndex(req, res) {
+  //   super.POST(req, res, () => this.#carouselService.postNewRandomIndex());
+  // }
+  getRandomIndex(req, res) {
+    return super.GET(req, res, () =>
+      this.#carouselService.getRandomIndex(req.body.count),
+    );
+  }
+  putCarouselAssemblyinNav(req, res) {
+    super.PUT(req, res, () =>
+      this.#carouselService.putCarouselAssemblyinNav(req.body.carousel.index),
+    );
   }
   postPreviousStateSlide(req, res) {
-    super.POST(req, res, () => this.#carouselService.postPreviousStateSlide());
+    return super.POST(req, res, () =>
+      this.#carouselService.postPreviousStateSlide(),
+    );
   }
   postNextStateSlide(req, res) {
-    super.POST(req, res, () => this.#carouselService.postNextStateSlide());
+    return super.POST(req, res, () =>
+      this.#carouselService.postNextStateSlide(),
+    );
   }
   putCarouselOnOffDisplay(req, res) {
     super.PUT(req, res, () => this.#carouselService.putCarouselOnOffDisplay());
   }
   putSlidesInPosition(req, res) {
     super.PUT(req, res, () =>
-      this.#carouselService.putSlidesInPosition(req.body),
+      this.#carouselService.putSlidesInPosition(req.body.usmap.navPaths),
     );
   }
 }

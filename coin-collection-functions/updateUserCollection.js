@@ -1,62 +1,131 @@
-import { EventRegister } from "../src/EventRegister.js";
+import { Application } from "../src/Application.js";
+// import { EventRegister } from "../src/EventRegister.js";
 
 export const handler = async (e) => {
   let responseBody;
   const action = e.target.dataset.action;
   const value = e.target.value;
   const mq = window.matchMedia("(max-width: 768px)").matches;
-  const collectionController = EventRegister.controllers.collectionController;
-  const coinController = EventRegister.controllers.coinController;
-  const tooltipController = EventRegister.controllers.tooltipController;
-  const usMapController = EventRegister.controllers.usMapController;
-  const headerController = EventRegister.controllers.headerController;
-  const modalController = EventRegister.controllers.modalController;
-  const pageController = EventRegister.controllers.pageController;
+  const {
+    authController,
+    modalController,
+    collectionController,
+    coinController,
+    pageController,
+    usMapController,
+    headerController,
+    tooltipController,
+  } = Application.controllers;
   const route = `${action}:${value}`;
   const res = { obj: (data) => (responseBody = data) };
   const req = {
     body: {
+      relative: e.relatedTarget,
       tooltip: e.target,
       clone: action === "add",
-      favoritesId: "favorites",
-      archiveId: "archive",
-      badgeId: "badge",
-      menuId: "menu",
     },
   };
-  await tooltipController.deleteTooltip(req, null);
-  await coinController.getUpdatedCoinState(req, res);
-  req.body.coin = responseBody.coin;
-  await collectionController.getCoinFromArchiveCollection(req, res);
-  if (responseBody) req.body.coin = responseBody;
-  const postCoinToMap = async () =>
-    await usMapController.putCoinInForeignObj(req, res);
+  const getCollection = async () => {
+    req.body.collection = responseBody.to(); //collectionDTO obj
+    req.body.header = req.body.collection.header; // headerDTO obj
+  };
+  const getCoin = async () => {
+    await coinController.getSelectedCoinEntity(req, res); //args - clone
+    req.body.coin = responseBody.to();
+  };
+
+  const updateBadges = async () => {
+    await headerController.putNewCountInBadge(req, res); //args - header.collection
+    req.body.header = responseBody.to(); //HeaderDTO obj
+    req.body.favoritesId = req.body.header.buttons.favorites.id;
+    req.body.archiveId = req.body.header.buttons.archive?.id;
+  };
+  const updateArchiveFooter = async (id) => {
+    req.body.button = { id };
+    await pageController.putFooterContentsOnOffPage(req, res); //args - button.id, header.collection.archive (count), collection.archive
+  };
+  const deleteId = async () => {
+    if (req.body.coin.entity.children["coined"])
+      await coinController.deletePartOfCoinId(req, res); //args - none
+  };
+
+  await authController.getMe(req, res);
+  req.body.user = responseBody.to();
+  const collection = req.body.user.collection;
+  console.log(collection);
+  
+  if (req.body.user.message) req.body.user.message.toToast();
+
   const updateMap = {
     "add:coin": async () => {
-      await collectionController.postToFavoritesCollection(req, res);
-      if (!mq) await postCoinToMap();
-      await collectionController.getCollectedFavoriteNames(req, res);
-      req.body.favorites = responseBody;
-      delete req.body.coin;
-      await modalController.postStateModalContext(req, res);
+      req.body.name = req.body.tooltip.parentNode.id;
+      await collectionController.getCoinFromArchiveCollection(req, res); //args - name
+      const coin = responseBody; //raw coin node
+      if (coin) req.body.coin = { entity: coin };
+      else {
+        await getCoin();
+        await deleteId();
+        req.body.tooltip = req.body.coin.entity.firstChild; //this is a clone containing a the tooltip that needs removal
+      }
+      await tooltipController.deleteTooltip(req, res); //args - relative, tooltip, clone
+      await collectionController.postToFavoritesCollection(req, res); //args - coin.entity, user
+      await getCollection();
+      if (!mq) await usMapController.putCoinInForeignObj(req, res); // args - coin.entity
+
+      req.body.name = req.body.coin.entity.id;
+      await coinController.putNewCoinInEntity(req, res); // args - name
+      req.body.coin = responseBody.to(); //Full CoinDTO obj
+      req.body.user = req.body.collection.user; //UserDTO obj
+      console.log(req.body.user.collection);
+      
+      await modalController.postStateModalContext(req, res); // args - coin, user.collection.favorites
+      await updateBadges();
     },
     "archive:coin": async () => {
-      await collectionController.putFavoriteInArchiveCollection(req, res);
-      await headerController.putNewCountInBadge(req, res);
-      req.body.button = responseBody;
-      req.body.collectionId = req.body.archiveId;
-      await collectionController.getCollectionById(req, res);
-      req.body.collection = responseBody.collection;
-      if (mq) await pageController.putArchiveOnPage(req, res);
+      await getCoin();
+      await deleteId();
+      await tooltipController.deleteTooltip(req, res); //args - relative, tooltip, clone
+      if (!mq) {
+        req.body.fo = req.body.coin.entity.parentNode;
+        usMapController.putFOBack(req, res);
+        req.body.fo.dataset.mouse = "inactive";
+      }
+      await collectionController.putFavoriteInArchiveCollection(req, res); //args - coin.entity, user
+      await getCollection();
+      console.log(req.body.user.collection);
+      await updateBadges();
+      if (mq) {
+        await pageController.putArchiveOnPage(req, res); //args - collection.favorites, collection.archive, favoritesId, archiveId
+        req.body.page = responseBody.to()
+        req.body.selectedId = action
+        await collectionController.putCollectionOnOrOffPage(req, res) //args - collection, selectedId, page
+      }
+      else updateArchiveFooter(action);
     },
 
     "restore:coin": async () => {
-      await collectionController.putArchivedInFavoritesCollection(req, null);
-      if (!mq) await postCoinToMap();
+      await getCoin();
+      await deleteId();
+      await tooltipController.deleteTooltip(req, res); //args - relative, tooltip, clone
+      await collectionController.putArchivedInFavoritesCollection(req, res); //args - coin.entity, user
+      await getCollection();
+      console.log(req.body.user.collection);
+      if (!mq) {
+        await updateArchiveFooter("archive");
+        await usMapController.putCoinInForeignObj(req, res); // args - coin.entity
+      }
+      await updateBadges();
     },
-    "delete:coin": async () =>
-      await collectionController.deleteArchivedFromCollection(req, res),
+    "delete:coin": async () => {
+      await getCoin();
+      await deleteId();
+      await tooltipController.deleteTooltip(req, res); //args - relative, tooltip, clone
+      await collectionController.deleteArchivedFromCollection(req, res); //args - coin.entity, user
+      await getCollection();
+      console.log(req.body.user.collection);
+      if (!mq) await updateArchiveFooter("archive");
+      await updateBadges();
+    },
   };
   await updateMap[route]();
-  if (action !== "archive") await headerController.putNewCountInBadge(req, res);
 };

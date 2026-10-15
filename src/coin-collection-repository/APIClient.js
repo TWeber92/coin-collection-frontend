@@ -2,13 +2,14 @@ export class APIClient {
   constructor(baseURL) {
     this.baseURL = baseURL;
   }
-  async API(endpoint, method, options = {}) {
+  async API(endpoint, method, { headers = {}, body } = {}) {
     const url = `${this.baseURL}${endpoint}`;
     try {
       const response = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json", ...options.headers },
-        ...options,
+        headers: { "Content-Type": "application/json", ...headers },
+        credentials: "include",
+        body,
       });
       const contentType = response.headers.get("content-type");
       if (contentType?.includes("application/json")) {
@@ -31,12 +32,12 @@ export class APIClient {
     return this.API(endpoint, "GET");
   }
   POST(endpoint, dto) {
-    return this.API(endpoint, "POST", dto);
+    return this.API(endpoint, "POST", { body: JSON.stringify(dto) });
   }
   PUT(endpoint, dto) {
-    return this.API(endpoint, "PUT", dto);
+    return this.API(endpoint, "PUT", { body: JSON.stringify(dto) });
   }
-  DELETE(endpoint) {
-    return this.API(endpoint, "DELETE");
+  DELETE(endpoint, id) {
+    return this.API(endpoint, "DELETE", id);
   }
 }

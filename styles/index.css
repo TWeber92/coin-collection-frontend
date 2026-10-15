@@ -20,11 +20,21 @@ body[data-overlay="true"]::before {
   background: rgba(0, 0, 0, 0.5);
   z-index: 4;
 }
-body:has(.modal-overlay:not([hidden])) .doc-header {
+body:has(.modal:not([hidden])) path,
+body:has(.modal:not([hidden])) .doc-header {
   pointer-events: none;
+}
+body:has(.error-banner:not([hidden])){
+  position: relative;
 }
 #overlay {
   font-family: "Oswald", sans-serif;
+}
+body[data-overlay="true"] #svg {
+  pointer-events: none;
+}
+#svg {
+  z-index: 5;
 }
 #close {
   all: unset;
@@ -35,4 +45,11 @@ body:has(.modal-overlay:not([hidden])) .doc-header {
 #close:hover {
   cursor: pointer;
   transform: scale(1.15);
+}
+.error-banner{
+  position: absolute;
+  z-index: 100;
+}
+.error-banner span {
+  padding-left: 10px;
 }

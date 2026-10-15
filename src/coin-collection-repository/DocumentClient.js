@@ -1,6 +1,5 @@
 export class DocumentClient {
-  constructor(entity) {
-    this.entity = entity;
+  constructor() {
   }
   DOC(value, method) {
     return method(value);

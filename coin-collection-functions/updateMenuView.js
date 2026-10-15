@@ -1,8 +1,9 @@
-import { EventRegister } from "../src/EventRegister.js";
+import { Application } from "../src/Application.js";
+// import { EventRegister } from "../src/EventRegister.js";
 
 export const handler = async (e) => {
-  const menuId = e.target.id;
-  const headerController = EventRegister.controllers.headerController;
-  const req = { body: { menuId } };
-  await headerController.putNewIconInHeader(req, null);
+  const menuBtn = e.target;
+  const headerController = Application.controllers.headerController;
+  const req = { body: { menuBtn} };
+  await headerController.putMenuNavOnOffDisplay(req, "");//args - menuBtn
 };

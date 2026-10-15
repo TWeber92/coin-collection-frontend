@@ -1,54 +1,53 @@
 import { DocumentStore } from "../DocumentStore.js";
+import { HtmlStore } from "../HtmlStore.js";
 import { DocumentClient } from "./DocumentClient.js";
 
 export class CarouselRepository extends DocumentClient {
-  constructor() {
+  constructor(view) {
     super();
+    this.#entity = view.entity
+  }
+  #entity
+
+  getStateCarouselLayout(props) {
+    this.#entity.layout = document.body.appendChild(
+      DocumentStore.createDivElement(props).node,
+    );
   }
 
-  #entity = this.#getCarouselNavElement();
-
-  #getCarouselNavElement() {
-    return document.body.appendChild(
-      DocumentStore.createNavElement({
-        id: "carousel-nav",
-        className: "carousel-nav",
-        ariaLabel: "State Carousel",
-      }).node,
+  getCarouselPartsWithHtml(html){
+    return super.GET(html, (t) => HtmlStore.from(t).nodes)
+  }
+  getSlidesFromCarousel() {
+    return super.GET(
+      this.#entity,
+      ({ carousel }) => carousel.firstChild.children,
     );
   }
-  getStateCarouselLayout(value) {
-    return document.body.appendChild(
-      DocumentStore.createDivElement(value).node,
-    );
+  getSlideContainer(slide) {
+    return super.GET(slide, (s) => s.firstChild);
   }
-  getSvgForSlidePath(value) {
-    return document.body.appendChild(DocumentStore.createSvgElement(value));
+  getSvgForSlidePath(props) {
+    return document.body.appendChild(DocumentStore.createSvgElement(props));
   }
-  getSlideContainer(value) {
-    return super.GET(value, (v) => v.s.querySelector(`[data-option=${v.o}]`));
+  putSlideTogether(assembly){
+    super.PUT(assembly, ({svg, p, cs, s}) => {
+      svg.append(p);
+      cs.replaceChildren(svg, s)
+    })
   }
-  putNavInCarouselLayout(value) {
-    super.PUT(value, (l) => l.append(this.#entity));
-  }
-  putSlidesInCarousel(value) {
-    super.PUT(value, (s) =>
-      this.#entity.firstElementChild.replaceChildren(...s),
-    );
-  }
-  putCarouselInNav(value) {
-    super.PUT(value, (c) => this.#entity.append(...c));
-  }
-  putPathInSlideSvg(value) {
-    super.PUT(value, (v) => v.svg.append(v.p));
-  }
-  putSvgInCarouselSlide(value) {
-    super.PUT(value, (v) => v.cs.prepend(v.svg));
+  putCarouselNavTogether(entity) {
+    super.PUT(entity, ({ nav, slides }) => {//slides needs to be converted to iterable
+      const { layout, carousel } = this.#entity;
+      layout.append(carousel);
+      carousel.append(...nav);
+      carousel.firstChild.replaceChildren(...Object.values(slides));//obj -> array spread
+    });
   }
   putCarouselOnOffDisplay() {
     super.PUT(
       window.matchMedia("(max-width: 768px)").matches,
-      (m) => (this.#entity.parentElement.hidden = !m),
+      (m) => (this.#entity.layout.hidden = !m),
     );
   }
 }

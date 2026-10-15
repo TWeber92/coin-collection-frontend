@@ -12,6 +12,8 @@ export class CoinCollectionError extends Error {
     this.#operation = operation;
     this.#status = status;
     this.#timestamp = new Date().toISOString();
+    this.node = CoinCollectionError.#node;
+    this.x = CoinCollectionError.#x;
   }
 
   toJSON() {
@@ -23,19 +25,38 @@ export class CoinCollectionError extends Error {
       timestamp: this.#timestamp,
     };
   }
+  toToast() {
+    if (!this.node) return;
+
+    this.node.hidden = false;
+    setTimeout(() => (this.node.hidden = true), 8000);
+
+    const time = document.createElement("span");
+    time.textContent = new Date(this.toJSON().timestamp).toLocaleString(
+      "en-US",
+      {
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      },
+    );
+    this.node.replaceChildren(this.message, time, this.x);
+  }
 
   static postErrorNode() {
     CoinCollectionError.#node = Object.assign(document.createElement("div"), {
-      id: "error-node",
-      className: "error-banner hidden",
+      id: "overlay",
+      className: "error-banner",
     });
-    CoinCollectionError.#x = Object.assign(document.createElement("div"), {
-      className: "close",
-      innerHTML: "&times;",
+    CoinCollectionError.#x = Object.assign(document.createElement("button"), {
+      id: "close",
+      innerHTML: "✕",
     });
-    CoinCollectionError.#x.dataset.active = "false";
+    CoinCollectionError.#x.hidden = false;
     document.body.prepend(CoinCollectionError.#node);
     CoinCollectionError.#node.appendChild(CoinCollectionError.#x);
+    CoinCollectionError.#node.hidden = true;
   }
 
   static get node() {
@@ -70,18 +91,30 @@ export class ValidationError extends CoinCollectionError {
 export class APIError extends CoinCollectionError {
   constructor(message, name, operation, status) {
     super({ message, name, operation, status });
-    this.node = CoinCollectionError.node;
-    this.x = CoinCollectionError.x;
   }
-
-  toToast() {
-    if (!this.node) return;
-
-    this.node.dataset.active = "true";
-    setTimeout(() => (this.node.dataset.active = "false"), 8000);
-
-    const time = document.createElement("span");
-    time.textContent = this.toJSON().timestamp;
-    this.node.replaceChildren(this.message, time, this.x);
+}
+export class GetMeNotice extends CoinCollectionError {
+  constructor(message) {
+    super({ message, name: "GetMeNotice", operation: "getMe", status: 401 });
+  }
+}
+export class EmailCopyNotice extends CoinCollectionError {
+  constructor(message) {
+    super({
+      message,
+      name: "EmailCopyNotice",
+      operation: "getEmailNotice",
+      status: 200,
+    });
+  }
+}
+export class LogoutNotice extends CoinCollectionError {
+  constructor(message = "Logged out") {
+    super({
+      message,
+      name: "LogoutNotice",
+      operation: "logout",
+      status: 200,
+    });
   }
 }

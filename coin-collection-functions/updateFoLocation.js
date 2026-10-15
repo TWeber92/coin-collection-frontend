@@ -1,16 +1,19 @@
-import { EventRegister } from "../src/EventRegister.js";
+import { Application } from "../src/Application.js";
+// import { EventRegister } from "../src/EventRegister.js";
 export const handler = async (e) => {
+  let responseBody;
   if (window.matchMedia("(max-width: 768px)").matches) return;
   const fo = e.target;
   const mouse = fo.dataset.mouse;
-  const usMapController = EventRegister.controllers.usMapController;
+  const usMapController = Application.controllers.usMapController;
   const req = { body: { fo } };
+  const res = { obj: (data) => (responseBody = data) };
   const router = {
     out: async () => {
+      await usMapController.putFOLast(req, res);
       fo.dataset.mouse = "over";
-      await usMapController.putFOLast(req, null);
     },
-    over: async () => await usMapController.putFOBack(req, null),
+    over: async () => await usMapController.putFOBack(req, res),
   };
-  await router[mouse]();
+  if (router[mouse]) await router[mouse]();
 };

@@ -5,22 +5,24 @@ import { handler as updateTooltip } from "./updateToolltip.js";
 import { handler as updateUserCollection } from "./updateUserCollection.js";
 import { handler as deleteOverlay } from "./deleteOverlay.js";
 import { handler as updateMenuView } from "./updateMenuView.js";
-import { handler as deleteBackdrop } from "./deleteBackDrop.js";
 import { handler as updatePathLocation } from "./updatePathLocation.js";
 import { handler as updateFoLocation } from "./updateFoLocation.js";
 import { handler as deleteTooltip } from "./deleteTooltip.js";
 import { handler as updateAuthInput } from "./updateAuthInput.js";
 import { handler as postAuthForm } from "./postAuthForm.js";
 import { handler as updateUiMode } from "./updateUi.js";
+import { handler as deleteBackDrop } from "./deleteBackDrop.js";
+import { handler as updateCoin } from "./updateCoin.js";
 
 export const event = async (e) => {
+  document.body.style.cursor = "wait";
   const type = e.type;
   const [tag] = e.composedPath();
   const tagName = tag.tagName.toLowerCase() || "document";
   const id = tag.id || "app";
   const route = `${type}:/${tagName}/${id}`;
 
-  // const reduce = (m) =>
+  // const reduce = (m) => ///Still conceptualizing...
   //   Object.entries(m).reduce(
   //     (acc, [key, value]) =>
   //       key.includes(route) ? { ...acc, [route]: value } : acc,
@@ -28,6 +30,7 @@ export const event = async (e) => {
   //   );
 
   const router = {
+    "click:/html/app": async () => await deleteBackDrop(e),
     "load:/ui/update": async () => await updateUiMode(e),
     "change:/ui/update": async () => await updateUiMode(e),
     "click:/svg/state": async () => await updateModalView(e),
@@ -44,7 +47,11 @@ export const event = async (e) => {
     "input:/input/email": async () => await updateAuthInput(e),
     "input:/input/password": async () => await updateAuthInput(e),
     "input:/input/confirm": async () => await updateAuthInput(e),
-    "click:/div/coin": async () => await updateTooltip(e),
+    "click:/div/coined": async () => await updateTooltip(e),
+    "click:/div/coin": async () => await updateCoin(e),
+    "click:/button/about": async () => await updatePageView(e),
+    "click:/button/email": async () => await updatePageView(e),
+    "click:/button/logout": async () => await updatePageView(e),
     "click:/button/favorites": async () => await updatePageView(e),
     "click:/button/archive": async () => await updatePageView(e),
     "click:/button/scrollable": async () => await updatePageView(e),
@@ -54,8 +61,9 @@ export const event = async (e) => {
     "pointermove:/foreignobject/state": async () => await updateFoLocation(e),
   };
   try {
-    // if (router[route]) console.log(route);
+    // if (type !== "mouseout") console.log(route);
     if (router[route]) await router[route]();
+    document.body.style.cursor = "default";
   } catch (err) {
     console.trace(err);
     const error = err.toJSON();

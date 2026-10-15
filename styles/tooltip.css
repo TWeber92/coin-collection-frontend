@@ -13,6 +13,7 @@
   justify-content: center;
   /* transition: transform 0.2s ease; */
   user-select: none;
+  /* pointer-events: auto; */
   z-index: 6;
 }
 #tooltip svg {
@@ -28,6 +29,7 @@
   all: unset;
   overflow: visible;
   pointer-events: auto;
+  z-index: 7;
 }
 #tooltip[hidden] {
   display: none;
@@ -84,14 +86,6 @@ textPath {
 button text[dominant-baseline="text-before-edge"] {
   transform: translateY(-1%);
 }
-/* [data-collection] #tooltip,
-foreignObject.fo-svg #tooltip {
-  width: 125px;
-  height: 125px;
-  transition:
-    height 0.8s ease,
-    width 0.8s ease;
-} */
 [data-collection] #tooltip,
 foreignObject.fo-svg #tooltip {
   width: 125px;
@@ -101,10 +95,6 @@ foreignObject.fo-svg #tooltip {
     transform 0.4s ease;
 }
 
-[data-collection] #tooltip.visible,
-foreignObject.fo-svg #tooltip.visible {
-  transform: scale(1); /* Grows to full 125px size */
-}
 @starting-style {
   #tooltip,
   foreignObject.fo-svg #tooltip {

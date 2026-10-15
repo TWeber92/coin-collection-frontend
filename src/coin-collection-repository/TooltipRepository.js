@@ -1,62 +1,59 @@
 import { DocumentStore } from "../DocumentStore.js";
+import { HtmlStore } from "../HtmlStore.js";
 import { DocumentClient } from "./DocumentClient.js";
 
 export class TooltipRepository extends DocumentClient {
-  constructor() {
+  constructor(view) {
     super();
+    this.#entity = view.entity;
   }
-  #entity = this.#getTooltipElement();
 
-  #getTooltipElement() {
-    return document.body.appendChild(
-      DocumentStore.createDivElement({
-        id: "tooltip",
-        className: "tooltip-wrapper",
-        hidden: true,
-      }).node,
-    );
+  #entity;
+
+  getCoinEntity(coin) {
+    return coin.parentNode;
   }
-  getCoinEntity(value) {
-    return value.parentElement;
+  getTooltipWithHtml(html) {
+    return super.GET(html, (t) => HtmlStore.from(t).nodes);
   }
-  getModifiedPathFromSvg(value) {
-    const path = value.querySelector("path").cloneNode(true);
+  getModifiedPathFromSvg(svg) {
+    const path = svg.querySelector("path").cloneNode(true);
     path.removeAttribute("id");
     const d = path.getAttribute("d");
     super.GET(path, (p) => p.setAttribute("d", d + " Z"));
     return path;
   }
-  postAddTooltip(value) {
-    super.POST(value, (t) => this.#entity.replaceChildren(t));
-  }
-  postArchiveTooltip(value) {
-    super.POST(value, (t) => this.#entity.replaceChildren(t));
-  }
-  postRestoreOrDeleteTooltip(value) {
-    super.POST(value, (t) => this.#entity.replaceChildren(...t));
-  }
-  postTextToSvg(value) {
-    const [_, textPath, text2] = value.svg.querySelectorAll("textPath, text");
-    const text = value.b.firstChild.splitText(value.b.dataset.action.length);
+  postTextToSvg(svg, b) {
+    const [_, textPath, text2] = svg.querySelectorAll("textPath, text");
+    const text = b.firstChild.splitText(b.dataset.action.length);
     super.POST([textPath, text2], (v) =>
-      v.forEach((t, i) => t.prepend([value.b.firstChild, text][i])),
+      v.forEach((t, i) => t.prepend([b.firstChild, text][i])),
     );
   }
-  putSemiCirclePathInSvg(value) {
-    super.PUT(value, (v) => v.svg.querySelector("circle").after(v.sc));
+  postAddTooltip(tooltip) {
+    super.POST(tooltip, (tt) => this.#entity.replaceChildren(tt));
   }
-  putSvgTextInButton(value) {
-    super.PUT(value, (v) => v.b.append(v.svg));
-    return value.b;
+  postArchiveTooltip(tooltip) {
+    super.POST(tooltip, (tt) => this.#entity.replaceChildren(tt));
   }
-  putTooltipOnDisplay(value) {
-    super.PUT(value, (c) => c.prepend(this.#entity));
+  postRestoreOrDeleteTooltip(tooltip) {
+    super.POST(tooltip, (tt) => this.#entity.replaceChildren(...tt));
+  }
+  putSvgTextInButton(context) {
+    super.PUT(context, ({ svg, b }) => b.append(svg));
+    return context.b;
+  }
+  putTooltipOnDisplay(coin) {
+    super.PUT(coin, (c) => c.prepend(this.#entity));
     this.#entity.hidden = false;
   }
-  deleteTooltip(value) {
-    super.DELETE(
-      value,
-      (v) => (this.#entity.hidden = !v.r || !this.#entity.contains(v.r)),
-    );
+  putSemiCirclePathInSvg(vector) {
+    super.PUT(vector, ({ svg, sc }) => svg.querySelector("circle").after(sc));
+  }
+  deleteTooltip(context) {
+    super.DELETE(context, ({ tt, rt, c }) => {
+      this.#entity.hidden = !rt || !this.#entity.contains(rt) || !c;
+      if (c) tt.remove();
+    });
   }
 }

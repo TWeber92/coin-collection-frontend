@@ -1,44 +1,41 @@
 import { CoinDTO } from "../coin-collection-dto/CoinDTO.js";
-import { CoinEntity } from "../coin-collection-entity/CoinEntity.js";
-import { CoinRepository } from "../coin-collection-repository/CoinRepository.js";
+import { Coin } from "../coin-collection-entity/Coin.js";
+import { CoinView } from "../coin-collection-view/CoinView.js";
 
 export class CoinService {
-  constructor() {
-    this.#repo = new CoinRepository();
+  constructor(repo) {
+    this.#repo = repo;
   }
 
   #repo;
 
-  getUpdatedCoinState(body) {
-    const dto = CoinDTO.fromEntity(body);
-    const coin = dto.clone
-      ? this.#repo.getCloneCoinEntityRemoveTooltip(dto.tooltip)
-      : dto.coin;
-    return CoinEntity.fromDTO({ ...dto, coin });
+  getSelectedCoinEntity(clone) {
+    const coin = clone
+      ? this.#repo.entity.selected.cloneNode(true)
+      : this.#repo.entity.selected;
+    const entity = Coin.from({ entity: coin });
+    return CoinDTO.from(entity.to());
+  }
+  putSelectedCoinInEntity(coin) {
+    this.#repo.putSelectedCoinInEntity(coin);
+    const entity = Coin.from({ entity: this.#repo.entity.selected });
+    return CoinDTO.from(entity.to());
   }
 
-  updateCoinEntityState(body) {
-    CoinDTO.fromEntity({
-      ...body,
-      coin: this.#repo.getCurrentEntityParent(body.coin),
+  async putNewCoinInEntity(name) {
+    const cache = this.#repo.getCacheCoinFromSession(name);
+    const coinObj = cache ? cache : await this.#repo.getCoinByStateName(name);
+    const html = CoinView.from(coinObj).coin;
+    const coin = this.#repo.getCoinWithHtml(html);
+    this.#repo.putCacheCoinInSession({ k: name, c: coinObj });
+    this.#repo.entity.coin.id = name;
+    const entity = Coin.from({
+      ...coinObj,
+      entity: this.#repo.putCoinInEntity(coin[0]),
     });
+    return CoinDTO.from(entity.to());
   }
-
-  async updateCoinEntity(body) {
-    const coin = this.#repo.getCacheCoinFromSession(body.name);
-    const dto = coin
-      ? CoinDTO.fromEntity({ ...body, ...coin })
-      : CoinDTO.fromAPI({
-          ...(await this.#repo.getCoinByStateName(body.name)),
-        });
-    this.#repo.putCacheCoinInSession({ k: dto.name, c: dto.cache });
-    const entity = CoinEntity.fromDTO({
-      ...dto,
-      year: coin ? dto.cache.mintYear : dto.year,
-    });
-    return {
-      ...entity,
-      coin: this.#repo.putCoinInEntity({ c: entity.node[0], n: entity.name }),
-    };
+  deletePartOfCoinId(entity) {
+    this.#repo.deletePartOfCoinId(entity);
   }
 }

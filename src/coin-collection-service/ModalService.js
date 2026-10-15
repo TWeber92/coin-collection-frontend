@@ -1,59 +1,74 @@
-import { ModalDTO } from "../coin-collection-dto/ModalDTO.js";
-import { ModalEntity } from "../coin-collection-entity/ModalEntity.js";
-import { ModalRepository } from "../coin-collection-repository/ModalRepository.js";
+import { Modal } from "../coin-collection-entity/Modal.js";
+import { ModalView } from "../coin-collection-view/ModalView.js";
 
 export class ModalService {
-  constructor() {
-    this.#repo = new ModalRepository();
-    this.#putModalContextInOverlay();
+  constructor(repo) {
+    this.#repo = repo;
   }
 
   #repo;
 
-  #putModalContextInOverlay() {
-    const dto = ModalDTO.fromEntity({});
-    const entity = ModalEntity.fromDTO(dto);
-    this.#repo.putModalContextInOverlay(entity.nodes);
+  putModalContextInOverlay() {
+    const { modal } = ModalView.from({});
+    this.#repo.putModalContextInOverlay(modal);
   }
 
-  postStateModalContext(data) {
-    const dto = ModalDTO.fromEntity(data);
-    const { title, body, footer, coin } = ModalEntity.fromDTO({
-      ...dto,
-      template: dto.state,
-    });
-    this.#repo.postStateModalContext({
-      t: title[0],
-      b: body[0],
-      f: footer,
+  postStateModalContext(coin, name, year, favorites) {
+    const { title, body, footer } = ModalView.from({
       coin,
+      name,
+      year,
+      favorites,
+    }).stateModal;
+    const nodes = this.#repo.getModalContext({
+      t: title,
+      b: body,
+      f: footer,
     });
-    this.#repo.putModalOnDisplay({ coin });
+    const entity = Modal.from({
+      title: nodes[0],
+      body: nodes[1],
+      footer: [...nodes].slice(2),
+      coin: coin,
+    });
+    this.#repo.postStateModalContext(entity.to());
   }
-  postLoginModalContext(data) {
-    const dto = ModalDTO.fromEntity(data);
-    const { title, body, footer } = ModalEntity.fromDTO({
-      ...dto,
-      template: dto.login,
+  postLoginModalContext(name) {
+    const { loginModal, form } = ModalView.from({ name });
+    const { title, body, footer } = loginModal;
+    const nodes = this.#repo.getModalContext({
+      fm: form,
+      t: title,
+      b: body,
+      f: footer,
     });
-    this.#repo.postSignUpModalContext({
-      t: title[0],
-      b: body[0],
-      f: footer[0],
+    const entity = Modal.from({
+      form: nodes[0],
+      title: nodes[1],
+      body: [...nodes].slice(2, 5),
+      footer: nodes[5],
     });
-    this.#repo.putModalOnDisplay();
+    this.#repo.postLoginModalContext(entity.to());
   }
-  postSignUpModalContext(data) {
-    const dto = ModalDTO.fromEntity(data);
-    const { title, body, footer } = ModalEntity.fromDTO({
-      ...dto,
-      template: dto.signup,
+  postSignUpModalContext(name) {
+    const { signupModal, form, newEmail } = ModalView.from({
+      name,
     });
-    this.#repo.postSignUpModalContext({
-      t: title[0],
-      b: body[0],
-      f: footer[0],
+    const { title, body, footer } = signupModal;
+    const nodes = this.#repo.getModalContext({
+      ne: newEmail,
+      fm: form,
+      t: title,
+      b: body,
+      f: footer,
     });
-    this.#repo.putModalOnDisplay();
+    const entity = Modal.from({
+      form: nodes[0],
+      newEmail: nodes[1],
+      title: nodes[2],
+      body: [...nodes].slice(3, 6),
+      footer: nodes[6],
+    });
+    this.#repo.postSignUpModalContext(entity.to());
   }
 }

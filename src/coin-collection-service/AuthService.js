@@ -1,44 +1,58 @@
-import { AuthDTO } from "../coin-collection-dto/AuthDTO.js";
-import { AuthEntity } from "../coin-collection-entity/AuthEntity.js";
-import { AuthRepository } from "../coin-collection-repository/AuthRepository.js";
+import { UserDTO } from "../coin-collection-dto/UserDTO.js";
+import { User } from "../coin-collection-entity/User.js";
+import { GetMeNotice, LogoutNotice } from "../coin-collection-exception/CoinCollectionError.js";
 import { UserValidator } from "../coin-collection-validation/UserValidator.js";
+import { ModalView } from "../coin-collection-view/ModalView.js";
 
 export class AuthService {
-  constructor() {
-    this.#repo = new AuthRepository();
+  constructor(repo) {
+    this.#repo = repo;
   }
 
   #repo;
 
-  getEmailInputValidation(body) {
-    this.#getInputValidation(body);
+  async getMe() {
+    const user = await this.#repo.getMe();
+    const message = user.message;
+    if (message) user.message = new GetMeNotice(message);
+    const entity = User.from(user);
+    return UserDTO.from(entity.to());
   }
-  getPasswordInputValidation(body) {
-    this.#getInputValidation(body);
+  async logout() {
+    const result = await this.#repo.postLogout();
+    return new LogoutNotice(result.message)
   }
-  getPasswordMatchValidation(body) {
-    this.#getInputValidation(body);
+
+  getEmailInputValidation(input, button) {
+    this.getInputValidation(input, button);
   }
-  #getInputValidation(body) {
+  getPasswordInputValidation(input, button) {
+    this.getInputValidation(input, button);
+  }
+  getPasswordMatchValidation(input, button) {
+    this.getInputValidation(input, button);
+  }
+
+  getInputValidation(input, button) {
     const setSpan = (s, n) => this.#repo.putSpanContextOnDisplay({ s, n });
     const setButton = (button, inputs) =>
       (button.disabled = !inputs.every((i) => i.checkValidity()));
-    const dto = AuthDTO.fromEntity({
-      ...body,
-      inputs: [...this.#repo.getInputsFromForm(body.input)],
-      span: this.#repo.getSpanSibling(body.input),
-    });
-    body.input.disable = () => setButton(dto.button, dto.inputs);
-    const confirm = UserValidator.validateUserInput(body.input);
-    const entity = AuthEntity.fromDTO(dto);
-    setSpan(entity.sibling, entity.node[0]);
+    const inputs = [...this.#repo.getInputsFromForm(input)];
+    const spanSibling = this.#repo.getSpanSibling(input);
+    input.disable = () => setButton(button, inputs);
+    const confirm = UserValidator.validateUserInput(input);
+    const html = ModalView.from({}).valid;
+    const valid = this.#repo.getValidSpanWithHtml(html);
+    setSpan(spanSibling, valid[0]);
     if (confirm?.interacted) {
       UserValidator.validateUserInput(confirm);
-      setSpan(this.#repo.getSpanSibling(confirm), entity.node[0]);
+      setSpan(this.#repo.getSpanSibling(confirm), valid[0]);
     }
-    setButton(entity.button, entity.inputs);
+    setButton(button, inputs);
   }
-  putNamesInUserCollection(body) {
-    const dto = AuthDTO.fromEntity(body.user);
+
+  putUserCollection(user) {
+    const entity = User.from(user);
+    this.#repo.putUserCollection(entity.to());
   }
 }

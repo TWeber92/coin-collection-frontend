@@ -1,14 +1,17 @@
-import { EventRegister } from "../src/EventRegister.js";
+import { Application } from "../src/Application.js";
+// import { EventRegister } from "../src/EventRegister.js";
 
 export const handler = async (e) => {
   const id = e.target.id;
-  const req = { body: { e, input: e.target, button: "authenticate" } };
-  const authController = EventRegister.controllers.authController;
+  const form = e.target.form;
+  const req = { body: { input: e.target, button: form["authenticate"] } };
+  const authController = Application.controllers.authController;
   const router = {
     email: async () => await authController.getEmailInputValidation(req, null),
     password: async () =>
       await authController.getPasswordInputValidation(req, null),
-    confirm: () => authController.getPasswordMatchValidation(req, null),
+    confirm: async () =>
+      await authController.getPasswordMatchValidation(req, null),
   };
   await router[id]();
 };

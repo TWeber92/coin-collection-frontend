@@ -2,124 +2,132 @@ import { DocumentStore } from "../DocumentStore.js";
 import { DocumentClient } from "./DocumentClient.js";
 import { APIClient } from "./APIClient.js";
 import { BrowserRepository } from "./BrowserRepository.js";
+import { HtmlStore } from "../HtmlStore.js";
 
 export class USMapRepository extends DocumentClient {
-  constructor() {
+  constructor(view, asset, browser) {
     super();
+    this.#entity = view.entity;
+    this.#asset = asset
+    this.#browser = browser
   }
-  #api = new APIClient("./assets");
-  #entity = this.#getMapLayout();
-  #browser = new BrowserRepository();
+  #asset 
+  #browser
+  #entity;
 
-  #getMapLayout() {
-    return document.body.appendChild(
-      DocumentStore.createDivElement({
-        id: "usmap",
-        className: "usmap-layout",
-      }).node,
-    );
+  get entity() {
+    return this.#entity;
   }
-  getForeignObjectSVG(value) {
-    return super.GET(value, (p) =>
+
+  getForeignObjectSVG(props) {
+    return super.GET(props, (p) =>
       document.body.appendChild(
         DocumentStore.createForeignObjectElement(p).node,
       ),
     );
   }
-  getCacheMapFromSession(value) {
-    const session = this.#browser.getSessionStorageByKey(value);
-    return session[this.#entity.id];
+  async getUSMapSvgText() {
+    const session = this.#browser.getSessionStorageByKey("svg");
+    const usmap = session[this.#entity.usmap.id];
+    return usmap || (await this.#asset.GET("/us.svg"));
   }
-  getSvgUSMapText(value) {
-    return this.#api.GET(value);
+
+  getCollectionFromContainer(container) {
+    return super.GET(container, (c) => c.lastChild);
   }
-  getAllForeignObjects(value) {
-    return super.GET(value, (tag) => this.#entity.querySelectorAll(tag));
-  }
-  getCoinFromForeignObj(value) {
-    return super.GET(value, (fo) => fo.firstChild);
-  }
-  getCollectionContainer(value) {
-    return super.GET(value, (c) => c.lastChild);
-  }
-  getPathAndPreviousSibling(value) {
-    const name = `[data-name='${value.name}']`;
-    const path = super.GET(value, (v) => v.map.querySelector(name));
-    return {
-      path,
-      sibling: super.GET(path, (p) => p.previousElementSibling),
-      name: value.name,
-    };
-  }
-  getNextAndPreviousSibling(value) {
-    return {
-      next: super.GET(value, (p) => p.nextElementSibling),
-      previous: super.GET(value, (p) => p.previousElementSibling),
-    };
-  }
-  getStatePathByName(value) {
-    return super.GET(value, (n) =>
-      this.#entity.querySelector(`path[data-name='${n}']`),
+  getForeignObjByName(name) {
+    return super.GET(name, (n) =>
+      this.#entity.svg.querySelector(`foreignObject[data-name='${n}']`),
     );
   }
-  getForeignObjByName(value) {
-    return super.GET(value, (n) =>
-      this.#entity.querySelector(`foreignObject[data-name='${n}']`),
+  getStatePathByName(name) {
+    return super.GET(name, (n) =>
+      this.#entity.svg.querySelector(`path[data-name='${n}']`),
     );
   }
-  getAllPathsFromSVG(value) {
-    return super.GET(value, (p) => this.#entity.querySelectorAll(p));
+  getCoinFromForeignObj(foreignObject) {
+    return super.GET(foreignObject, (fo) => fo.firstChild);
   }
-  getAllFavoriteCoins(value) {
-    return super.GET(value, (f) => f.children);
+  getAllForeignObjects(tag) {
+    return super.GET(tag, (t) => this.#entity.svg.querySelectorAll(t));
   }
-  putMapInEntity(value) {
-    super.PUT(value, (svg) => this.#entity.append(svg));
+  getNextAndPreviousSibling(path) {
+    return super.GET(path, (p) => {
+      return { next: p.nextSibling, previous: p.previousSibling };
+    });
   }
-  putStatePathBack(value) {
-    super.PUT(value, (v) => v.sibling.after(v.path));
+  getAllFavoriteCoins(favorites) {
+    return super.GET(favorites, (f) => f.children);
   }
-  putForeignObjectLast(value) {
-    super.PUT(value, (v) => v.map.append(v.fo));
+  getAllPathsFromSVG(tagName) {
+    return super.GET(tagName, (tn) => this.#entity.svg.querySelectorAll(tn));
   }
-  putForeignObjectBack(value) {
-    super.PUT(value, (v) => v.siblings.previous.after(v.fo));
+  getPathAndPreviousSibling(name) {
+    return super.GET(name, (n) => {
+      const path = this.#entity.svg.querySelector(`[data-name='${n}']`);
+      const sibling = path.previousSibling;
+      return { path, sibling, name };
+    });
   }
-  putCacheMapInSession(value) {
+  putMapInEntity(svg) {
+    super.PUT(svg, (map) => this.#entity.svg.append(map));
+  }
+  putMapOnDisplay(text) {
+    const svg = HtmlStore.from(text).nodes[0];
     this.#browser.putNewItemInSessionByKey(
-      value.key,
-      this.#entity.id,
-      value.usmap,
+      svg.tagName,
+      this.#entity.usmap.id,
+      text,
     );
+    svg.setAttribute("viewBox", "80 0 1000 589");
+    this.#entity.svg = svg;
+    this.#entity.usmap.append(this.#entity.svg);
+    this.putMapOnOffDisplay();
   }
-  putPathAndSiblingLast(value) {
-    const children = [value.path];
-    if (value.siblings.next.tagName === "foreignObject")
-      children.push(value.siblings.next);
-    super.PUT(value, (v) => v.map.append(...children));
+  putPathAndSiblingFirst(vectors) {
+    super.PUT(vectors, ({ path, siblings }) => {
+      const children = [path];
+      if (siblings.next.tagName === "foreignObject")
+        children.push(siblings.next);
+      this.#entity.svg.prepend(...children);
+    });
   }
-  putPathAndSiblingFirst(value) {
-    const children = [value.path];
-    if (value.siblings.next.tagName === "foreignObject")
-      children.push(value.siblings.next);
-    super.PUT(value, (v) => v.map.prepend(...children));
+  putStatePathBack(vectors) {
+    super.PUT(vectors, ({ path, sibling }) => sibling.after(path));
   }
-  putPathAndSiblingBack(value) {
-    const children = [value.path];
-    if (value.siblings.next.tagName === "foreignObject")
-      children.push(value.siblings.next);
-    super.PUT(value, (v) => v.siblings.previous.after(...children));
+  putPathAndSiblingLast(vectors) {
+    super.PUT(vectors, ({ path, siblings }) => {
+      const children = [path];
+      if (siblings.next.tagName === "foreignObject")
+        children.push(siblings.next);
+      this.#entity.svg.append(...children);
+    });
   }
-  putCoinInForeignObject(value) {
-    super.PUT(value, (v) => v.fo.append(v.c));
+  putPathAndSiblingBack(vectors) {
+    super.PUT(vectors, ({ path, siblings }) => {
+      const children = [path];
+      if (siblings.next.tagName === "foreignObject")
+        children.push(siblings.next);
+      siblings.previous.after(...children);
+    });
   }
-  putForeignObjAfterPath(value) {
-    super.PUT(value, (svg) => svg.path.after(svg.fo));
+  putCoinInForeignObject(contents) {
+    super.PUT(contents, ({ fo, c }) => fo.append(c));
+  }
+  putForeignObjAfterPath(vectors) {
+    super.PUT(vectors, ({ path, fo }) => path.after(fo));
+  }
+  putForeignObjectLast(foreignObject) {
+    super.PUT(foreignObject, (fo) => this.#entity.svg.append(fo));
+  }
+  putForeignObjectBack(vectors) {
+    super.PUT(vectors, ({ siblings, fo }) => 
+      siblings.previous.after(fo));
   }
   putMapOnOffDisplay() {
     super.PUT(
       window.matchMedia("(max-width: 768px)").matches,
-      (m) => (this.#entity.hidden = m),
+      (m) => (this.#entity.usmap.hidden = m),
     );
   }
 }

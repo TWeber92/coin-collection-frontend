@@ -17,8 +17,10 @@ export class GeoUtility {
     MI: { xAdjust: -260, yAdjust: 10 },
   };
 
-  static #getPositionOverrides(id) {
-    return GeoUtility.#POSITION_OVERRIDES[id] || { xAdjust: 0, yAdjust: 0 };
+  static async #getPositionOverrides(id) {
+    return (
+      (await GeoUtility.#POSITION_OVERRIDES[id]) || { xAdjust: 0, yAdjust: 0 }
+    );
   }
 
   static async #getStatePathsGeometry() {
@@ -66,7 +68,7 @@ export class GeoUtility {
     const pathData = path.getAttribute("d");
     const geoMean = Math.sqrt(bbox.width * bbox.height);
     const coinSize = Math.max(50, Math.min(geoMean * 0.85, 150));
-    const override = this.#getPositionOverrides(id);
+    const override = await this.#getPositionOverrides(id);
     const numbers = pathData.match(/[-+]?(\d*\.\d+|\d+\.?)/g);
     GeoState.fromSVG({
       pathData,

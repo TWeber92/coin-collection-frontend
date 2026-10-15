@@ -1,56 +1,62 @@
 import { DocumentStore } from "../DocumentStore.js";
+import { HtmlStore } from "../HtmlStore.js";
 import { DocumentClient } from "./DocumentClient.js";
 
 export class ModalRepository extends DocumentClient {
-  constructor() {
+  constructor(view) {
     super();
+    this.#entity = view.entity;
   }
+  #entity;
 
-  #entity = this.#getModalElement();
-
-  #getModalElement() {
-    return document.body.appendChild(
-      DocumentStore.createDivElement({
-        id: "overlay",
-        className: "modal-overlay",
-        hidden: true,
-      }).node,
+  getModalContext(context) {
+    return super.GET(
+      context,
+      (
+        { t, b, f, fm, ne }, // dynamic concept..
+      ) => HtmlStore.from([fm, ne, t, b, f].filter(Boolean).join("")).nodes,
     );
   }
-  getCollectedFromStateModal(value) {
-    return super.GET(value, (e) => e.body.querySelector(e.collectedId));
-  }
-  #postAuthenticationModal(value) {
-    super.POST(value, (v) => {
-      const [header, body, footer] = this.#entity.children;
-      header.replaceChild(v.t, header.querySelector("h2"));
-      body.replaceChildren(v.b);
-      footer.replaceChildren(v.f);
+  postStateModalContext(entity) {
+    super.POST(entity, ({ title, body, footer, coin }) => {
+      coin.hidden = false;
+      coin.dataset.location = this.#entity.className;
+      const [h, b, f] = this.#entity.children;
+      h.replaceChild(title, h.firstChild);
+      b.replaceChildren(body, coin);
+      f.replaceChildren(...footer);
+      this.putModalOnDisplay({ h, b, f });
     });
   }
-  postStateModalContext(value) {
-    super.POST(value, (v) => {
-      const [header, body, footer] = this.#entity.children;
-      header.replaceChild(v.t, header.querySelector("h2"));
-      body.replaceChildren(v.b, v.coin);
-      footer.replaceChildren(...v.f);
+  postLoginModalContext(entity) {
+    super.POST(entity, ({ form, title, body, footer }) => {
+      const [h, b, f] = this.#entity.children;
+      h.replaceChild(title, h.firstChild);
+      form.append(...body);
+      b.replaceChildren(form);
+      f.replaceChildren(footer);
+      this.putModalOnDisplay({ h, b, f });
     });
   }
-  postLoginModalContext(value) {
-    this.#postAuthenticationModal(value);
+  postSignUpModalContext(entity) {
+    super.POST(entity, ({ form, newEmail, title, body, footer }) => {
+      const [h, b, f] = this.#entity.children;
+      h.replaceChild(title, h.firstChild);
+      form.append(newEmail);
+      form.append(...body);
+      b.replaceChildren(form);
+      f.replaceChildren(footer);
+      this.putModalOnDisplay({ h, b, f });
+    });
   }
-  postSignUpModalContext(value) {
-    this.#postAuthenticationModal(value);
+  putModalContextInOverlay(modal) {
+    super.PUT(modal, (m) => this.#entity.append(...HtmlStore.from(m).nodes));
   }
-  putCoinAfterCollected(value) {
-    super.POST(value, (v) => v.collected.after(v.coin));
-  }
-  putModalOnDisplay(value) {
-    if (value?.coin) value.coin.hidden = false;
-    this.#entity.hidden = false;
-    document.body.dataset.overlay = "true";
-  }
-  putModalContextInOverlay(value) {
-    super.PUT(value, (n) => this.#entity.append(...n));
+  putModalOnDisplay(entity) {
+    super.PUT(entity, ({ h, b, f }) => {
+      this.#entity.replaceChildren(h, b, f);
+      this.#entity.hidden = false;
+      document.body.dataset.overlay = "true";
+    });
   }
 }

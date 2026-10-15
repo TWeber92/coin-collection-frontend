@@ -14,6 +14,9 @@ path {
 #tooltip:hover .fo-svg {
   pointer-events: none;
 }
+.fo-svg[data-mouse="inactive"]{
+  pointer-events: none;
+}
 svg:has(.fo-svg[data-mouse="over"]) path {
   pointer-events: none !important;
 }

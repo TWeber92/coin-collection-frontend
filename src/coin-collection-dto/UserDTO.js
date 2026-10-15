@@ -1,30 +1,36 @@
 export class UserDTO {
-  static #json = {};
   #authenticated;
-  #userName;
+  #merged;
+  #email;
   #collection;
-  #permissions;
-  #roles;
-  constructor(entity) {
-    entity = { ...UserDTO.#json, ...entity };
-    this.#authenticated = entity.authenticated;
-    this.#userName = entity.userName;
-    this.#collection = {
-      favorites: entity.collection?.favorites?.names,
-      archive: entity.collection?.archive?.names,
-    };
-    UserDTO.#json = this.#toJSON();
+  #createdAt;
+  #message;
+  constructor(data) {
+    this.#authenticated = data.email ? true : false;
+    this.#merged = data.merged || false;
+    this.#email = data.email;
+    this.#collection = data.collection;
+    this.#createdAt = data.createdAt
+      ? new Date(data.createdAt).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+        })
+      : "—";
+    this.#message = data.message;
   }
 
-  #toJSON() {
+  to() {
     return {
       authenticated: this.#authenticated,
-      userName: this.#userName,
+      merged: this.#merged,
+      email: this.#email,
       collection: this.#collection,
+      createdAt: this.#createdAt,
+      message: this.#message,
     };
   }
 
-  static fromEntity(entity) {
-    return new UserDTO(entity).#toJSON();
+  static from(data) {
+    return new UserDTO(data);
   }
 }

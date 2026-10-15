@@ -6,14 +6,19 @@ export class CollectionController extends AppController {
     super();
     this.#collectionService = service;
   }
-  getCollectionById(req, res) {
+  getCollectionsById(req, res) {
     return super.GET(req, res, () =>
-      this.#collectionService.getCollectionById(req.body),
+      this.#collectionService.getCollectionsById(
+        req.body.favoritesId,
+        req.body.archiveId,
+      ),
     );
   }
   getCoinFromArchiveCollection(req, res) {
     return super.GET(req, res, () =>
-      this.#collectionService.getCoinFromArchiveCollection(req.body),
+      this.#collectionService.getCoinFromArchiveCollection(
+        req.body.name,
+      ),
     );
   }
   async getUserSyncedCollection(req, res) {
@@ -21,12 +26,7 @@ export class CollectionController extends AppController {
       req,
       res,
       async () =>
-        await this.#collectionService.getUserSyncedCollection(req.body),
-    );
-  }
-  async getCollectedFavoriteNames(req, res) {
-    return super.GET(req, res, () =>
-      this.#collectionService.getCollectedFavoriteNames(req.body),
+        await this.#collectionService.getUserSyncedCollection(req.body.user),
     );
   }
   async postToFavoritesCollection(req, res) {
@@ -34,7 +34,10 @@ export class CollectionController extends AppController {
       req,
       res,
       async () =>
-        await this.#collectionService.postToFavoritesCollection(req.body),
+        await this.#collectionService.postToFavoritesCollection(
+          req.body.coin.entity,
+          req.body.user
+        ),
     );
   }
   async putFavoriteInArchiveCollection(req, res) {
@@ -42,7 +45,10 @@ export class CollectionController extends AppController {
       req,
       res,
       async () =>
-        await this.#collectionService.putFavoriteInArchiveCollection(req.body),
+        await this.#collectionService.putFavoriteInArchiveCollection(
+          req.body.coin.entity,
+          req.body.user
+        ),
     );
   }
   async putArchivedInFavoritesCollection(req, res) {
@@ -51,7 +57,8 @@ export class CollectionController extends AppController {
       res,
       async () =>
         await this.#collectionService.putArchivedInFavoritesCollection(
-          req.body,
+          req.body.coin.entity,
+          req.body.user
         ),
     );
   }
@@ -60,20 +67,31 @@ export class CollectionController extends AppController {
       req,
       res,
       async () =>
-        await this.#collectionService.deleteArchivedFromCollection(req.body),
+        await this.#collectionService.deleteArchivedFromCollection(
+          req.body.coin.entity,
+          req.body.user
+        ),
     );
   }
   putAllFavoritesInCollection(req, res) {
     super.PUT(req, res, () =>
-      this.#collectionService.putAllFavoritesInCollection(req.body),
+      this.#collectionService.putAllFavoritesInCollection(req.body.usmap.coins),
     );
   }
-  putCollectionOnOrOffDisplay(req, res) {
+  putCollectionOnOrOffPage(req, res) {
     super.PUT(req, res, () =>
-      this.#collectionService.putCollectionOnOrOffDisplay(req.body),
+      this.#collectionService.putCollectionOnOrOffPage(
+        req.body.collection[req.body.selectedId],
+        req.body.page
+      ),
     );
   }
-  // #deleteCollectionControls(req, res) {
+  putFavoritesCollectionInEntity(req, res) {
+    super.GET(req, res, () =>
+      this.#collectionService.putFavoritesCollectionInEntity(),
+    );
+  }
+  // deleteCollectionControls(req, res) {
   //   super.DELETE(req, res, () =>
   //     this.#collectionService.deleteCollectionControls(req.body),
   //   );

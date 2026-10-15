@@ -8,19 +8,27 @@ export class TooltipController extends AppController {
     this.#tooltipService = service;
   }
   postAddTooltip(req, res) {
-    super.POST(req, res, () => this.#tooltipService.postAddTooltip(req.body));
+    super.POST(req, res, () =>
+      this.#tooltipService.postAddTooltip(req.body.coin),
+    );
   }
   postArchiveTooltip(req, res) {
     super.POST(req, res, () =>
-      this.#tooltipService.postArchiveTooltip(req.body),
+      this.#tooltipService.postArchiveTooltip(req.body.coin),
     );
   }
   postRestoreOrDeleteTooltip(req, res) {
     super.POST(req, res, () =>
-      this.#tooltipService.postRestoreOrDeleteTooltip(req.body),
+      this.#tooltipService.postRestoreOrDeleteTooltip(req.body.coin),
     );
   }
   deleteTooltip(req, res) {
-    super.DELETE(req, res, () => this.#tooltipService.deleteTooltip(req.body));
+    super.DELETE(req, res, () =>
+      this.#tooltipService.deleteTooltip(
+        req.body.tooltip,
+        req.body.relative,
+        req.body.clone,
+      ),
+    );
   }
 }

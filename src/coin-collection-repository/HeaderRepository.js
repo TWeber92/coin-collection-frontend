@@ -1,83 +1,82 @@
 import { DocumentStore } from "../DocumentStore.js";
+import { HtmlStore } from "../HtmlStore.js";
 import { DocumentClient } from "./DocumentClient.js";
 
 export class HeaderRepository extends DocumentClient {
-  constructor() {
+  constructor(view) {
     super();
+    this.#entity = view.entity
   }
 
-  #entity = { header: this.#getHeaderElement() };
+  #entity
 
-  #getHeaderElement() {
-    return document.body.appendChild(
-      DocumentStore.createHeaderElement({
-        id: "header",
-        className: "doc-header",
-      }).node,
+  get entity() {
+    return this.#entity;
+  }
+  getHeaderContextWithHtml(html) {
+    return super.GET(html, (t) => HtmlStore.from(t).nodes);
+  }
+  getMenuButtonById(menuBtnId) {
+    return super.GET(menuBtnId, (id) => this.#entity.header.children[id]);
+  }
+
+  getButtonsFromEntity() {
+    return super.GET(this.#entity, ({ nav, menu }) =>
+      !nav.hidden ? nav.children : menu.children,
     );
   }
-  getMenuButtonById(value) {
-    return super.GET(value, (id) => this.#entity.header.querySelector(id));
-  }
-  getBadgesFromEntity(value) {
-    const entity = this.#entity.nav.children.length
-      ? this.#entity.nav
-      : this.#entity.header;
-    return super.GET(value, (id) => entity.querySelectorAll(id));
-  }
-  getExistingArchiveButton(value) {
-    return super.GET(value, (id) => {
-      const nav = this.#entity.nav.children[id];
-      const header = this.#entity.header.querySelector(`#${id}`);
-      return !!nav || !!header;
+  // getExistingArchiveButton(archiveId) {
+  //   return super.GET(`#${archiveId}`, (id) => {
+  //     const nav = this.#entity.nav.children[id];
+  //     const header = this.#entity.header.querySelector(id);
+  //     return !!nav || !!header;
+  //   });
+  // }
+  getBadgesFromEntity(id) {
+    return super.GET(`#${id}`, (id) => {
+      const entity = this.#entity.nav.hidden
+        ? this.#entity.header
+        : this.#entity.nav;
+      return entity.querySelectorAll(id);
     });
   }
-  getNavItemsFromDocBody() {
-    return super.GET(document.body, (b) =>
-      b.querySelectorAll("[data-nav-item]"),
-    );
+  getExistingBadgeFromButton(button) {
+    return super.GET(button, (b) => b.lastChild);
   }
-  getFavoritesButtonFromEntity(value) {
-    return super.GET(value, (id) =>
+  putArchiveButtonInEntity(button) {
+    return super.PUT(button, (b) =>
       this.#entity.nav.hidden
-        ? this.#entity.header.querySelector(`#${id}`)
-        : this.#entity.nav.children[id],
+        ? this.#entity.menu.append(b)
+        : this.#entity.nav.append(b),
     );
   }
-  putArchiveButtonInEntity(value) {
-    super.PUT(value, (v) =>
-      this.#entity.nav.hidden
-        ? this.#entity.header.querySelector(value.id).append(v.b)
-        : this.#entity.nav.append(v.b),
-    );
+  putHeaderAssemblyTogether(entity) {
+    super.PUT(entity, ({ title, menu, hamburger, mobile, buttons }) => {
+      menu.append(...Object.values(buttons));//buttons needs to be converted to iterable
+      const { header } = this.#entity;
+      header.append(title, menu, hamburger);
+      header.after(mobile);
+      this.#entity.menu = menu;
+      this.#entity.nav = mobile;
+      
+    });
   }
-  putNavItemsInMenu(value) {
-    super.PUT(value, (v) => v.menu.append(...v.items));
-  }
-  putNewMenuButtonInHeader(value) {
+  putNewMenuButtonInHeader(menuBtn) {
     super.PUT(
-      value,
+      menuBtn,
       (mb) => (mb.textContent = this.#entity.nav.hidden ? "☰" : "✕"),
     );
   }
-  putContextInHeader(value) {
-    super.PUT(value, (c) => this.#entity.header.append(...c));
+  putNewCountInBadge(context) {
+    super.PUT(context, ({ b, c }) => (b.textContent = c));
   }
-  putNavAfterHeader(value) {
-    this.#entity.nav = value;
-    super.PUT(value, (n) => this.#entity.header.after(n));
-  }
-  putNewCountInBadge(value) {
-    super.PUT(value, (e) => (e.b.textContent = e.c));
-  }
-  putMenuNavOnOffDisplay(value) {
-    const hidden = this.#entity.nav.hidden;
-    this.#entity.nav.hidden = hidden ? false : true;
-    this.#entity.nav.hidden
-      ? super.PUT(value, (btns) =>
-          this.#entity.header.querySelector("menu").append(...btns),
-        )
-      : super.PUT(value, (btns) => this.#entity.nav.append(...btns));
-    document.body.dataset.overlay = this.#entity.nav.hidden ? "false" : "true";
+  putMenuNavOnOffDisplay(buttons) {
+    super.PUT(buttons, (btns) => {
+      const { nav, menu } = this.#entity;
+      const hidden = nav.hidden;
+      nav.hidden = hidden ? false : true;
+      nav.hidden ? menu.append(...btns) : nav.append(...btns);
+      document.body.dataset.overlay = nav.hidden ? "false" : "true";
+    });
   }
 }
