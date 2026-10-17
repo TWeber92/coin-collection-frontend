@@ -11,7 +11,7 @@ export class GeoState {
     this.#pathData = obj.pathData;
     this.#numbers = obj.numbers;
     this.#override = obj.override;
-    this.#coinSize = Math.max(18, Math.min(obj.coinSize * 0.45, 50));
+    this.#coinSize = Math.max(18, Math.min(obj.geoMean * 0.45, 50));
     GeoState.#json = { ...GeoState.fromGeo(), ...obj };
   }
 

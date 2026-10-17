@@ -28,7 +28,27 @@ export class ModalController extends AppController {
       this.#modalService.postSignUpModalContext(req.body.id),
     );
   }
+  postEmailStageContext(req, res) {
+    super.POST(req, res, () =>
+      this.#modalService.postEmailStageContext(req.body.id, req.body.name),
+    );
+  }
+  postPinStageContext(req, res) {
+    super.POST(req, res, () =>
+      this.#modalService.postPinStageContext(req.body.name, req.body.message),
+    );
+  }
+  postResetStageContext(req, res) {
+    super.POST(req, res, () =>
+      this.#modalService.postResetStageContext(req.body.name),
+    );
+  }
+
   putModalContextInOverlay(req, res) {
-    super.PUT(req, res, () => this.#modalService.putModalContextInOverlay())
+    super.PUT(req, res, () => this.#modalService.putModalContextInOverlay());
+  }
+
+  deleteModalFromDisplay(req, res) {
+    super.DELETE(req, res, () => this.#modalService.deleteModalFromDisplay());
   }
 }

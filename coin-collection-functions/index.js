@@ -38,6 +38,7 @@ export const event = async (e) => {
     "click:/div/state": async () => await updateModalView(e),
     "click:/button/login": async () => await updateModalView(e),
     "click:/button/signup": async () => await updateModalView(e),
+    "click:/button/password": async () => await updateModalView(e),
     "click:/button/close": async () => await deleteOverlay(e),
     "click:/button/hamburger": async () => await updateMenuView(e),
     "click:/button/next": async () => await updateCarousel(e),
@@ -47,6 +48,7 @@ export const event = async (e) => {
     "input:/input/email": async () => await updateAuthInput(e),
     "input:/input/password": async () => await updateAuthInput(e),
     "input:/input/confirm": async () => await updateAuthInput(e),
+    "input:/input/pin": async () => await updateAuthInput(e),
     "click:/div/coined": async () => await updateTooltip(e),
     "click:/div/coin": async () => await updateCoin(e),
     "click:/button/about": async () => await updatePageView(e),
@@ -59,6 +61,9 @@ export const event = async (e) => {
     "click:/button/tooltip": async () => await updateUserCollection(e),
     "pointermove:/path/state": async () => await updatePathLocation(e),
     "pointermove:/foreignobject/state": async () => await updateFoLocation(e),
+    "submit:/form/reset": async () => await postAuthForm(e),
+    "submit:/form/pin": async () => await postAuthForm(e),
+    "submit:/form/password": async () => await postAuthForm(e),
   };
   try {
     // if (type !== "mouseout") console.log(route);

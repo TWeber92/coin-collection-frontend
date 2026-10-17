@@ -60,7 +60,7 @@ export class PageView {
                  <h3>Account</h3>
                  <p class="user-email"><strong>Email:</strong> ${data.user?.email}</p>
                  <p class="user-since"><strong>Member since:</strong> ${data.user?.createdAt || "—"}</p>
-                 <button id="password" type="button">🔒 Reset Password</button>
+                 <button id="password" type="button" name="reset">🔒 Reset Password</button>
                </div>
                <div id="user-actions">
                  <h3>Collection</h3>

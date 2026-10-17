@@ -7,7 +7,7 @@ export const handler = async (e) => {
   let responseBody;
   const req = {
     body: {
-      name: e.target.dataset.name,
+      name: e.target.dataset.name || e.target.name,
       id: e.target.id,
     },
   };
@@ -18,6 +18,7 @@ export const handler = async (e) => {
     collectionController,
     coinController,
     headerController,
+    pageController,
   } = Application.controllers;
 
   await headerController.getHeaderContext(req, res); //args - none
@@ -34,6 +35,10 @@ export const handler = async (e) => {
     req.body.coin = responseBody.to(); //CoinDTO obj
   }
   const router = {
+    password: async () => {
+      await modalController.postEmailStageContext(req, null); //args - id, name
+      await pageController.deletePageFromDisplay(req, res); //args - none
+    },
     state: async () => await modalController.postStateModalContext(req, null), //args - coin, name, user.collection.favorites,
     login: async () => await modalController.postLoginModalContext(req, null), //args - id
     signup: async () => await modalController.postSignUpModalContext(req, null), //args - id

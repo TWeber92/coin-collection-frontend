@@ -13,8 +13,9 @@ export class ModalRepository extends DocumentClient {
     return super.GET(
       context,
       (
-        { t, b, f, fm, ne }, // dynamic concept..
-      ) => HtmlStore.from([fm, ne, t, b, f].filter(Boolean).join("")).nodes,
+        { t, b, f, fm, ni, btn }, // dynamic concept..
+      ) =>
+        HtmlStore.from([fm, ni, btn, t, b, f].filter(Boolean).join("")).nodes,
     );
   }
   postStateModalContext(entity) {
@@ -58,5 +59,50 @@ export class ModalRepository extends DocumentClient {
       this.#entity.hidden = false;
       document.body.dataset.overlay = "true";
     });
+  }
+  postEmailStageContext(entity) {
+    super.POST(entity, ({ form, newEmail, button, id }) => {
+      const [h, b, f] = this.#entity.children;
+      h.firstChild.textContent = `${id} ${form.id}`.toUpperCase();
+      form.append(newEmail, button);
+      b.replaceChildren(form);
+      f.replaceChildren();
+      this.putModalOnDisplay({ h, b, f });
+    });
+  }
+  postPinStageContext(entity) {
+    super.POST(entity, ({ pin, button, msg }) => {
+      const [b, f] = [...this.#entity.children].slice(1);
+      const form = b.firstChild;
+      form.id = pin.id;
+      [...form.elements].forEach((el) => {
+        el.type = "hidden";
+        el.parentNode.hidden = true;
+      });
+      form.replaceChild(button, form.lastChild);
+      button.before(pin);
+      f.append(msg)
+    });
+  }
+  postPasswordStageContext(entity) {
+    super.POST(entity, ({ button, body }) => {
+      const [b, f] = [...this.#entity.children].slice(1);
+      const form = b.firstChild;
+      form.id = body[0].id;
+      [...form.elements].forEach((el) => {
+        el.type = "hidden";
+        el.parentNode.hidden = true;
+      });
+      body.pop();
+      body.push(button);
+      form.lastChild.replaceWith(...body);
+      f.replaceChildren()
+    });
+  }
+  putModalOnOffDisplay(){
+    super.PUT(this.#entity, (m) => {
+      m.hidden = !m.hidden;
+      document.body.dataset.overlay = m.hidden ? "false" : "true"
+    })
   }
 }

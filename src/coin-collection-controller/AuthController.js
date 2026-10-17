@@ -6,13 +6,26 @@ export class AuthController extends AppController {
     super();
     this.#authService = service;
   }
-  
+
   async logout(req, res) {
-    return super.POST(req, res, () => this.#authService.logout())
+    return super.POST(req, res, async () => await this.#authService.logout());
   }
 
-  getMe(req, res) {
-    return super.GET(req, res, () => this.#authService.getMe());
+  async getMe(req, res) {
+    return super.GET(req, res, async () => await this.#authService.getMe());
+  }
+  async getPin(req, res) {
+    return super.GET(
+      req,
+      res,
+      async () => await this.#authService.getPin(req.body.email),
+    );
+  }
+
+  getPinInputValidation(req, res) {
+    return super.GET(req, res, () =>
+      this.#authService.getPinInputValidation(req.body.input, req.body.button),
+    );
   }
 
   getEmailInputValidation(req, res) {
@@ -39,9 +52,23 @@ export class AuthController extends AppController {
       ),
     );
   }
-  putUserCollection(req, res) {
-    super.PUT(req, res, () =>
-      this.#authService.putUserCollection(req.body.user),
+  async putNewCollectionInUser(req, res) {
+    super.PUT(
+      req,
+      res,
+      async () => await this.#authService.putNewCollectionInUser(req.body.user),
+    );
+  }
+  async postPasswordResetForm(req, res) {
+    return super.PUT(
+      req,
+      res,
+      async () =>
+        await this.#authService.postPasswordResetForm(
+          req.body.email,
+          req.body.pin,
+          req.body.password,
+        ),
     );
   }
 }

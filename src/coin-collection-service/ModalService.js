@@ -56,7 +56,7 @@ export class ModalService {
     });
     const { title, body, footer } = signupModal;
     const nodes = this.#repo.getModalContext({
-      ne: newEmail,
+      ni: newEmail,
       fm: form,
       t: title,
       b: body,
@@ -70,5 +70,57 @@ export class ModalService {
       footer: nodes[6],
     });
     this.#repo.postSignUpModalContext(entity.to());
+  }
+  postEmailStageContext(id, name) {
+    console.log(name);
+
+    const { button, form, newEmail } = ModalView.from({
+      name,
+    });
+    const nodes = this.#repo.getModalContext({
+      ni: newEmail,
+      fm: form,
+      btn: button,
+    });
+    console.log();
+
+    const entity = Modal.from({
+      form: nodes[0],
+      newEmail: nodes[1],
+      button: nodes[2],
+    });
+    this.#repo.postEmailStageContext({ ...entity.to(), id });
+  }
+  postPinStageContext(name, message) {
+    const { button, pin } = ModalView.from({
+      name,
+    });
+    const nodes = this.#repo.getModalContext({
+      ni: pin,
+      btn: button,
+    });
+    const entity = Modal.from({
+      pin: nodes[0],
+      button: nodes[1],
+    });
+    this.#repo.postPinStageContext({ ...entity.to(), msg: message });
+  }
+  postResetStageContext(name) {
+    const { button, signupModal } = ModalView.from({
+      name,
+    });
+    const { body } = signupModal;
+    const nodes = this.#repo.getModalContext({
+      btn: button,
+      b: body,
+    });
+    const entity = Modal.from({
+      button: nodes[0],
+      body: [...nodes].slice(1),
+    });
+    this.#repo.postPasswordStageContext(entity.to());
+  }
+  deleteModalFromDisplay(){
+    this.#repo.putModalOnOffDisplay()
   }
 }

@@ -7,6 +7,8 @@ export class Modal {
   #coin
   #form
   #newEmail
+  #button
+  #pin
   constructor(data) {
     this.#title = data.title;
     this.#body = data.body
@@ -14,6 +16,8 @@ export class Modal {
     this.#coin = data.coin
     this.#form = data.form;
     this.#newEmail = data.newEmail
+    this.#button = data.button
+    this.#pin = data.pin
   }
 
   to() {
@@ -23,7 +27,9 @@ export class Modal {
       footer: this.#footer,
       coin: this.#coin,
       form: this.#form,
-      newEmail: this.#newEmail
+      newEmail: this.#newEmail,
+      button: this.#button,
+      pin: this.#pin
     };
   }
   static from(data) {

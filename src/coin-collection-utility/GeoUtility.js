@@ -59,7 +59,7 @@ export class GeoUtility {
       pathData,
       numbers,
     });
-    return await this.#getStatePathsGeometry(); //{ #fromEntity }
+    return await this.#getStatePathsGeometry(); 
   }
 
   static async getPositionForCoin(path) {
@@ -67,14 +67,13 @@ export class GeoUtility {
     const bbox = path.getBBox();
     const pathData = path.getAttribute("d");
     const geoMean = Math.sqrt(bbox.width * bbox.height);
-    const coinSize = Math.max(50, Math.min(geoMean * 0.85, 150));
     const override = await this.#getPositionOverrides(id);
     const numbers = pathData.match(/[-+]?(\d*\.\d+|\d+\.?)/g);
     GeoState.fromSVG({
       pathData,
       numbers,
       override,
-      coinSize,
+      geoMean,
     });
     return await this.#getStatePathsGeometry();
   }

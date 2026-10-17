@@ -32,7 +32,7 @@ export class EventRegister {
   #registerListeners() {
     this.#registerClickListener();
     this.#registerInputListener();
-    // this.#registerSubmitListener();
+    this.#registerSubmitListener();
     this.#registerPointerListeners();
     this.#registerTransitionListener();
     this.#registerLoadedListener();

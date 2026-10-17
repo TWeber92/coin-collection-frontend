@@ -9,6 +9,7 @@ export class UserValidator {
       email: () => UserValidator.validateUserEmail(input),
       password: () => UserValidator.validateUserPassword(input),
       confirm: () => UserValidator.validatePasswordMatch(input),
+      pin: () => UserValidator.validateUserPin(input),
     };
     return router[input.id]();
   }
@@ -63,6 +64,21 @@ export class UserValidator {
         message: { confirmMsg: input.validationMessage },
         name: "ValidationError",
         operation: "validatePasswordMatch",
+      });
+    }
+  }
+  static validateUserPin(input) {
+    const isValid = input.checkValidity();
+    console.log(isValid);
+    
+    if (!isValid) {
+      input.disable();
+      input.setCustomValidity("Enter the 6-digit PIN from your email.");
+      throw new ValidationError({
+        target: input,
+        message: { pinMsg: input.validationMessage },
+        name: "ValidationError",
+        operation: "validateUserPin",
       });
     }
   }

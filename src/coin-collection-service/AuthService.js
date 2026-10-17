@@ -1,6 +1,10 @@
 import { UserDTO } from "../coin-collection-dto/UserDTO.js";
 import { User } from "../coin-collection-entity/User.js";
-import { GetMeNotice, LogoutNotice } from "../coin-collection-exception/CoinCollectionError.js";
+import {
+  GetMeNotice,
+  LogoutNotice,
+  PasswordResetNotice,
+} from "../coin-collection-exception/CoinCollectionError.js";
 import { UserValidator } from "../coin-collection-validation/UserValidator.js";
 import { ModalView } from "../coin-collection-view/ModalView.js";
 
@@ -12,28 +16,34 @@ export class AuthService {
   #repo;
 
   async getMe() {
-    const user = await this.#repo.getMe();
-    const message = user.message;
-    if (message) user.message = new GetMeNotice(message);
+    const result = await this.#repo.getMe();
+    const user = result.message ? this.#repo.user : result;
+    if (result.message) user.message = new GetMeNotice(result.message);
     const entity = User.from(user);
     return UserDTO.from(entity.to());
   }
+  getPin(email) {
+    return this.#repo.getPin(email);
+  }
   async logout() {
     const result = await this.#repo.postLogout();
-    return new LogoutNotice(result.message)
+    return new LogoutNotice(result.message);
   }
 
   getEmailInputValidation(input, button) {
-    this.getInputValidation(input, button);
+    this.#getInputValidation(input, button);
   }
   getPasswordInputValidation(input, button) {
-    this.getInputValidation(input, button);
+    this.#getInputValidation(input, button);
   }
   getPasswordMatchValidation(input, button) {
-    this.getInputValidation(input, button);
+    this.#getInputValidation(input, button);
+  }
+  getPinInputValidation(input, button) {
+    this.#getInputValidation(input, button);
   }
 
-  getInputValidation(input, button) {
+  #getInputValidation(input, button) {
     const setSpan = (s, n) => this.#repo.putSpanContextOnDisplay({ s, n });
     const setButton = (button, inputs) =>
       (button.disabled = !inputs.every((i) => i.checkValidity()));
@@ -50,9 +60,16 @@ export class AuthService {
     }
     setButton(button, inputs);
   }
+  async postPasswordResetForm(email, pin, password) {
+    const result = await this.#repo.putUserPassword({ email, pin, password });
+    console.log(result);
+    
+    result.message = new PasswordResetNotice(result.message)
+    return result
+  }
 
-  putUserCollection(user) {
+  putNewCollectionInUser(user) {
     const entity = User.from(user);
-    this.#repo.putUserCollection(entity.to());
+    return this.#repo.putUserCollection(entity.to());
   }
 }

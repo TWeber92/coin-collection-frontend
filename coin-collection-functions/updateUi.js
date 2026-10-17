@@ -107,7 +107,7 @@ export const restore = async (req) => {
   const update = userFavorites.length !== localFavorites.length;
   const put = userArchive.length !== localArchive.length;
   const patch = req.body.user.merged || (userEmpty && !localEmpty);
-  if (update || put || patch) await authController.putUserCollection(req, res); //args - user
+  if (update || put || patch) await authController.putNewCollectionInUser(req, res); //args - user
   for (const [k, v] of Object.entries(req.body.user.collection)) {
     const collection = req.body.collection[k]?.lastChild;
     if (collection) {

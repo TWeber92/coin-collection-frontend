@@ -73,17 +73,18 @@ export class ValidationError extends CoinCollectionError {
   constructor({ target, name, message, operation }) {
     super({ message: Object.values(message), name, operation, status: 400 }); // 👈 object
     this.#input = target;
-    this.#span = target.nextElementSibling;
+    this.#span = target.nextSibling;
   }
   toSpan() {
+    const id = this.#input.id;
     const form = this.#input.form;
-    const confirmSpan = form.confirm?.nextElementSibling;
+    const confirmSpan = form.confirm?.nextSibling;
     const text = this.message.split("⚠️,");
     this.#span.textContent = text[0];
     this.#span.hidden = false;
     if (text[1]) confirmSpan.textContent = text[1];
-    const match =
-      this.#input.form[this.#input.type].value === this.#input.value;
+    const indentifier = id === "pin" ? this.#input.id : this.#input.type;
+    const match = form[indentifier].value === this.#input.value;
     if (match) this.#input.setCustomValidity("");
   }
 }
@@ -114,6 +115,16 @@ export class LogoutNotice extends CoinCollectionError {
       message,
       name: "LogoutNotice",
       operation: "logout",
+      status: 200,
+    });
+  }
+}
+export class PasswordResetNotice extends CoinCollectionError {
+  constructor(message = "Password updated") {
+    super({
+      message,
+      name: "PasswordResetNotice",
+      operation: "putPassword",
       status: 200,
     });
   }

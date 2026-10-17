@@ -1,5 +1,4 @@
 import { HtmlStore } from "../HtmlStore.js";
-import { APIClient } from "./APIClient.js";
 import { DocumentClient } from "./DocumentClient.js";
 
 export class AuthRepository extends DocumentClient {
@@ -24,9 +23,17 @@ export class AuthRepository extends DocumentClient {
     email: null,
     collection: { favorites: [], archive: [] },
   };
-  // get user() {
-  //   return this.#user;
-  // }
+  get user() {
+    return this.#user;
+  }
+  async postLogin(email, password) {
+    return await this.#api.POST("/api/login", { email, password });
+  }
+
+  async postSignup(email, password, collection) {
+    return await this.#api.POST("/api/signup", { email, password, collection });
+  }
+
   // async putUserCollection(entity) {
   //   console.log({ collection: entity.collection });
   //   this.#mockUser.collection = entity.collection;
@@ -44,6 +51,28 @@ export class AuthRepository extends DocumentClient {
       collection: entity.collection,
     });
   }
+  // async putUserPassword({ email, pin, password }) {
+  //   return await this.#api.PUT("/api/password", { email, pin, password });
+  // }
+  async putUserPassword({ email, pin, password }) {
+    return await this.#local.PUT("/api/password", {
+      email,
+      pin,
+      newPassword: password,
+    });
+  }
+  // async putUserPassword({ email, pin, password }) {
+  //   return { message: "Password updated successfully." }
+  // }
+  // async getPin(email) {
+  //   return await this.#api.POST("/api/pin", { email });
+  // }
+  async getPin(email) {
+    return await this.#local.POST("/api/pin", { email });
+  }
+  // async getPin(email) {
+  //   return { message: "If that email is registered, a PIN has been sent." };
+  // }
 
   // async getMe() {
   //   console.log(this.#mockUser);
@@ -54,19 +83,10 @@ export class AuthRepository extends DocumentClient {
   //   return this.#user;
   // }
   // async getMe() {
-  //   const result = await this.#api.GET("/api/me");
-  //   if (result.message) {
-  //     this.#user.message = result.message;
-  //     return this.#user;
-  //   } else return result;
+  //   return await this.#api.GET("/api/me");
   // }
   async getMe() {
-    const result = await this.#local.GET("/api/me");
-    console.log(result);
-    if (result.message) {
-      this.#user.message = result.message;
-      return this.#user;
-    } else return result;
+    return await this.#local.GET("/api/me");
   }
   async postLogout() {
     return await this.#local.POST("/api/logout");

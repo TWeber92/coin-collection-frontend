@@ -9,6 +9,7 @@ export class ModalView {
   #valid;
   #newEmail;
   #button;
+  #pin;
   constructor(data) {
     this.#html = data;
   }
@@ -48,20 +49,22 @@ export class ModalView {
               <label for="email">Email</label>
               <input required type="email" 
                      id="email" 
+                     name="email"
                      placeholder="Email" 
                      autocomplete="email" 
                      aria-label="Email" />
-              <span class="validation-feedback" hidden ></span>
+              <span class="validation-feedback"></span>
             </div>
             <div class="input-group">
               <label for="password">Password</label>
                 <input required type="password" 
                       id="password" 
+                      name="password"
                       placeholder="Password" 
                       autocomplete="password" 
                       aria-label="Password" 
                       pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"/>
-              <span class="validation-feedback" hidden ></span>
+              <span class="validation-feedback"></span>
             </div>
             <button disabled 
                     id="login" 
@@ -74,15 +77,16 @@ export class ModalView {
 
     this.#signupModal = {
       title: `<h2>${data.name?.toUpperCase()}</h2>`,
-      body: `<div class="input-group">
+      body: `<div id="password" class="input-group">
                  <label for="password">Password</label>
                    <input required type="password" 
                      id="password" 
+                     name="password"
                      placeholder="Password" 
                      autocomplete="new-password" 
                      aria-label="Password" 
                      pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"/>
-                 <span class="validation-feedback" hidden ></span>
+                 <span class="validation-feedback"></span>
                </div>
                <div class="input-group">
                  <label for="confirm">Confirm Password</label>
@@ -92,7 +96,7 @@ export class ModalView {
                     autocomplete="new-password" 
                     aria-label="Confirm Password" 
                     pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"/>
-                 <span class="validation-feedback" hidden ></span>
+                 <span class="validation-feedback"></span>
                </div>
                <button disabled id="signup" 
                        name="authenticate" 
@@ -106,28 +110,43 @@ export class ModalView {
                        <label for="email">Email</label>
                         <input required type="email" 
                           id="email" 
+                          name="email"
                           placeholder="Email" 
                           autocomplete="new-email" 
                           aria-label="Email"/>
-                        <span class="validation-feedback" hidden ></span>
+                        <span class="validation-feedback"></span>
                       </div>`;
     this.#button = `<button disabled id="${data.name}" 
                        name="authenticate" 
                        type="submit" 
-                       data-action="${data.name}">${data.name}
+                       data-action="${data.name}">Submit
                     </button>`;
     this.#valid = "<span>Nailed it! 🔨</span>";
-  }//password, pin, reset = name
+    this.#pin = `<div id="pin" class="input-group">
+                    <label >PIN</label>
+                    <input required type="text"
+                      id="pin"
+                      name="pin"
+                      placeholder="6-digit PIN"
+                      inputmode="numeric"
+                      pattern="[0-9]{6}"
+                      maxlength="6"
+                      autocomplete="one-time-code"
+                      aria-label="6-digit PIN" />
+                    <span class="validation-feedback"</span>
+                  </div>`;
+  } //password, pin, reset = name
   #to() {
     return {
       modal: this.#modal,
       stateModal: this.#stateModal,
       loginModal: this.#loginModal,
       signupModal: this.#signupModal,
-      form: this.#form,
       newEmail: this.#newEmail,
-      buttons: this.#button,
+      button: this.#button,
       valid: this.#valid,
+      form: this.#form,
+      pin: this.#pin,
     };
   }
   static from(data) {
