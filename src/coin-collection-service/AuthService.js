@@ -2,6 +2,7 @@ import { UserDTO } from "../coin-collection-dto/UserDTO.js";
 import { User } from "../coin-collection-entity/User.js";
 import {
   GetMeNotice,
+  LoginNotice,
   LogoutNotice,
   PasswordResetNotice,
 } from "../coin-collection-exception/CoinCollectionError.js";
@@ -62,10 +63,14 @@ export class AuthService {
   }
   async postPasswordResetForm(email, pin, password) {
     const result = await this.#repo.putUserPassword({ email, pin, password });
-    console.log(result);
-    
-    result.message = new PasswordResetNotice(result.message)
-    return result
+    result.message = new PasswordResetNotice(result.message);
+    return result;
+  }
+  async postLoginForm(email, password) {
+    const result = await this.#repo.postLogin(email, password);
+    if (result.message) result.message = new LoginNotice(result.message);
+    const entity = User.from(result);
+    return UserDTO.from(entity.to());
   }
 
   putNewCollectionInUser(user) {

@@ -4,9 +4,17 @@ import { Application } from "../src/Application.js";
 export const handler = async (e) => {
   let responseBody;
   const selectedId = e.target.id;
-  const { collectionController, pageController, headerController, authController } =
-    Application.controllers;
-  const req = { body: { button: e.target, selectedId } };
+  const mq = window.matchMedia("(max-width: 768px)").matches;
+  const {
+    collectionController,
+    pageController,
+    headerController,
+    authController,
+    usMapController
+  } = Application.controllers;
+  const req = {
+    body: { button: e.target, selectedId, foTag: "foreignObject" },
+  };
   const res = { obj: (data) => (responseBody = data) };
   await headerController.getHeaderContext(req, res);
   req.body.header = responseBody.to(); //HeaderDTO obj
@@ -20,30 +28,41 @@ export const handler = async (e) => {
   if (navIsOpen) await headerController.putMenuNavOnOffDisplay(req, res); //args - header.hamburger
   const router = {
     email: async () => {
-      await pageController.getEmailNotice(req,res)//args button
-      responseBody.toToast()
+      await pageController.getEmailNotice(req, res); //args button
+      responseBody.toToast();
     },
     logout: async () => {
-      await pageController.deletePageFromDisplay(req, res)//args none
-      await authController.logout(req, res)//args - none
-      responseBody.toToast()
-      await authController.getMe(req, res)//args - none
-      req.body.user = responseBody.to()
-      await headerController.deleteAboutHeaderButton(req, res)//args - user
+      await pageController.deletePageFromDisplay(req, res); //args none
+      await authController.logout(req, res); //args - none
+      responseBody.toToast();
+      await authController.getMe(req, res); //args - none
+      req.body.user = responseBody.to();
+      if (!mq) {
+        await usMapController.getAllCoinsFromForeignObjects(req, res); //args - foTag
+        req.body.usmap = responseBody.to(); // UsMapDTO obj
+      }
+      if (!req.body.archiveId)
+        req.body.archiveId = Object.keys(req.body.user.collection)[1];
+      await collectionController.deleteLocalCollections(req, res); //args - favoritesId, archiveId
+      await collectionController.putCoinsInRespectiveDisplays(req, res); //args - user, usmap, favoritesId, archiveId
+      req.body.collection = responseBody.to();
+      req.body.header = req.body.collection.header;
+      await headerController.putNewCountInBadge(req, res); //args - header.collection
+      await headerController.deleteAboutHeaderButton(req, res); //args - user
     },
     about: async () => {
-      await authController.getMe(req, res)// args - none
-      req.body.user = responseBody.to()
-      await pageController.putAboutOnPage(req, res)//args - user
+      await authController.getMe(req, res); // args - none
+      req.body.user = responseBody.to();
+      await pageController.putAboutOnPage(req, res); //args - user
     },
     favorites: async () => {
       await pageController.putFavoritesOnPage(req, res); //args - collection.favorites, collection.archive, favoritesId, archiveId
-      req.body.page = responseBody.to()
+      req.body.page = responseBody.to();
       await collectionController.putCollectionOnOrOffPage(req, res); //args - collection, selectedId
     },
     archive: async () => {
       await pageController.putArchiveOnPage(req, res); //args - collection.favorites, collection.archive, favoritesId, archiveId
-      req.body.page = responseBody.to()
+      req.body.page = responseBody.to();
       await collectionController.putCollectionOnOrOffPage(req, res); //args - collection, selectedId, page
       req.body.header.collection = req.body.collection.header.collection;
       await pageController.putFooterContentsOnOffPage(req, res); //args - button.id, header.collection.archive (count), collection.archive

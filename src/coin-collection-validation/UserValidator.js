@@ -69,8 +69,6 @@ export class UserValidator {
   }
   static validateUserPin(input) {
     const isValid = input.checkValidity();
-    console.log(isValid);
-    
     if (!isValid) {
       input.disable();
       input.setCustomValidity("Enter the 6-digit PIN from your email.");

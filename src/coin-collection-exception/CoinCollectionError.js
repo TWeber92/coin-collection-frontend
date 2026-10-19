@@ -129,3 +129,13 @@ export class PasswordResetNotice extends CoinCollectionError {
     });
   }
 }
+export class LoginNotice extends CoinCollectionError {
+  constructor(message = "Invalid credentials") {
+    super({
+      message,
+      name: "LoginNotice",
+      operation: "login",
+      status: 401,
+    });
+  }
+}

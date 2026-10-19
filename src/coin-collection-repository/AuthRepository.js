@@ -16,7 +16,7 @@ export class AuthRepository extends DocumentClient {
     createdAt: "2026-08-15T12:00:00.000Z",
     collection: {
       favorites: ["California", "Texas"], // California new, Texas dup
-      archive: ["Nevada", "Maine"], // Nevada new, Maine dup
+      archive: ["Nevada"], // Nevada new, Maine dup
     },
   };
   #user = {
@@ -27,11 +27,16 @@ export class AuthRepository extends DocumentClient {
     return this.#user;
   }
   async postLogin(email, password) {
-    return await this.#api.POST("/api/login", { email, password });
+    return await this.#local.POST("/api/login", { email, password });
+    // return await this.#api.POST("/api/login", { email, password });
   }
+  // async postLogin(email, password) {
+  //   return this.#mockUser
+  // }
 
   async postSignup(email, password, collection) {
-    return await this.#api.POST("/api/signup", { email, password, collection });
+    return await this.#local.POST("/api/signup", { email, password, collection });
+    // return await this.#api.POST("/api/signup", { email, password, collection });
   }
 
   // async putUserCollection(entity) {

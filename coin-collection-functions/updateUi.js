@@ -86,11 +86,6 @@ export const restore = async (req) => {
   req.body.carousel = responseBody.to(); // CarouselDTO obj
   await carouselController.putCarouselAssemblyinNav(req, res); //args - carousel.index
   await modalController.putModalContextInOverlay(req, res); //args - none
-  // await authController.getMe(req, res); //args - none getMe
-  // req.body.user = responseBody.to(); //userDTO obj
-  // const userFavorites = req.body.user.collection.favorites;
-  // const userArchive = req.body.user.collection.archive;
-  // const userEmpty = !userFavorites.length && !userArchive.length; //both have to be empty
   if (req.body.user.message || userEmpty) {
     //if message is truthy we have a blank user dto, if its not truthy but collections empty, emulating signup phase
     const [fid, aid] = Object.keys(req.body.user.collection);
@@ -100,7 +95,7 @@ export const restore = async (req) => {
   } else await collectionController.getUserSyncedCollection(req, res); //args - user
   const localFavorites = req.body.user.collection.favorites;
   const localArchive = req.body.user.collection.archive;
-  const localEmpty = !localFavorites.length || !localArchive.length;
+  const localEmpty = !localFavorites.length && !localArchive.length;
   req.body.collection = responseBody.to(); //CollectionDTO obj
   req.body.header.collection = req.body.collection.header.collection;
   req.body.user = req.body.collection.user;
@@ -125,3 +120,17 @@ export const restore = async (req) => {
   }
   document.body.children["usmap"].style.cursor = "default";
 };
+
+export const handle = async () => {
+  const userFavorites = req.body.user.collection.favorites;
+  const userArchive = req.body.user.collection.archive;
+  const userEmpty = !userFavorites.length && !userArchive.length; //both have to be empty
+//login - user logs in no collection localempty, user comes back from storage with collection !userEmpty sync user with local
+//login - user logs in with collection !localempty, user comes back no collection user empty, sync user with local
+//login - !userEmpty and !localEmpty merge user and local
+//login - userEmpty and localempty do not merge
+//signup - user signs up no collection localempty, user is stored with current local collection
+//signup - user signs up with collection !localempty, user is stored with current local collection
+//signup - !userEmpty and !localEmpty user is stored with current local collection
+//signup - userEmpty and localempty user is stored with current local collection
+}

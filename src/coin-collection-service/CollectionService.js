@@ -30,7 +30,8 @@ export class CollectionService {
   getCollectionsById(favoritesId, archiveId) {
     const favorites = this.#repo.getCollectionById(favoritesId);
     const localArchive = this.#browser.getLocalStorageByKey(archiveId);
-    if (localArchive.length) this.putArchivedCollectionInEntity();
+    if (localArchive.length && !this.#repo.archive)
+      this.putArchivedCollectionInEntity();
     const archive = this.#repo.getCollectionById(archiveId);
     return CollectionDTO.from({
       favorites,
@@ -51,18 +52,15 @@ export class CollectionService {
     if (user.collection.archive.length || localArchive.length)
       this.putArchivedCollectionInEntity();
     const localFavorites = this.#browser.getLocalStorageByKey(favoritesKey);
-
     const mergedFavorites = user.authenticated
       ? [...new Set([...user.collection.favorites, ...localFavorites])]
       : localFavorites;
     const rawArchive = user.authenticated
       ? [...new Set([...user.collection.archive, ...localArchive])]
       : localArchive;
-
     const mergedArchive = rawArchive.filter(
       (x) => !mergedFavorites.includes(x),
     );
-
     user.collection = { favorites: mergedFavorites, archive: mergedArchive };
     const favoritesChanged = !same(localFavorites, mergedFavorites);
     const archiveChanged = !same(localArchive, mergedArchive);
@@ -139,6 +137,33 @@ export class CollectionService {
   putCollectionOnOrOffPage(collection, page) {
     this.#repo.putCollectionOnOrOffPage({ c: collection, p: page });
   }
+
+  putCoinsInRespectiveDisplays(user, usmap, favoritesKey, archiveKey) {
+    const coins = usmap?.coins;
+    if (coins) this.putAllFavoritesInCollection(coins);
+    const { favorites, archive } = this.#repo.entity; //archive may be undefined at any time
+    const names = user.collection;
+    if (!names.favorites.length)
+      this.#repo.deleteCoinsFromCollection(favoritesKey);
+    if (!names.archive.length && this.#repo.archive)
+      this.#repo.deleteCoinsFromCollection(archiveKey);
+    names.favorites = names.favorites.reduce((acc, n) => {
+      const favorite = favorites.lastChild.children[n];
+      const archived = archive?.lastChild.children[n];
+      const coin = favorite || archived;
+      if (coin) favorites.lastChild.append(coin);
+      else if (!favorites.lastChild.children[n]) acc.push(n);
+      return acc;
+    }, []);
+    names.archive = names.archive.reduce((acc, n) => {
+      const coin = archive?.lastChild.children[n];
+      if (!coin) acc.push(n);
+      return acc;
+    }, []);
+    const entity = Collection.from({ favorites, archive, user });
+    return CollectionDTO.from(entity.to());
+  }
+
   async deleteArchivedFromCollection(coin, user) {
     const [favoritesKey, archiveKey] = Object.keys(user.collection);
     const archive = this.#browser.getLocalStorageByKey(archiveKey);
@@ -158,5 +183,11 @@ export class CollectionService {
     } else user.message = new APIError(message);
     const entity = Collection.from({ ...this.#repo.entity, user });
     return CollectionDTO.from({ ...entity.to(), user });
+  }
+  deleteLocalCollections(favoritesKey, archiveKey) {
+    this.#browser.putLocalStorageByKey(favoritesKey, []);
+    this.#repo.deleteCoinsFromCollection(favoritesKey);
+    this.#browser.putLocalStorageByKey(archiveKey, []);
+    this.#repo.deleteCoinsFromCollection(archiveKey);
   }
 }

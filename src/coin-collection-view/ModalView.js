@@ -56,7 +56,10 @@ export class ModalView {
               <span class="validation-feedback"></span>
             </div>
             <div class="input-group">
-              <label for="password">Password</label>
+               <div class="label-row">
+                  <label for="password">Password</label>
+                  <button id="password" type="button" name="reset" class="forgot-link" >Forgot?</button>
+                </div>
                 <input required type="password" 
                       id="password" 
                       name="password"
@@ -67,7 +70,6 @@ export class ModalView {
               <span class="validation-feedback"></span>
             </div>
             <button disabled 
-                    id="login" 
                     name="authenticate" 
                     type="submit" 
                     data-action="login">Sign In
@@ -98,7 +100,7 @@ export class ModalView {
                     pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"/>
                  <span class="validation-feedback"></span>
                </div>
-               <button disabled id="signup" 
+               <button disabled
                        name="authenticate" 
                        type="submit" 
                        data-action="signup">Create Account

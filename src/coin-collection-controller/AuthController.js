@@ -71,4 +71,27 @@ export class AuthController extends AppController {
         ),
     );
   }
+  async postLoginForm(req, res) {
+    return super.POST(
+      req,
+      res,
+      async () =>
+        await this.#authService.postLoginForm(
+          req.body.email,
+          req.body.password,
+        ),
+    );
+  }
+  async postSignUpForm(req, res) {
+    return super.POST(
+      req,
+      res,
+      async () =>
+        await this.#authService.postSignUpForm(
+          req.body.email,
+          req.body.password,
+          req.body.collection,
+        ),
+    );
+  }
 }

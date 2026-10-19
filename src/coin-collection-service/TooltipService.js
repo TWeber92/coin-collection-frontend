@@ -34,7 +34,6 @@ export class TooltipService {
     this.#repo.putSvgTextInButton({ svg: entity.svg, b: entity.button });
     this.#repo.postArchiveTooltip(entity.button);
     this.#repo.putTooltipOnDisplay(entity.coin.entity);
-    console.log(entity.coin.entity);
   }
   postRestoreOrDeleteTooltip(coin) {
     [...Array(2)].reduce((acc, _, i) => {

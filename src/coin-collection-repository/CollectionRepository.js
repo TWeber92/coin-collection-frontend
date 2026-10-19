@@ -4,9 +4,10 @@ import { BrowserRepository } from "./BrowserRepository.js";
 import { DocumentClient } from "./DocumentClient.js";
 
 export class CollectionRepository extends DocumentClient {
-  constructor(view, api) {
+  constructor(view, api, local) {
     super();
     this.#api = api;
+    this.#local = local
     this.#entity = view.entity;
     this.#mq = window.matchMedia("(max-width: 768px)").matches;
   }
@@ -14,6 +15,7 @@ export class CollectionRepository extends DocumentClient {
   #mq;
   #entity;
   #api;
+  #local;
 
   get entity() {
     return this.#entity;
@@ -33,7 +35,9 @@ export class CollectionRepository extends DocumentClient {
   async postToFavoritesCollection(context) {
     const coin = context.c;
     const result = context.auth
-      ? await this.#api.POST("/api/user/collection", context.uc)
+      ? await this.#local.PUT("/api/user/collection", {
+          collection: context.uc,
+        })
       : {};
     if (result.message) return result;
     if (this.#mq)
@@ -43,7 +47,9 @@ export class CollectionRepository extends DocumentClient {
   async postToArchiveCollection(context) {
     const coin = context.c;
     const result = context.auth
-      ? await this.#api.PUT("/api/user/collection", context.uc)
+      ? await this.#local.PUT("/api/user/collection", {
+          collection: context.uc,
+        })
       : {};
     if (result.message) return result;
     super.POST(coin, (c) => this.#entity.archive.lastChild.append(c));
@@ -65,10 +71,15 @@ export class CollectionRepository extends DocumentClient {
   async deleteFromArchiveCollection(context) {
     const coin = context.c;
     const result = context.auth
-      ? await this.#api.DELETE("/api/user/collection", context.uc)
+      ? await this.#local.PUT("/api/user/collection", {
+          collection: context.uc,
+        })
       : {};
     if (result.message) return result;
     super.DELETE(coin, (c) => c.remove());
     return result;
+  }
+  deleteCoinsFromCollection(id) {
+    super.DELETE(id, (id) => this.#entity[id].lastChild.replaceChildren());
   }
 }

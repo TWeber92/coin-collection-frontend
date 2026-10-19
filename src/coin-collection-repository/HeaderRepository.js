@@ -25,13 +25,6 @@ export class HeaderRepository extends DocumentClient {
       !nav.hidden ? nav.children : menu.children,
     );
   }
-  // getExistingArchiveButton(archiveId) {
-  //   return super.GET(`#${archiveId}`, (id) => {
-  //     const nav = this.#entity.nav.children[id];
-  //     const header = this.#entity.header.querySelector(id);
-  //     return !!nav || !!header;
-  //   });
-  // }
   getBadgesFromEntity(id) {
     return super.GET(`#${id}`, (id) => {
       const entity = this.#entity.nav.hidden

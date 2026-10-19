@@ -51,9 +51,6 @@ export const handler = async (e) => {
 
   await authController.getMe(req, res);
   req.body.user = responseBody.to();
-  const collection = req.body.user.collection;
-  console.log(collection);
-  
   if (req.body.user.message) req.body.user.message.toToast();
 
   const updateMap = {
@@ -76,8 +73,6 @@ export const handler = async (e) => {
       await coinController.putNewCoinInEntity(req, res); // args - name
       req.body.coin = responseBody.to(); //Full CoinDTO obj
       req.body.user = req.body.collection.user; //UserDTO obj
-      console.log(req.body.user.collection);
-      
       await modalController.postStateModalContext(req, res); // args - coin, user.collection.favorites
       await updateBadges();
     },
@@ -92,7 +87,6 @@ export const handler = async (e) => {
       }
       await collectionController.putFavoriteInArchiveCollection(req, res); //args - coin.entity, user
       await getCollection();
-      console.log(req.body.user.collection);
       await updateBadges();
       if (mq) {
         await pageController.putArchiveOnPage(req, res); //args - collection.favorites, collection.archive, favoritesId, archiveId
@@ -109,7 +103,6 @@ export const handler = async (e) => {
       await tooltipController.deleteTooltip(req, res); //args - relative, tooltip, clone
       await collectionController.putArchivedInFavoritesCollection(req, res); //args - coin.entity, user
       await getCollection();
-      console.log(req.body.user.collection);
       if (!mq) {
         await updateArchiveFooter("archive");
         await usMapController.putCoinInForeignObj(req, res); // args - coin.entity
@@ -122,7 +115,6 @@ export const handler = async (e) => {
       await tooltipController.deleteTooltip(req, res); //args - relative, tooltip, clone
       await collectionController.deleteArchivedFromCollection(req, res); //args - coin.entity, user
       await getCollection();
-      console.log(req.body.user.collection);
       if (!mq) await updateArchiveFooter("archive");
       await updateBadges();
     },

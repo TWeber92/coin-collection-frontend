@@ -27,88 +27,6 @@ import { ModalService } from "./coin-collection-service/ModalService.js";
 import { PageService } from "./coin-collection-service/PageService.js";
 import { TooltipService } from "./coin-collection-service/TooltipService.js";
 import { USMapService } from "./coin-collection-service/USMapService.js";
-// import { CarouselView } from "./coin-collection-view/CarouselView.js";
-// import { CoinView } from "./coin-collection-view/CoinView.js";
-// import { CollectionView } from "./coin-collection-view/CollectionView.js";
-// import { HeaderView } from "./coin-collection-view/HeaderView.js";
-// import { ModalView } from "./coin-collection-view/ModalView.js";
-// import { PageView } from "./coin-collection-view/PageView.js";
-// import { TooltipView } from "./coin-collection-view/TooltipView.js";
-// import { UsMapView } from "./coin-collection-view/UsMapView.js";
-// import { EventRegister } from "./EventRegister.js";
-// import { View } from "./View.js";
-
-// export class Application {
-//   // constructor() {
-//   //   console.log("Services Instantiated! ✅");
-//   // }
-
-//   // #services = {};
-//   // #controllers = {};
-
-//   #init = (async () => {
-//     const {
-//       collectionView,
-//       headerView,
-//       usMapView,
-//       carouselView,
-//       coinView,
-//       pageView,
-//       modalView,
-//       tooltipView,
-//     } = View.views;
-//     this.controllers = {}
-//     // const apiRepo = new APIClient("https://coin-api.coin-collection.workers.dev")
-//     // const browserRepo = new BrowserRepository()
-//     // const collectionView = new CollectionView({});
-//     const collectionRepo = new CollectionRepository(collectionView);
-//     const collectionService = new CollectionService(collectionRepo);
-//     this.controllers.collectionController = new CollectionController(
-//       collectionService,
-//     );
-//     // const headerView = new HeaderView({});
-//     const headerRepo = new HeaderRepository(headerView);
-//     const headerService = new HeaderService(headerRepo);
-//     this.controllers.headerController = new HeaderController(headerService);
-//     // const usMapView = new UsMapView({});
-//     const usMapRepo = new USMapRepository(usMapView);
-//     const usMapService = new USMapService(usMapRepo);
-//     this.controllers.usMapController = new USMapController(usMapService);
-//     // const carouselView = new CarouselView({});
-//     const carouselRepo = new CarouselRepository(carouselView);
-//     const carouselService = new CarouselService(carouselRepo);
-//     this.controllers.carouselController = new CarouselController(
-//       carouselService,
-//     );
-//     // const coinView = new CoinView({});
-//     const coinRepo = new CoinRepository(coinView);
-//     const coinService = new CoinService(coinRepo);
-//     this.controllers.coinController = new CoinController(coinService);
-//     // const pageView = new PageView({});
-//     const pageRepo = new PageRepository(pageView);
-//     const pageService = new PageService(pageRepo);
-//     this.controllers.pageController = new PageController(pageService);
-//     // const modalView = new ModalView({});
-//     const modalRepo = new ModalRepository(modalView);
-//     const modalService = new ModalService(modalRepo);
-//     this.controllers.modalController = new ModalController(modalService);
-//     console.log("first");
-
-//     // const tooltipView = new TooltipView({})
-//     const tooltipRepo = new TooltipRepository(tooltipView);
-//     const tooltipService = new TooltipService(tooltipRepo);
-//     this.controllers.tooltipController = new TooltipController(tooltipService);
-//     const authRepo = new AuthRepository();
-//     const authService = new AuthService(authRepo);
-//     this.controllers.authController = new AuthController(authService);
-//     console.log("Application Instantiated! ✅");
-
-//     // new EventRegister(this.#services);
-
-//     // const controllers = Application.controllers;
-//   })();
-
-// }
 export class Application {
   static #controllers = {};
 
@@ -140,7 +58,7 @@ export class Application {
   static viewInstance;
 
   #buildCollection(view) {
-    const repo = new CollectionRepository(view, this.#api);
+    const repo = new CollectionRepository(view, this.#api, this.#local);
     const service = new CollectionService(repo, this.#browser);
     return new CollectionController(service);
   }
@@ -164,7 +82,7 @@ export class Application {
   }
 
   #buildCoin(view) {
-    const repo = new CoinRepository(view);
+    const repo = new CoinRepository(view, this.#api, this.#browser);
     const service = new CoinService(repo);
     return new CoinController(service);
   }

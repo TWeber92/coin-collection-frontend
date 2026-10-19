@@ -6,13 +6,15 @@ import { DocumentClient } from "./DocumentClient.js";
 
 export class CoinRepository extends DocumentClient {
   #cacheId = "coins";
-  constructor(view) {
+  constructor(view, api, browser) {
     super();
     this.#entity = view.entity;
+    this.#api = api;
+    this.#browser = browser
   }
-  #api = new APIClient("https://coin-api.coin-collection.workers.dev");
+  #api
   #entity;
-  #browser = new BrowserRepository();
+  #browser
 
   get entity() {
     return this.#entity;

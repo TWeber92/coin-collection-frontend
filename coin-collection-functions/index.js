@@ -61,6 +61,7 @@ export const event = async (e) => {
     "click:/button/tooltip": async () => await updateUserCollection(e),
     "pointermove:/path/state": async () => await updatePathLocation(e),
     "pointermove:/foreignobject/state": async () => await updateFoLocation(e),
+    "submit:/form/login": async () => await postAuthForm(e),
     "submit:/form/reset": async () => await postAuthForm(e),
     "submit:/form/pin": async () => await postAuthForm(e),
     "submit:/form/password": async () => await postAuthForm(e),
@@ -71,12 +72,12 @@ export const event = async (e) => {
     document.body.style.cursor = "default";
   } catch (err) {
     console.trace(err);
-    const error = err.toJSON();
-    const map = {
-      ValidationError: () => err.toSpan(),
-      AuthenticationError: () => err.toToast(),
-      AuthorizationError: () => err.toToast(),
-    };
-    map[error.name]();
+    // const error = err.toJSON();
+    // const map = {
+    //   ValidationError: () => err.toSpan(),
+    //   AuthenticationError: () => err.toToast(),
+    //   AuthorizationError: () => err.toToast(),
+    // };
+    // map[error.name]();
   }
 };

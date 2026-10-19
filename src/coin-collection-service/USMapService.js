@@ -103,10 +103,6 @@ export class USMapService {
   }
 
   putPathBack(path) {
-    // EventRegister.mutation = {
-    //   node: this.#repo.entity.svg,
-    //   fn: () => (path.dataset.mouse = "out"),
-    // };
     if (!this.#repo.pathSiblings.previous)
       this.#repo.putPathAndSiblingFirst({
         path,

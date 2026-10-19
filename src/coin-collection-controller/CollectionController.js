@@ -16,9 +16,7 @@ export class CollectionController extends AppController {
   }
   getCoinFromArchiveCollection(req, res) {
     return super.GET(req, res, () =>
-      this.#collectionService.getCoinFromArchiveCollection(
-        req.body.name,
-      ),
+      this.#collectionService.getCoinFromArchiveCollection(req.body.name),
     );
   }
   async getUserSyncedCollection(req, res) {
@@ -36,7 +34,7 @@ export class CollectionController extends AppController {
       async () =>
         await this.#collectionService.postToFavoritesCollection(
           req.body.coin.entity,
-          req.body.user
+          req.body.user,
         ),
     );
   }
@@ -47,7 +45,7 @@ export class CollectionController extends AppController {
       async () =>
         await this.#collectionService.putFavoriteInArchiveCollection(
           req.body.coin.entity,
-          req.body.user
+          req.body.user,
         ),
     );
   }
@@ -58,7 +56,7 @@ export class CollectionController extends AppController {
       async () =>
         await this.#collectionService.putArchivedInFavoritesCollection(
           req.body.coin.entity,
-          req.body.user
+          req.body.user,
         ),
     );
   }
@@ -69,7 +67,7 @@ export class CollectionController extends AppController {
       async () =>
         await this.#collectionService.deleteArchivedFromCollection(
           req.body.coin.entity,
-          req.body.user
+          req.body.user,
         ),
     );
   }
@@ -82,13 +80,31 @@ export class CollectionController extends AppController {
     super.PUT(req, res, () =>
       this.#collectionService.putCollectionOnOrOffPage(
         req.body.collection[req.body.selectedId],
-        req.body.page
+        req.body.page,
       ),
     );
   }
   putFavoritesCollectionInEntity(req, res) {
     super.GET(req, res, () =>
       this.#collectionService.putFavoritesCollectionInEntity(),
+    );
+  }
+  putCoinsInRespectiveDisplays(req, res) {
+    return super.PUT(req, res, () =>
+      this.#collectionService.putCoinsInRespectiveDisplays(
+        req.body.user,
+        req.body.usmap,
+        req.body.favoritesId,
+        req.body.archiveId,
+      ),
+    );
+  }
+  deleteLocalCollections(req, res) {
+    super.DELETE(req, res, () =>
+      this.#collectionService.deleteLocalCollections(
+        req.body.favoritesId,
+        req.body.archiveId,
+      ),
     );
   }
   // deleteCollectionControls(req, res) {

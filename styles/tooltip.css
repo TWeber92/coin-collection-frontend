@@ -11,9 +11,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* transition: transform 0.2s ease; */
   user-select: none;
-  /* pointer-events: auto; */
   z-index: 6;
 }
 #tooltip svg {

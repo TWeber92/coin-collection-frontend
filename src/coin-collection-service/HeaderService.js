@@ -57,7 +57,7 @@ export class HeaderService {
     // const archive = entity.buttons[2] || null;
     const badge = this.#repo.getExistingBadgeFromButton(favorites);
     if (!archive && count > 0)
-      this.#repo.putArchiveButtonInEntity(headerBtns[2]);
+      this.#repo.putArchiveButtonInEntity(headerBtns[3]);
     const badges = [...this.#repo.getBadgesFromEntity(badge.id)];
     Object.entries(entity.collection).forEach(([key, count]) => {
       const badge = badges.find((b) => b.dataset.badge === key);
@@ -75,8 +75,6 @@ export class HeaderService {
     this.#repo.putNewMenuButtonInHeader(menuBtn);
   }
   deleteAboutHeaderButton(user) {
-    console.log(user);
-    
     const buttons = this.#repo.getButtonsFromEntity();
     const authenticated = user.authenticated;
     const entity = Header.from({ buttons }).to();

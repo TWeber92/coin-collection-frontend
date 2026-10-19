@@ -4,8 +4,15 @@ export class AppController {
       const result = await handler();
       if (res) res.obj(result);
       return;
-    } catch (error) {
-      throw error;
+    } catch (err) {
+      const error = err.toJSON();
+      const map = {
+        ValidationError: () => res.obj({ message: err }),
+        AuthenticationError: () => res.obj({ message: err }),
+        AuthorizationError: () => res.obj({ message: err }),
+      };
+      if(map[error.name]) map[error.name]();
+      // else throw err
     }
   }
   async GET(req, res, handler) {

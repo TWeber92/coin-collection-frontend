@@ -72,8 +72,6 @@ export class ModalService {
     this.#repo.postSignUpModalContext(entity.to());
   }
   postEmailStageContext(id, name) {
-    console.log(name);
-
     const { button, form, newEmail } = ModalView.from({
       name,
     });
@@ -82,8 +80,6 @@ export class ModalService {
       fm: form,
       btn: button,
     });
-    console.log();
-
     const entity = Modal.from({
       form: nodes[0],
       newEmail: nodes[1],
