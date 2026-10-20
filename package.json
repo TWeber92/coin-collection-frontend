@@ -1,5 +1,8 @@
 {
+  "type": "module",
   "devDependencies": {
-    "@playwright/test": "^1.64.1"
+    "@playwright/test": "^1.64.1",
+    "extensionless": "^2.0.6",
+    "jsdom": "^30.1.3"
   }
 }

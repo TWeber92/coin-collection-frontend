@@ -91,8 +91,6 @@ export class CollectionService {
       uc: userCollection,
       auth: user.authenticated,
     });
-    user.collection = userCollection;
-    coin.dataset.location = archiveKey;
     const message = result.message;
     if (!message) {
       this.#browser.putNewItemInLocalByKey(archiveKey, coin.id);

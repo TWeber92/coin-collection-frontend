@@ -51,6 +51,7 @@ export class Application {
   #api = new APIClient("https://coin-api.coin-collection.workers.dev");
   #local = new APIClient("https://localhost:3000");
   #asset = new APIClient("./assets");
+  #mq = window.matchMedia("(max-width: 768px)").matches;
 
   static get controllers() {
     return Application.#controllers;
@@ -59,7 +60,7 @@ export class Application {
   static viewInstance;
 
   #buildCollection(view) {
-    const repo = new CollectionRepository(view, this.#api, this.#local);
+    const repo = new CollectionRepository(view, this.#api, this.#local, mq);
     const service = new CollectionService(repo, this.#browser);
     return new CollectionController(service);
   }

@@ -4,12 +4,12 @@ import { BrowserRepository } from "./BrowserRepository.js";
 import { DocumentClient } from "./DocumentClient.js";
 
 export class CollectionRepository extends DocumentClient {
-  constructor(view, api, local) {
+  constructor(view, api, local, mq) {
     super();
     this.#api = api;
     this.#local = local
     this.#entity = view.entity;
-    this.#mq = window.matchMedia("(max-width: 768px)").matches;
+    this.#mq = mq
   }
 
   #mq;

@@ -72,12 +72,5 @@ export const event = async (e) => {
     document.body.style.cursor = "default";
   } catch (err) {
     console.trace(err);
-    // const error = err.toJSON();
-    // const map = {
-    //   ValidationError: () => err.toSpan(),
-    //   AuthenticationError: () => err.toToast(),
-    //   AuthorizationError: () => err.toToast(),
-    // };
-    // map[error.name]();
   }
 };
