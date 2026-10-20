@@ -35,7 +35,7 @@
 .modal:has(#pin) {
   max-height: 250px;
 }
-.modal:has(#login) {
+.modal:has(form#login) {
   max-height: 300px;
 }
 .modal:has(#signup) {
@@ -122,6 +122,16 @@
   transform: scale(1.05);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
   cursor: pointer;
+}
+.modal-footer span {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem;
+}
+.modal-footer #password {
+  flex-basis: 100%;
+  text-align: center;
 }
 
 /* ============================================

@@ -60,7 +60,7 @@ export class Application {
   static viewInstance;
 
   #buildCollection(view) {
-    const repo = new CollectionRepository(view, this.#api, this.#local, mq);
+    const repo = new CollectionRepository(view, this.#api, this.#local, this.#mq);
     const service = new CollectionService(repo, this.#browser);
     return new CollectionController(service);
   }

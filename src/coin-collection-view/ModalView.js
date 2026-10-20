@@ -56,15 +56,12 @@ export class ModalView {
               <span class="validation-feedback"></span>
             </div>
             <div class="input-group">
-               <div class="label-row">
-                  <label for="password">Password</label>
-                  <button id="password" type="button" name="reset" class="forgot-link" >Forgot?</button>
-                </div>
+                <label for="password">Password</label>
                 <input required type="password" 
                       id="password" 
                       name="password"
                       placeholder="Password" 
-                      autocomplete="password" 
+                      autocomplete="current-password" 
                       aria-label="Password" 
                       pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"/>
               <span class="validation-feedback"></span>
@@ -74,7 +71,10 @@ export class ModalView {
                     type="submit" 
                     data-action="login">Sign In
             </button>`,
-      footer: `<span>Don't have an account? <button id="signup" data-name="signup" type="button">Sign Up</button></span>`,
+      footer: `<span>Don't have an account? 
+                  <button id="signup" data-name="signup" type="button">Sign Up</button>
+                  <button id="password" type="button" name="reset" class="forgot-link" >Forgot?</button>
+              </span>`,
     };
 
     this.#signupModal = {

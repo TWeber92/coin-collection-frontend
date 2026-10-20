@@ -35,7 +35,7 @@ export class CollectionRepository extends DocumentClient {
   async postToFavoritesCollection(context) {
     const coin = context.c;
     const result = context.auth
-      ? await this.#local.PUT("/api/user/collection", {
+      ? await this.#api.PUT("/api/user/collection", {
           collection: context.uc,
         })
       : {};
@@ -47,7 +47,7 @@ export class CollectionRepository extends DocumentClient {
   async postToArchiveCollection(context) {
     const coin = context.c;
     const result = context.auth
-      ? await this.#local.PUT("/api/user/collection", {
+      ? await this.#api.PUT("/api/user/collection", {
           collection: context.uc,
         })
       : {};
@@ -71,7 +71,7 @@ export class CollectionRepository extends DocumentClient {
   async deleteFromArchiveCollection(context) {
     const coin = context.c;
     const result = context.auth
-      ? await this.#local.PUT("/api/user/collection", {
+      ? await this.#api.PUT("/api/user/collection", {
           collection: context.uc,
         })
       : {};
