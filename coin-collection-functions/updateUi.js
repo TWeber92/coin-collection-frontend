@@ -120,17 +120,3 @@ export const restore = async (req) => {
   }
   document.body.children["usmap"].style.cursor = "default";
 };
-
-export const handle = async () => {
-  const userFavorites = req.body.user.collection.favorites;
-  const userArchive = req.body.user.collection.archive;
-  const userEmpty = !userFavorites.length && !userArchive.length; //both have to be empty
-//login - user logs in no collection localempty, user comes back from storage with collection !userEmpty sync user with local
-//login - user logs in with collection !localempty, user comes back no collection user empty, sync user with local
-//login - !userEmpty and !localEmpty merge user and local
-//login - userEmpty and localempty do not merge
-//signup - user signs up no collection localempty, user is stored with current local collection
-//signup - user signs up with collection !localempty, user is stored with current local collection
-//signup - !userEmpty and !localEmpty user is stored with current local collection
-//signup - userEmpty and localempty user is stored with current local collection
-}

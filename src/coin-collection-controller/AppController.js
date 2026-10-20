@@ -5,13 +5,13 @@ export class AppController {
       if (res) res.obj(result);
       return;
     } catch (err) {
-      const error = err.toJSON();
+      const error = err.toJSON ? err.toJSON() : null;
       const map = {
         ValidationError: () => res.obj({ message: err }),
         AuthenticationError: () => res.obj({ message: err }),
         AuthorizationError: () => res.obj({ message: err }),
       };
-      if(map[error.name]) map[error.name]();
+      if(map[error?.name]) map[error?.name]();
       // else throw err
     }
   }

@@ -19,7 +19,7 @@ export class TooltipView {
   #getTooltipElement() {
     return document.body.appendChild(
       DocumentStore.createDivElement({
-        id: "tooltip",
+        id: "tooltip-wrapper",
         className: "tooltip-wrapper",
         hidden: true,
       }).node,

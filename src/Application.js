@@ -44,6 +44,7 @@ export class Application {
     controllers.modalController = this.#buildModal(views.modalView);
     controllers.tooltipController = this.#buildTooltip(views.tooltipView);
     controllers.authController = this.#buildAuth();
+    if (navigator.webdriver) window.Controllers = controllers;
   }
 
   #browser = new BrowserRepository();

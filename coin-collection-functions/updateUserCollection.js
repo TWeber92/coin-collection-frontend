@@ -90,11 +90,10 @@ export const handler = async (e) => {
       await updateBadges();
       if (mq) {
         await pageController.putArchiveOnPage(req, res); //args - collection.favorites, collection.archive, favoritesId, archiveId
-        req.body.page = responseBody.to()
-        req.body.selectedId = action
-        await collectionController.putCollectionOnOrOffPage(req, res) //args - collection, selectedId, page
-      }
-      else updateArchiveFooter(action);
+        req.body.page = responseBody.to();
+        req.body.selectedId = action;
+        await collectionController.putCollectionOnOrOffPage(req, res); //args - collection, selectedId, page
+      } else updateArchiveFooter(action);
     },
 
     "restore:coin": async () => {
