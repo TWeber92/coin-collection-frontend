@@ -15,9 +15,6 @@ export class UserValidator {
   }
   static validateUserEmail(input) {
     const isValid = input.checkValidity();
-    console.log(input.validity.patternMismatch);
-    console.log(input.validity.valueMissing);
-    
     if (!isValid) {
       input.disable();
       input.setCustomValidity(
