@@ -172,3 +172,14 @@ coin-collection-frontend/
 - **Desktop/mobile branching.** `mq` is read once at construction from `matchMedia` and injected into repositories, so services never query the viewport directly. This is what keeps them testable.
 - **`id="state"` on all SVG paths.** Intentional — the event router dispatches on `type:/tag/id`, so every state path shares the same route key. The state name lives in `data-name`.
 - **No framework.** Vanilla JS with explicit layering. The test suite is where the structure pays off: services are testable without a browser, and the e2e suite exercises the wiring.
+
+
+## Zero-Cost Infrastructure
+
+This application is built and deployed entirely on free tiers, demonstrating a fully distributed, production-ready architecture at zero cost:
+
+- **Frontend:** Vanilla JS hosted on GitHub Pages (Organization Page)
+- **Backend:** Cloudflare Workers (serverless V8 isolates) wired via GitHub CI/CD
+- **Storage:** OORT decentralized object storage (S3-compatible, 20GB free tier)
+- **Database & Auth:** Cloudflare Worker secrets + OORT JSON payloads
+
